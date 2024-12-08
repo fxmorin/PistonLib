@@ -68,7 +68,3 @@ I don't have much time to work on this, so any time your willing to give to help
 
 You can find a small amount of development progress in [this youtube playlist](https://www.youtube.com/embed/videoseries?list=PL3J0JOfWvCsvQNJqxBwXQnWM3b0sjXxAo)
 [![PistonLib Development Playlist](https://img.youtube.com/vi/eukvh4gyeW0/0.jpg)](https://www.youtube.com/embed/videoseries?list=PL3J0JOfWvCsvQNJqxBwXQnWM3b0sjXxAo)
-
----
-
-<a href="https://client.kinetichosting.net/aff.php?aff=42"><img alt="Kinetic Hosting" src="https://media.discordapp.net/attachments/1058184491476197427/1058799080672854126/FX.png"></a>
