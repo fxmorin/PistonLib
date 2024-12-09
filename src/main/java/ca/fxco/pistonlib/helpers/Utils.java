@@ -9,6 +9,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 
 import static net.minecraft.core.Direction.*;
@@ -106,8 +107,8 @@ public class Utils {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T[] createInstances(Class<?>[] classes) {
-        Object[] instances = new Object[classes.length];
+    public static <T> T[] createInstances(Class<T> tClass, Class<?>[] classes) {
+        Object[] instances = (Object[]) Array.newInstance(tClass, classes.length);
         for (int i = 0; i < classes.length; i++) {
             instances[i] = Utils.createInstance(classes[i]);
         }

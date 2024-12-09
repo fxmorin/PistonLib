@@ -95,8 +95,8 @@ public class ConfigManager {
                             continue nextField; // Skip this field entirely
                         }
                     }
-                    Parser<?>[] parsers = Utils.createInstances(configValue.parser());
-                    Observer<?>[] observers = Utils.createInstances(configValue.observer());
+                    Parser<?>[] parsers = Utils.createInstances(Parser.class, configValue.parser());
+                    Observer<?>[] observers = Utils.createInstances(Observer.class, configValue.observer());
                     ParsedValue<?> parsedValue = new ParsedValue<>(
                             field,
                             configValue.desc(),
