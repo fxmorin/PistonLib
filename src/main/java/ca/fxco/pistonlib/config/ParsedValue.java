@@ -31,12 +31,13 @@ public class ParsedValue<T> {
     protected final T defaultValue; // Set by the recommended option
     protected final Parser<T>[] parsers;
     protected final Observer<T>[] observers;
+    protected final ConfigManager configManager;
     //public boolean requiresClient;
     //public final boolean clientOnly;
 
     public ParsedValue(Field field, String desc, String[] more, String[] keywords, Category[] categories,
                        String[] requires, String[] conflicts, boolean requiresRestart, int[] fixes,
-                       Parser<?>[] parsers, Observer<?>[] observers) {
+                       Parser<?>[] parsers, Observer<?>[] observers, ConfigManager configManager) {
         this.field = field;
         this.name = field.getName();
         this.description = desc;
@@ -50,6 +51,7 @@ public class ParsedValue<T> {
         this.parsers = (Parser<T>[]) parsers;
         this.observers = (Observer<T>[]) observers;
         this.defaultValue = getValue();
+        this.configManager = configManager;
         //this.clientOnly = this.groups.contains(FixGroup.CLIENTONLY);
         //this.requiresClient = this.clientOnly || this.groups.contains(FixGroup.CLIENT);
     }
@@ -130,7 +132,7 @@ public class ParsedValue<T> {
      */
     protected Object getValueForConfig() {
         // TODO: Allow for multiple custom config managers, not just the PistonLib one
-        return PistonLib.getConfigManager().trySavingValue(this.getValue(), this);
+        return configManager.trySavingValue(this.getValue(), this);
     }
 
     /**

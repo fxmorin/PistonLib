@@ -1,6 +1,7 @@
 package ca.fxco.pistonlib.config;
 
 import ca.fxco.api.pistonlib.config.*;
+import ca.fxco.api.pistonlib.config.Observer;
 import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.helpers.Utils;
 import com.moandjiezana.toml.Toml;
@@ -15,10 +16,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Config Options should never be changed async. They should be changed near the end of the tick, highly recommended
@@ -31,7 +29,7 @@ public class ConfigManager {
     private final TomlWriter tomlWriter;
     private final List<TypeConverter> typeConverters = new ArrayList<>();
 
-    private final Map<String, ParsedValue<?>> parsedValues = new HashMap<>();
+    private final Map<String, ParsedValue<?>> parsedValues = new LinkedHashMap<>();
 
     // TODO: Add a way to change config values in-game (with listeners to update the config file)
 
@@ -108,7 +106,8 @@ public class ConfigManager {
                             configValue.requiresRestart(),
                             configValue.fixes(),
                             parsers,
-                            observers
+                            observers,
+                            this
                     );
                     parsedValues.put(parsedValue.getName(), parsedValue);
                     break;
@@ -131,11 +130,18 @@ public class ConfigManager {
     private void writeValuesToConf() {
         try {
             Files.createDirectories(configPath.getParent());
-            Map<String, Object> savedValues = new HashMap<>();
+            Map<String, Map<String, Object>> savedValues = new LinkedHashMap<>();
+            savedValues.put("NONE", new LinkedHashMap<>());
             for (Map.Entry<String, ParsedValue<?>> entry : parsedValues.entrySet()) {
                 ParsedValue<?> parsedValue = entry.getValue();
+                Category category = parsedValue.getCategories().stream().findAny().orElse(null);
+                if (category != null) {
+                    savedValues.putIfAbsent(category.name(), new LinkedHashMap<>());
+                    savedValues.get(category.name()).put(entry.getKey(), parsedValue.getValueForConfig());
+                    continue;
+                }
                 Object value = parsedValue.getValue();
-                savedValues.put(entry.getKey(), parsedValue.getValueForConfig());
+                savedValues.get("NONE").put(entry.getKey(), parsedValue.getValueForConfig());
             }
             tomlWriter.write(savedValues, configPath.toFile());
         } catch (IOException e) {
