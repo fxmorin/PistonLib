@@ -33,11 +33,11 @@ public class ConfigManager {
 
     // TODO: Add a way to change config values in-game (with listeners to update the config file)
 
-    public ConfigManager(String modId) {
+    public ConfigManager(String modId, Class<?> configClass) {
         this.configPath = FabricLoader.getInstance().getConfigDir().resolve(modId + ".toml");
         this.tomlWriter = new TomlWriter();
 
-        loadConfigClass(PistonLibConfig.class);
+        loadConfigClass(configClass);
 
         Map<String, Object> loadedValues = loadValuesFromConf();
         if (loadedValues != null) {

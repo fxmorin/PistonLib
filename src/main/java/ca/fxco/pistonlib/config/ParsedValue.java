@@ -165,7 +165,7 @@ public class ParsedValue<T> {
     public boolean doKeywordMatchSearch(String search) {
         search = search.toLowerCase(Locale.ROOT);
         for (String keyword : this.keywords) {
-            if (keyword.toLowerCase(Locale.ROOT).equals(search)) {
+            if (keyword.toLowerCase(Locale.ROOT).startsWith(search)) {
                 return true;
             }
         }
