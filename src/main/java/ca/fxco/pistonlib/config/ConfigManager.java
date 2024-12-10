@@ -89,7 +89,7 @@ public class ConfigManager {
                 if (annotation instanceof ConfigValue configValue) {
                     if (Arrays.stream(configValue.envType()).noneMatch(envType ->
                             envType == FabricLoader.getInstance().getEnvironmentType())) {
-                        continue nextField;
+                        continue nextField; // Skip this field entirely
                     }
                     for (Class<? extends Condition> conditionClazz : configValue.condition()) {
                         Condition condition = Utils.createInstance(conditionClazz);
@@ -144,7 +144,6 @@ public class ConfigManager {
                     savedValues.get(category.name()).put(entry.getKey(), parsedValue.getValueForConfig());
                     continue;
                 }
-                Object value = parsedValue.getValue();
                 savedValues.get("NONE").put(entry.getKey(), parsedValue.getValueForConfig());
             }
             tomlWriter.write(savedValues, configPath.toFile());

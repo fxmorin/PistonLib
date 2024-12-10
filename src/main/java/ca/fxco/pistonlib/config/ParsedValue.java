@@ -3,7 +3,6 @@ package ca.fxco.pistonlib.config;
 import ca.fxco.api.pistonlib.config.Category;
 import ca.fxco.api.pistonlib.config.Observer;
 import ca.fxco.api.pistonlib.config.Parser;
-import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.pistonlib.helpers.ConfigUtils;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
@@ -32,8 +31,6 @@ public class ParsedValue<T> {
     protected final Parser<T>[] parsers;
     protected final Observer<T>[] observers;
     protected final ConfigManager configManager;
-    //public boolean requiresClient;
-    //public final boolean clientOnly;
 
     public ParsedValue(Field field, String desc, String[] more, String[] keywords, Category[] categories,
                        String[] requires, String[] conflicts, boolean requiresRestart, int[] fixes,
@@ -52,8 +49,6 @@ public class ParsedValue<T> {
         this.observers = (Observer<T>[]) observers;
         this.defaultValue = getValue();
         this.configManager = configManager;
-        //this.clientOnly = this.groups.contains(FixGroup.CLIENTONLY);
-        //this.requiresClient = this.clientOnly || this.groups.contains(FixGroup.CLIENT);
     }
 
     /**
@@ -116,8 +111,7 @@ public class ParsedValue<T> {
     protected void setValueFromConfig(Object value) {
         T newValue = ConfigUtils.loadValueFromConfig(value, this);
         if (newValue == null) {
-            // TODO: Allow for multiple custom config managers, not just the PistonLib one
-            newValue = PistonLib.getConfigManager().tryLoadingValue(value, this);
+            newValue = configManager.tryLoadingValue(value, this);
         }
         if (newValue != null) {
             for (Parser<T> parser : this.parsers) {
@@ -131,7 +125,6 @@ public class ParsedValue<T> {
      * Returns the value that should be used within the config file
      */
     protected Object getValueForConfig() {
-        // TODO: Allow for multiple custom config managers, not just the PistonLib one
         return configManager.trySavingValue(this.getValue(), this);
     }
 
