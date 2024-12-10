@@ -2,7 +2,6 @@ package ca.fxco.pistonlib.config;
 
 import ca.fxco.api.pistonlib.config.*;
 import ca.fxco.api.pistonlib.config.Observer;
-import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.helpers.Utils;
 import com.moandjiezana.toml.Toml;
 import com.moandjiezana.toml.TomlWriter;
@@ -30,6 +29,7 @@ public class ConfigManager {
     private final List<TypeConverter> typeConverters = new ArrayList<>();
 
     private final Map<String, ParsedValue<?>> parsedValues = new LinkedHashMap<>();
+    private final Map<String, Object> loadedValues;
 
     // TODO: Add a way to change config values in-game (with listeners to update the config file)
 
@@ -39,7 +39,7 @@ public class ConfigManager {
 
         loadConfigClass(configClass);
 
-        Map<String, Object> loadedValues = loadValuesFromConf();
+        loadedValues = loadValuesFromConf();
         if (loadedValues != null) {
             for (Map.Entry<String, Object> entry : loadedValues.entrySet()) {
                 if (parsedValues.containsKey(entry.getKey())) {
@@ -53,6 +53,22 @@ public class ConfigManager {
 
     public void addConverter(TypeConverter converter) {
         this.typeConverters.add(converter);
+    }
+
+    public void addParsedValues(ParsedValue<?>... parsedValues) {
+        for (ParsedValue<?> parsedValue : parsedValues) {
+            this.parsedValues.put(parsedValue.getName(), parsedValue);
+        }
+
+        if (loadedValues != null) {
+            for (ParsedValue<?> parsedValue : parsedValues) {
+                if (loadedValues.containsKey(parsedValue.getName())) {
+                    parsedValue.setValueFromConfig(loadedValues.get(parsedValue.getName()));
+                }
+            }
+        }
+
+        writeValuesToConf();
     }
 
     public <T> T tryLoadingValue(Object value, ParsedValue<T> parsedValue) {
