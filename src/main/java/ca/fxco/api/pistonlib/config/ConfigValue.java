@@ -1,5 +1,7 @@
 package ca.fxco.api.pistonlib.config;
 
+import net.fabricmc.api.EnvType;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -66,6 +68,11 @@ public @interface ConfigValue {
      * @see Parser
      */
     Class<? extends Parser>[] parser() default {};
+
+    /**
+     * On which side should option be loaded.
+     */
+    EnvType[] envType() default {EnvType.SERVER, EnvType.CLIENT};
 
     /**
      * The class of the condition checked when the rule is parsed, before being added

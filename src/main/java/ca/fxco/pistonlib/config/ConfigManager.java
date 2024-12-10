@@ -87,6 +87,10 @@ public class ConfigManager {
             // Check for ConfigValue annotation
             for (Annotation annotation : field.getAnnotations()) {
                 if (annotation instanceof ConfigValue configValue) {
+                    if (Arrays.stream(configValue.envType()).noneMatch(envType ->
+                            envType == FabricLoader.getInstance().getEnvironmentType())) {
+                        continue nextField;
+                    }
                     for (Class<? extends Condition> conditionClazz : configValue.condition()) {
                         Condition condition = Utils.createInstance(conditionClazz);
                         if (!condition.shouldInclude()) {
