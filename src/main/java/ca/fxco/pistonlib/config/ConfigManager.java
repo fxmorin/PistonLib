@@ -41,7 +41,10 @@ public class ConfigManager implements ConfigManagerEntrypoint {
     }
 
     public void init(String modId, Map<String, List<Field>> fieldProvider) {
-        loadConfigClass(fieldProvider.get(modId).toArray(new Field[0]));
+        List<Field> fields = fieldProvider.get(modId);
+        if (fields != null) {
+            loadConfigClass(fields.toArray(new Field[0]));
+        }
 
         Map<String, Object> loadedValues = loadValuesFromConf();
         if (loadedValues != null) {
@@ -151,8 +154,8 @@ public class ConfigManager implements ConfigManagerEntrypoint {
                 ParsedValue<?> parsedValue = entry.getValue();
                 Category category = parsedValue.getCategories().stream().findAny().orElse(null);
                 if (category != null) {
-                    savedValues.putIfAbsent(category.name(), new LinkedHashMap<>());
-                    savedValues.get(category.name()).put(entry.getKey(), parsedValue.getValueForConfig());
+                    savedValues.computeIfAbsent(category.name(), string ->
+                            new LinkedHashMap<>()).put(entry.getKey(), parsedValue.getValueForConfig());
                     continue;
                 }
                 savedValues.get("NONE").put(entry.getKey(), parsedValue.getValueForConfig());
