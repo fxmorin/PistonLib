@@ -46,12 +46,10 @@ public class PistonLib implements ModInitializer, PistonLibInitializer {
         PLNetwork.initialize();
 
         Map<String, List<Field>> customParsedValues = new HashMap<>();
-        for (EntrypointContainer<CustomParsedValues> entrypointContainer : FabricLoader.getInstance()
-                .getEntrypointContainers("pistonlib-parsedvalues", CustomParsedValues.class)) {
-            entrypointContainer.getEntrypoint().getParsedValue().forEach((key, value) -> {
-                customParsedValues.putIfAbsent(key, new ArrayList<>());
-                customParsedValues.get(key).addAll(value);
-            });
+        for (EntrypointContainer<ConfigFieldEntrypoint> entrypointContainer : FabricLoader.getInstance()
+                .getEntrypointContainers("pistonlib-configfield", ConfigFieldEntrypoint.class)) {
+            entrypointContainer.getEntrypoint().getConfigFields().forEach((key, value) ->
+                    customParsedValues.computeIfAbsent(key, string -> new ArrayList<>()).addAll(value));
         }
 
         for (EntrypointContainer<ConfigManagerEntrypoint> entrypointContainer : FabricLoader.getInstance()
