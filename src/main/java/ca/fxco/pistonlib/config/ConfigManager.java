@@ -40,8 +40,8 @@ public class ConfigManager implements ConfigManagerEntrypoint {
         loadConfigClass(configClass.getDeclaredFields());
     }
 
-    public void init(String modId) {
-        loadConfigClass(PistonLib.getParsedValuesForMod(modId).toArray(new Field[0]));
+    public void init(String modId, Map<String, List<Field>> fieldProvider) {
+        loadConfigClass(fieldProvider.get(modId).toArray(new Field[0]));
 
         Map<String, Object> loadedValues = loadValuesFromConf();
         if (loadedValues != null) {

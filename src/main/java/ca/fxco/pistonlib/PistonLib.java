@@ -27,7 +27,6 @@ public class PistonLib implements ModInitializer, PistonLibInitializer {
 
     @Getter
     private static final ConfigManager configManager = new ConfigManager(MOD_ID, PistonLibConfig.class);
-    private static final Map<String, List<Field>> customParsedValues = new HashMap<>();
 
     public static ResourceLocation id(String path) {
         return new ResourceLocation(MOD_ID, path);
@@ -46,6 +45,7 @@ public class PistonLib implements ModInitializer, PistonLibInitializer {
 
         PLNetwork.initialize();
 
+        Map<String, List<Field>> customParsedValues = new HashMap<>();
         for (EntrypointContainer<CustomParsedValues> entrypointContainer : FabricLoader.getInstance()
                 .getEntrypointContainers("pistonlib-parsedvalues", CustomParsedValues.class)) {
             entrypointContainer.getEntrypoint().getParsedValue().forEach((key, value) -> {
@@ -56,12 +56,11 @@ public class PistonLib implements ModInitializer, PistonLibInitializer {
 
         for (EntrypointContainer<ConfigManagerEntrypoint> entrypointContainer : FabricLoader.getInstance()
                 .getEntrypointContainers("pistonlib-configmanager", ConfigManagerEntrypoint.class)) {
-            entrypointContainer.getEntrypoint().getConfigManager().init(entrypointContainer.getProvider().getMetadata().getId());
+            entrypointContainer.getEntrypoint().getConfigManager().init(
+                    entrypointContainer.getProvider().getMetadata().getId(),
+                    customParsedValues
+            );
         }
-    }
-
-    public static List<Field> getParsedValuesForMod(String modId) {
-        return customParsedValues.getOrDefault(modId, List.of());
     }
 
     @Override
