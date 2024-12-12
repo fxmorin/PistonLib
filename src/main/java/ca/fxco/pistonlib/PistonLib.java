@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.function.Consumer;
 
 import ca.fxco.api.pistonlib.PistonLibInitializer;
+import ca.fxco.api.pistonlib.config.ConfigFieldEntrypoint;
 import ca.fxco.api.pistonlib.config.ConfigManager;
 import ca.fxco.pistonlib.base.*;
 import ca.fxco.api.pistonlib.config.ConfigManagerEntrypoint;

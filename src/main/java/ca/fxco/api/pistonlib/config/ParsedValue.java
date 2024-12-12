@@ -11,6 +11,12 @@ import java.lang.reflect.Field;
 import java.util.Locale;
 import java.util.Set;
 
+/**
+ * Holds needed info about config field as well as providing methods to set/get value
+ * @author FX
+ * @param <T> the class of value
+ * @since 1.0.4
+ */
 @Getter
 public class ParsedValue<T> {
 
@@ -50,6 +56,7 @@ public class ParsedValue<T> {
 
     /**
      * Sets this value to its default value
+     * @since 1.0.4
      */
     public void reset() {
         setValue(this.defaultValue);
@@ -57,6 +64,7 @@ public class ParsedValue<T> {
 
     /**
      * Returns true if it's currently the default value
+     * @since 1.0.4
      */
     public boolean isDefaultValue() {
         return this.defaultValue.equals(getValue());
@@ -66,6 +74,13 @@ public class ParsedValue<T> {
         setValue(value, false);
     }
 
+
+    /**
+     * Used to set the value of parsed value
+     * @param value object to set field's value to
+     * @param load is method called on load or after
+     * @since 1.0.4
+     */
     public void setValue(T value, boolean load) {
         try {
             T currentValue = getValue();
@@ -93,6 +108,11 @@ public class ParsedValue<T> {
         }
     }
 
+    /**
+     * Used to get the value of parsed value
+     * @return value of the field assigned to parsed value
+     * @since 1.0.4
+     */
     @SuppressWarnings("unchecked")
     public T getValue() {
         try {
@@ -104,6 +124,8 @@ public class ParsedValue<T> {
 
     /**
      * Should not be used unless loading from the config
+     * @param value value to set
+     * @since 1.0.4
      */
     protected void setValueFromConfig(Object value) {
         T newValue = ConfigUtils.loadValueFromConfig(value, this);
@@ -120,6 +142,7 @@ public class ParsedValue<T> {
 
     /**
      * Returns the value that should be used within the config file
+     * @since 1.0.4
      */
     protected Object getValueForConfig() {
         return configManager.trySavingValue(this.getValue(), this);
@@ -127,6 +150,9 @@ public class ParsedValue<T> {
 
     /**
      * Used when attempting to parse the value from a command as a string
+     * @param source command source stack used by command
+     * @param inputValue string from command to parse
+     * @since 1.0.4
      */
     protected void parseValue(CommandSourceStack source, String inputValue) {
         boolean useDefault = true;
@@ -147,6 +173,8 @@ public class ParsedValue<T> {
 
     /**
      * Returns true if the config value name or its description matches the search term
+     * @param search the string what is being searched
+     * @since 1.0.4
      */
     public boolean matchesTerm(String search) {
         search = search.toLowerCase(Locale.ROOT);
@@ -158,6 +186,8 @@ public class ParsedValue<T> {
 
     /**
      * Returns true if the search term matches one of the config value keywords
+     * @param search the string what is being searched
+     * @since 1.0.4
      */
     public boolean doKeywordMatchSearch(String search) {
         search = search.toLowerCase(Locale.ROOT);
@@ -171,6 +201,8 @@ public class ParsedValue<T> {
 
     /**
      * Returns true if the config value contains a category which matches the search term
+     * @param search the string what is being searched
+     * @since 1.0.4
      */
     public boolean doCategoryMatchSearch(String search) {
         search = search.toLowerCase(Locale.ROOT);

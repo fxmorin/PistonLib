@@ -19,6 +19,8 @@ import java.util.*;
  * Config Options should never be changed async. They should be changed near the end of the tick, highly recommended
  * that you do this during the MinecraftServer tickables using minecraftServer.addTickable() or during the network
  * tick. Such as during a packet
+ * @author FX
+ * @since 1.0.4
  */
 public class ConfigManager implements ConfigManagerEntrypoint {
 
@@ -30,17 +32,29 @@ public class ConfigManager implements ConfigManagerEntrypoint {
 
     // TODO: Add a way to change config values in-game (with listeners to update the config file)
 
+    /**
+     * @param modId mod id of your mod
+     * @param configClass the config class with all the ConfigValues
+     * @since 1.0.4
+     */
     public ConfigManager(String modId, Class<?> configClass) {
         this.configPath = FabricLoader.getInstance().getConfigDir().resolve(modId + ".toml");
         this.tomlWriter = new TomlWriter();
 
-        loadConfigClass(configClass.getDeclaredFields());
+        loadConfigFields(configClass.getDeclaredFields());
     }
 
+    /**
+     * Add pistonlib-configmanager entrypoint to your ConfigManager instance which would call this method after all
+     * Config Options from other mods are collected
+     * @param modId mod id of the entrypoint provider
+     * @param fieldProvider config fields added by other mods to your configManager
+     * @since 1.0.4
+     */
     public void init(String modId, Map<String, List<Field>> fieldProvider) {
         List<Field> fields = fieldProvider.get(modId);
         if (fields != null) {
-            loadConfigClass(fields.toArray(new Field[0]));
+            loadConfigFields(fields.toArray(new Field[0]));
         }
 
         Map<String, Object> loadedValues = loadValuesFromConf();
@@ -55,10 +69,23 @@ public class ConfigManager implements ConfigManagerEntrypoint {
         writeValuesToConf();
     }
 
+    /**
+     * Will add TypeConverters to ConfigManager
+     * @see TypeConverter
+     * @param converter the TypeConverter to add
+     * @since 1.0.4
+     */
     public void addConverter(TypeConverter converter) {
         this.typeConverters.add(converter);
     }
 
+    /**
+     * Will try to load value using converter
+     * @param value TODO
+     * @param parsedValue parsedValue to load from
+     * @return returns new value or null if config manager doesn't have converters
+     * @since 1.0.4
+     */
     public <T> T tryLoadingValue(Object value, ParsedValue<T> parsedValue) {
         for (TypeConverter converter : this.typeConverters) {
             T newValue = converter.loadValue(value, parsedValue);
@@ -69,6 +96,13 @@ public class ConfigManager implements ConfigManagerEntrypoint {
         return null;
     }
 
+    /**
+     * Will try to load value using converter
+     * @param value value to save
+     * @param parsedValue parsed value to which value will be saved
+     * @return returns new value or null if config manager doesn't have converters
+     * @since 1.0.4
+     */
     public <T> Object trySavingValue(T value, ParsedValue<T> parsedValue) {
         for (TypeConverter converter : this.typeConverters) {
             Object newValue = converter.saveValue(value, parsedValue);
@@ -81,8 +115,10 @@ public class ConfigManager implements ConfigManagerEntrypoint {
 
     /**
      * Generates all values from a config class and then loads the config file and sets all there values
+     * @param fields fields to turn into ConfigValue and then add to parsedValues
+     * @since 1.0.4
      */
-    public void loadConfigClass(Field[] fields) {
+    public void loadConfigFields(Field[] fields) {
         nextField: for (Field field : fields) {
 
             // Only accept fields that are static & not final
@@ -124,6 +160,11 @@ public class ConfigManager implements ConfigManagerEntrypoint {
         }
     }
 
+    /**
+     * Loads values from config file
+     * @return values from config file or null if it doesn't exist
+     * @since 1.0.4
+     */
     @SuppressWarnings("unchecked")
     private @Nullable Map<String, Object> loadValuesFromConf() {
         if (Files.exists(configPath)) {
@@ -142,6 +183,10 @@ public class ConfigManager implements ConfigManagerEntrypoint {
         return null;
     }
 
+    /**
+     * Writes values to config file
+     * @since 1.0.4
+     */
     private void writeValuesToConf() {
         try {
             Files.createDirectories(configPath.getParent());
@@ -163,8 +208,15 @@ public class ConfigManager implements ConfigManagerEntrypoint {
         }
     }
 
+
+    /**
+     * Proxy method for entrypoint
+     * @return this config manager
+     * @since 1.0.4
+     */
     @Override
     public ConfigManager getConfigManager() {
         return this;
     }
+
 }
