@@ -1,7 +1,5 @@
 package ca.fxco.api.pistonlib.config;
 
-import ca.fxco.pistonlib.config.ParsedValue;
-
 /**
  * The Observer class is used within the {@link ConfigValue} class in order to trigger events
  */

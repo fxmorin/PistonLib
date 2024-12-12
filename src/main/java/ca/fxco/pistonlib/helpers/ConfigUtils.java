@@ -1,6 +1,6 @@
 package ca.fxco.pistonlib.helpers;
 
-import ca.fxco.pistonlib.config.ParsedValue;
+import ca.fxco.api.pistonlib.config.ParsedValue;
 import com.google.common.primitives.Primitives;
 import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.Nullable;

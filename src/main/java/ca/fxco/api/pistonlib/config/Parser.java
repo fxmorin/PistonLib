@@ -1,6 +1,5 @@
 package ca.fxco.api.pistonlib.config;
 
-import ca.fxco.pistonlib.config.ParsedValue;
 import net.minecraft.commands.CommandSourceStack;
 import org.jetbrains.annotations.Nullable;
 

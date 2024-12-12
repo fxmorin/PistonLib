@@ -1,8 +1,5 @@
-package ca.fxco.pistonlib.config;
+package ca.fxco.api.pistonlib.config;
 
-import ca.fxco.api.pistonlib.config.Category;
-import ca.fxco.api.pistonlib.config.Observer;
-import ca.fxco.api.pistonlib.config.Parser;
 import ca.fxco.pistonlib.helpers.ConfigUtils;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;

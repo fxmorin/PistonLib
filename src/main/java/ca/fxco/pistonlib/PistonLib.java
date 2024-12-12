@@ -5,9 +5,9 @@ import java.util.*;
 import java.util.function.Consumer;
 
 import ca.fxco.api.pistonlib.PistonLibInitializer;
-import ca.fxco.pistonlib.config.ConfigManager;
+import ca.fxco.api.pistonlib.config.ConfigManager;
 import ca.fxco.pistonlib.base.*;
-import ca.fxco.pistonlib.config.ConfigManagerEntrypoint;
+import ca.fxco.api.pistonlib.config.ConfigManagerEntrypoint;
 import ca.fxco.pistonlib.network.PLNetwork;
 import lombok.Getter;
 import net.fabricmc.loader.api.FabricLoader;

@@ -1,6 +1,5 @@
 package ca.fxco.api.pistonlib.config;
 
-import ca.fxco.pistonlib.config.ParsedValue;
 import org.jetbrains.annotations.Nullable;
 
 /**

@@ -1,4 +1,4 @@
-package ca.fxco.pistonlib.config;
+package ca.fxco.api.pistonlib.config;
 
 public interface ConfigManagerEntrypoint {
 
