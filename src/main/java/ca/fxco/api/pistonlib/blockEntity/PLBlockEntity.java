@@ -14,6 +14,8 @@ import net.minecraft.world.level.block.state.BlockState;
 /**
  * This interface collects all custom behavior that is injected into {@code BlockEntity}s.
  * It provides default implementations for all custom behavior.
+ * @author Space Walker
+ * @since 1.0.4
  */
 public interface PLBlockEntity extends BlockEntityPistonMerging, BlockEntityPostLoad {
 

@@ -22,19 +22,28 @@ import net.minecraft.world.level.block.state.BlockState;
  * This interface collects all custom behavior that is injected into {@code BlockState}s.
  * Similarly to {@linkplain net.minecraft.world.level.block.state.BlockBehaviour.BlockStateBase BlockStateBase},
  * it simply forwards method calls to the block's implementations.
+ * @author Space Walker
+ * @since 1.0.4
  */
 @SuppressWarnings("deprecation")
-public interface PLBlockStateBase extends BlockStatePistonBehavior, BlockStatePistonMerging, BlockStatePistonStickiness, BlockStateQuasiPower {
+public interface PLBlockStateBase extends BlockStatePistonBehavior,
+        BlockStatePistonMerging, BlockStatePistonStickiness, BlockStateQuasiPower {
 
     /**
-     * for internal use - this method is equivalent to {@linkplain net.minecraft.world.level.block.state.BlockBehaviour.BlockStateBase#getBlock BlockStateBase.getBlock}
+     * for internal use - this method is equivalent to
+     * {@linkplain net.minecraft.world.level.block.state.BlockBehaviour.BlockStateBase#getBlock BlockStateBase.getBlock}
+     * @return block of the BlockStateBase
+     * @since 1.0.4
      */
     default Block pl$getBlock() {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * for internal use - this method is equivalent to {@linkplain net.minecraft.world.level.block.state.BlockBehaviour.BlockStateBase#asState BlockStateBase.asState}
+     * for internal use - this method is equivalent to
+     * {@linkplain net.minecraft.world.level.block.state.BlockBehaviour.BlockStateBase#asState BlockStateBase.asState}
+     * @return block state of the BlockStateBase
+     * @since 1.0.4
      */
     default BlockState pl$asState() {
         throw new UnsupportedOperationException();

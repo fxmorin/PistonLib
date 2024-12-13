@@ -9,6 +9,7 @@ public interface ConfigManagerEntrypoint {
 
     /**
      * Proxy method for entrypoint
+     * @since 1.0.4
      */
     ConfigManager getConfigManager();
 

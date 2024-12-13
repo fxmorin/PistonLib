@@ -396,9 +396,6 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
         tickMovement();
     }
 
-    /**
-     * @return true if it finished movement
-     */
     public void tickStart() {
         this.lastTicked = this.level.getGameTime();
         this.progressO = this.progress;

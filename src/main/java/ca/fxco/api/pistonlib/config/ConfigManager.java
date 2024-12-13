@@ -45,8 +45,8 @@ public class ConfigManager implements ConfigManagerEntrypoint {
     }
 
     /**
-     * Add pistonlib-configmanager entrypoint to your ConfigManager instance which would call this method after all
-     * Config Options from other mods are collected
+     * Add pistonlib-configmanager entrypoint to your ConfigManager instance
+     * which would call this method after all Config Options from other mods are collected
      * @param modId mod id of the entrypoint provider
      * @param fieldProvider config fields added by other mods to your configManager
      * @since 1.0.4
