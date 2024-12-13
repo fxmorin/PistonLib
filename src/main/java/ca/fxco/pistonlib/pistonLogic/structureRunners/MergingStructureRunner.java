@@ -8,6 +8,7 @@ import ca.fxco.pistonlib.impl.BlockEntityMerging;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBaseMerging;
 import ca.fxco.pistonlib.pistonLogic.structureGroups.StructureGroup;
+import ca.fxco.pistonlib.pistonLogic.structureResolvers.BasicStructureResolver;
 import ca.fxco.pistonlib.pistonLogic.structureResolvers.MergingPistonStructureResolver;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
@@ -15,30 +16,39 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.piston.PistonStructureResolver;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.PistonType;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static net.minecraft.world.level.block.Block.*;
 import static net.minecraft.world.level.block.Block.UPDATE_INVISIBLE;
 
 public class MergingStructureRunner extends BasicStructureRunner {
 
-    private final Map<BlockPos, BlockState> toKeep = new LinkedHashMap<>();
+    private Map<BlockPos, BlockState> toKeep;
     private BlockState[] unMergingStates;
     private int unMergingIndex = 0;
 
-    public MergingStructureRunner(PistonFamily family, PistonType type) {
-        super(family, type);
+    public MergingStructureRunner(Level level, BlockPos pos, Direction facing, int length,
+                                  PistonFamily family, PistonType type, boolean extend,
+                                  BasicStructureResolver.Factory<? extends BasicStructureResolver> structureProvider) {
+        super(level, pos, facing, length, family, type, extend, structureProvider);
     }
 
     @Override
-    protected void taskSetPositionsToMove(Level level, List<BlockPos> toMove, Direction moveDir) {
+    public boolean taskRunStructureResolver() {
+        if (!super.taskRunStructureResolver()) {
+            return false;
+        }
+        this.toKeep = new LinkedHashMap<>();
+        return true;
+    }
+
+    @Override
+    public void taskSetPositionsToMove() {
         for (BlockPos posToMove : toMove) {
             BlockState stateToMove = level.getBlockState(posToMove);
             BlockEntity blockEntityToMove = level.getBlockEntity(posToMove);
@@ -57,28 +67,25 @@ public class MergingStructureRunner extends BasicStructureRunner {
     }
 
     @Override
-    protected void taskMoveBlocks(Level level, BlockPos pos, PistonStructureResolver structure, Direction facing,
-                                  boolean extend, List<BlockPos> toMove, BlockState[] affectedStates,
-                                  AtomicInteger affectedIndex, Direction moveDir) {
+    public void taskMoveBlocks() {
         int moveSize = toMove.size();
         if (moveSize > 0) {
-            StructureGroup structureGroup = null;
-            if (moveSize > 1) { // Only use Structure group if there are more than 1 block entities in the group
-                structureGroup = StructureGroup.create(level);
-            }
-            for (int i = moveSize - 1; i >= 0; i--) {
-                BlockPos posToMove = toMove.get(i);
-                BlockPos dstPos = posToMove.relative(moveDir);
-                BlockState stateToMove = statesToMove.get(i);
-                BlockEntity blockEntityToMove = blockEntitiesToMove.get(i);
+            if (structure instanceof MergingPistonStructureResolver mergingStructure) {
+                List<BlockPos> toUnMerge = mergingStructure.getToUnMerge();
+                unMergingStates = new BlockState[toUnMerge.size()];
+                StructureGroup structureGroup = null;
+                if (moveSize > 1) { // Only use Structure group if there are more than 1 block entities in the group
+                    structureGroup = StructureGroup.create(level);
+                }
+                for (int i = moveSize - 1; i >= 0; i--) {
+                    BlockPos posToMove = toMove.get(i);
+                    BlockPos dstPos = posToMove.relative(moveDir);
+                    BlockState stateToMove = statesToMove.get(i);
+                    BlockEntity blockEntityToMove = blockEntitiesToMove.get(i);
 
-                boolean move = true;
+                    boolean move = true;
 
-                // UnMerge blocks
-                if (structure instanceof MergingPistonStructureResolver mergingStructure) {
-                    List<BlockPos> toUnMerge = mergingStructure.getToUnMerge();
-                    unMergingStates = new BlockState[toUnMerge.size()];
-
+                    // UnMerge blocks
                     if (toUnMerge.contains(posToMove) && stateToMove instanceof BlockStateBaseMerging bsbm) {
                         Pair<BlockState, BlockState> unmergedStates = null;
                         if (bsbm.getBlockEntityMergeRules().checkUnMerge() &&
@@ -96,34 +103,36 @@ public class MergingStructureRunner extends BasicStructureRunner {
                             stateToMove = unmergedStates.getFirst();
                             BlockState stateToKeep = unmergedStates.getSecond();
                             toKeep.put(posToMove, stateToKeep);
-                            affectedStates[affectedIndex.getAndIncrement()] = stateToKeep;
+                            affectedStates[affectedIndex++] = stateToKeep;
                             toRemove.remove(posToMove);
                             move = false;
                         }
                     }
-                }
 
-                toRemove.remove(dstPos);
+                    toRemove.remove(dstPos);
 
-                BlockState movingBlock = this.family.getMoving().defaultBlockState()
-                        .setValue(BasicMovingBlock.FACING, facing);
-                BlockEntity movingBlockEntity = this.family
-                        .newMovingBlockEntity(structureGroup, dstPos, movingBlock, stateToMove, blockEntityToMove, facing, extend, false);
+                    BlockState movingBlock = this.family.getMoving().defaultBlockState()
+                            .setValue(BasicMovingBlock.FACING, facing);
+                    BlockEntity movingBlockEntity = this.family
+                            .newMovingBlockEntity(structureGroup, dstPos, movingBlock, stateToMove, blockEntityToMove, facing, extend, false);
 
-                level.setBlock(dstPos, movingBlock, UPDATE_MOVE_BY_PISTON | UPDATE_INVISIBLE);
-                level.setBlockEntity(movingBlockEntity);
+                    level.setBlock(dstPos, movingBlock, UPDATE_MOVE_BY_PISTON | UPDATE_INVISIBLE);
+                    level.setBlockEntity(movingBlockEntity);
 
-                if (move) {
-                    affectedStates[affectedIndex.getAndIncrement()] = stateToMove;
+                    if (move) {
+                        affectedStates[affectedIndex++] = stateToMove;
+                    }
                 }
             }
         }
     }
 
     @Override
-    protected void taskMergeBlocks(Level level, BlockPos pos, Direction facing, boolean extend,
-                                   MergingPistonStructureResolver structure, Direction moveDir) {
-        List<BlockPos> toMerge = structure.getToMerge();
+    public void taskMergeBlocks() {
+        if (!(structure instanceof MergingPistonStructureResolver mergingStructure)) {
+            return;
+        }
+        List<BlockPos> toMerge = mergingStructure.getToMerge();
         float speed = extend ? family.getExtendingSpeed() : family.getRetractingSpeed();
 
         // Merge Blocks
@@ -184,7 +193,7 @@ public class MergingStructureRunner extends BasicStructureRunner {
     }
 
     @Override
-    protected void taskDoUnMergeUpdates(Level level) {
+    public void taskDoUnMergeUpdates() {
         int unMergingIndex = 0;
 
         // Keep these blocks as they unmerged, just change there state to the new one

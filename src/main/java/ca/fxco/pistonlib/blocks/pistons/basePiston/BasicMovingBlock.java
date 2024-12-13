@@ -3,6 +3,7 @@ package ca.fxco.pistonlib.blocks.pistons.basePiston;
 import java.util.Collections;
 import java.util.List;
 
+import ca.fxco.pistonlib.PistonLibConfig;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 
@@ -48,7 +49,7 @@ public class BasicMovingBlock extends MovingPistonBlock {
     }
 
     public BasicMovingBlock(PistonFamily family, Properties properties) {
-        super(properties);
+        super(properties.isValidSpawn((a,b,c,d) -> !PistonLibConfig.mobsSpawnOnMovingPistonsFix));
 
         this.family = family;
         this.family.setMoving(this);
