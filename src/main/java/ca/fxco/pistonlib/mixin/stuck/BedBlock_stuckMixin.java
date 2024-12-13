@@ -82,4 +82,9 @@ public abstract class BedBlock_stuckMixin extends Block
     public boolean matchesStickyConditions(BlockState state, BlockState neighborState, Direction dir) {
         return state.is(neighborState.getBlock()) && getNeighbourDirection(neighborState) == dir.getOpposite();
     }
+
+    @Override
+    public boolean propagatesIndirectSticky(BlockState state) {
+        return false;
+    }
 }

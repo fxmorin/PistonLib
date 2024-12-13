@@ -103,6 +103,11 @@ public abstract class BlockStateBase_pistonBehaviorMixin implements BlockStateBa
     }
 
     @Override
+    public boolean propagatesIndirectSticky() {
+        return ((ConfigurablePistonStickiness)this.getBlock()).propagatesIndirectSticky(this.asState());
+    }
+
+    @Override
     public int getQuasiSignal(BlockGetter blockGetter, BlockPos blockPos, Direction dir, int dist) {
         return ((BlockQuasiPower)this.getBlock()).getQuasiSignal(this.asState(), blockGetter, blockPos, dir, dist);
     }

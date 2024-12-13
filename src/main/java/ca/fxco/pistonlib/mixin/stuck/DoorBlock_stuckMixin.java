@@ -76,4 +76,9 @@ public abstract class DoorBlock_stuckMixin extends Block
     public boolean matchesStickyConditions(BlockState state, BlockState neighborState, Direction dir) {
         return state.is(neighborState.getBlock()) && getStickyDirection(neighborState) == dir.getOpposite();
     }
+
+    @Override
+    public boolean propagatesIndirectSticky(BlockState state) {
+        return false;
+    }
 }

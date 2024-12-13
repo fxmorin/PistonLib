@@ -28,5 +28,5 @@ public interface BlockStateBaseExpandedSticky {
     boolean isSticky();
     Map<Direction, StickyType> stickySides();
     StickyType sideStickiness(Direction direction);
-
+    boolean propagatesIndirectSticky();
 }

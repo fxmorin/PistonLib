@@ -82,7 +82,7 @@ public class BasicStructureResolver extends PistonStructureResolver {
         // Structure Generation
         BlockState state = this.level.getBlockState(this.startPos);
         if (!this.piston.canMoveBlock(state, this.level, this.startPos, this.pushDirection, false, this.pistonDirection)) {
-            // Block directly int front is immovable, can only be true if extending, and it can be destroyed
+            // Block directly in front is immovable, can only be true if extending, and it can be destroyed
             if (this.extending) {
                 ConfigurablePistonBehavior pistonBehavior = (ConfigurablePistonBehavior)state.getBlock();
                 if (pistonBehavior.usesConfigurablePistonBehavior()) {
@@ -167,12 +167,12 @@ public class BasicStructureResolver extends PistonStructureResolver {
 
     // Stickiness checks
     protected static boolean canAdjacentBlockStick(Direction dir, BlockState state, BlockState adjState, boolean attemptIndirect) {
-        BlockStateBaseExpandedSticky stick = (BlockStateBaseExpandedSticky)adjState;
-        if (stick.usesConfigurablePistonStickiness()) {
-            if (!stick.isSticky()) {
+        BlockStateBaseExpandedSticky adjStick = (BlockStateBaseExpandedSticky)adjState;
+        if (adjStick.usesConfigurablePistonStickiness()) {
+            if (!adjStick.isSticky()) {
                 return attemptIndirect && canIndirectBlockStick(dir, state, adjState);
             }
-            StickyType type = stick.sideStickiness(dir.getOpposite());
+            StickyType type = adjStick.sideStickiness(dir.getOpposite());
             if (type == StickyType.CONDITIONAL) {
                 if (type.canStick(state, adjState, dir)) {
                     return true;
@@ -183,7 +183,7 @@ public class BasicStructureResolver extends PistonStructureResolver {
         }
         StickyGroup stickyGroup1 = ((BlockStateBaseExpandedSticky)state).getStickyGroup();
         if (stickyGroup1 != null) {
-            return StickRules.test(stickyGroup1, stick.getStickyGroup());
+            return StickRules.test(stickyGroup1, adjStick.getStickyGroup());
         }
         return attemptIndirect && canIndirectBlockStick(dir, state, adjState);
     }
@@ -218,9 +218,13 @@ public class BasicStructureResolver extends PistonStructureResolver {
         return !stick.hasStickyGroup() || !cantMoveAdjacentBlocks(pos);
     }
 
-    protected static boolean isSticky(ConfigurablePistonStickiness stick, BlockState state, Direction dir) {
+    protected boolean isSticky(ConfigurablePistonStickiness stick, BlockState state, Direction dir) {
         if (PistonLibConfig.indirectStickyApi) {
-            // Basically all blocks should check the blocks around them for indirect sticky blocks, except air
+            // Some conditional blocks such as double blocks, shouldn't propagate indirect sticky conditions
+            if (stick.usesConfigurablePistonStickiness() && stick.isSticky(state)) {
+                return stick.propagatesIndirectSticky(state);
+            }
+            // All other blocks should check the blocks around them for indirect sticky blocks, except air
             return !state.isAir();
         }
         if (stick.usesConfigurablePistonStickiness()) {
@@ -270,7 +274,7 @@ public class BasicStructureResolver extends PistonStructureResolver {
         }
         this.movingWeight += weight;
         int j = 0, k;
-        for(k = i - 1; k >= 0; --k) {
+        for (k = i - 1; k >= 0; --k) {
             this.toPush.add(pos.relative(dir2, k));
             ++j;
         }

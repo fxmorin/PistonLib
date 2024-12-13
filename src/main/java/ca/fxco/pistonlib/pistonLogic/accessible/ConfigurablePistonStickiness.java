@@ -46,8 +46,13 @@ public interface ConfigurablePistonStickiness {
         return StickyType.DEFAULT;
     }
 
+    // If it propagates indirect sticky behaviour to all sides
+    default boolean propagatesIndirectSticky(BlockState state) {
+        return true;
+    }
+
     /**
-     * This only gets used if the sticky type is {@linkplain ca.fxco.pistonlib.pistonLogic.StickyType#CONDITIONAL CONDITIONAL}.
+     * This only gets used if the sticky type is {@linkplain StickyType#CONDITIONAL CONDITIONAL}.
      */
     default boolean matchesStickyConditions(BlockState state, BlockState neighborState, Direction dir) {
         return true;

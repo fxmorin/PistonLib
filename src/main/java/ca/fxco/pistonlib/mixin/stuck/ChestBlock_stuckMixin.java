@@ -50,4 +50,9 @@ public abstract class ChestBlock_stuckMixin implements ConfigurablePistonStickin
         }
         return false;
     }
+
+    @Override
+    public boolean propagatesIndirectSticky(BlockState state) {
+        return false;
+    }
 }
