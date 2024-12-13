@@ -6,6 +6,7 @@ import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBaseMoveBehavior;
 import com.moandjiezana.toml.Toml;
 import com.moandjiezana.toml.TomlWriter;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.Block;
@@ -86,6 +87,7 @@ public class PistonLibBehaviorManager {
      * A wrapper of {@link net.minecraft.world.level.material.PushReaction PushReaction}
      * that includes {@code default}, to be used in the `/pistonlib behavior` command.
      */
+    @Getter
     @AllArgsConstructor
     public enum PistonMoveBehavior {
 
@@ -123,24 +125,12 @@ public class PistonLibBehaviorManager {
         private final String name;
         private final PushReaction pushReaction;
 
-        public int getIndex() {
-            return index;
-        }
-
         public static PistonMoveBehavior fromIndex(int index) {
             return (index < 0 || index >= ALL.length) ? null : ALL[index];
         }
 
-        public String getName() {
-            return name;
-        }
-
         public static PistonMoveBehavior fromName(String name) {
             return name == null ? null : BY_NAME.get(name);
-        }
-
-        public PushReaction getPushReaction() {
-            return pushReaction;
         }
 
         public static PistonMoveBehavior fromPushReaction(PushReaction pushReaction) {
