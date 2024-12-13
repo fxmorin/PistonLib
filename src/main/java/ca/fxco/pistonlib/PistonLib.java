@@ -1,10 +1,16 @@
 package ca.fxco.pistonlib;
 
+import java.lang.reflect.Field;
+import java.util.*;
 import java.util.function.Consumer;
 
 import ca.fxco.pistonlib.config.ConfigManager;
 import ca.fxco.pistonlib.base.*;
+import ca.fxco.pistonlib.config.ConfigManagerEntrypoint;
 import ca.fxco.pistonlib.network.PLNetwork;
+import lombok.Getter;
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.impl.FabricLoaderImpl;
 import org.slf4j.Logger;
@@ -20,7 +26,9 @@ public class PistonLib implements ModInitializer, PistonLibInitializer {
     public static final String MOD_ID = "pistonlib";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     public static final boolean DATAGEN_ACTIVE = System.getProperty("fabric-api.datagen") != null;
-    public static final ConfigManager CONFIG_MANAGER = new ConfigManager(MOD_ID);
+
+    @Getter
+    private static final ConfigManager configManager = new ConfigManager(MOD_ID, PistonLibConfig.class);
 
     public static ResourceLocation id(String path) {
         return new ResourceLocation(MOD_ID, path);
@@ -38,6 +46,21 @@ public class PistonLib implements ModInitializer, PistonLibInitializer {
         ModStickyGroups.validate();
 
         PLNetwork.initialize();
+
+        Map<String, List<Field>> customParsedValues = new HashMap<>();
+        for (EntrypointContainer<ConfigFieldEntrypoint> entrypointContainer : FabricLoader.getInstance()
+                .getEntrypointContainers("pistonlib-configfield", ConfigFieldEntrypoint.class)) {
+            entrypointContainer.getEntrypoint().getConfigFields().forEach((key, value) ->
+                    customParsedValues.computeIfAbsent(key, string -> new ArrayList<>()).addAll(value));
+        }
+
+        for (EntrypointContainer<ConfigManagerEntrypoint> entrypointContainer : FabricLoader.getInstance()
+                .getEntrypointContainers("pistonlib-configmanager", ConfigManagerEntrypoint.class)) {
+            entrypointContainer.getEntrypoint().getConfigManager().init(
+                    entrypointContainer.getProvider().getMetadata().getId(),
+                    customParsedValues
+            );
+        }
     }
 
     @Override

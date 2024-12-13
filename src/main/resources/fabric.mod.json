@@ -29,6 +29,9 @@
     "pistonlib": [
       "ca.fxco.pistonlib.PistonLib"
     ],
+    "pistonlib-configmanager": [
+      "ca.fxco.pistonlib.PistonLib::getConfigManager"
+    ],
     "preLaunch": [
       "com.llamalad7.mixinextras.MixinExtrasBootstrap::init"
     ],

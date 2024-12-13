@@ -9,6 +9,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.util.Collection;
 
@@ -115,6 +116,15 @@ public class Utils {
             }
         }
         return !failed;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T[] createInstances(Class<T> tClass, Class<?>[] classes) {
+        Object[] instances = (Object[]) Array.newInstance(tClass, classes.length);
+        for (int i = 0; i < classes.length; i++) {
+            instances[i] = Utils.createInstance(classes[i]);
+        }
+        return (T[]) instances;
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

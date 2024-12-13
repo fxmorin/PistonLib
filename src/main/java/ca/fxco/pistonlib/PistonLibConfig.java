@@ -30,7 +30,7 @@ public class PistonLibConfig {
     )
     public static boolean doSlabMerging = true;
 
-    // TODO: Hide item from the creative inventory when disbled, since all crafting blocks placed when disabled won't have a block entity
+    // TODO: Hide item from the creative inventory when disabled, since all crafting blocks placed when disabled won't have a block entity
     @ConfigValue(
             desc = "Toggle the auto crafting block feature. The block will still exist it just wont work if disabled",
             keyword = {"auto", "crafting"},
@@ -73,7 +73,7 @@ public class PistonLibConfig {
 
     @ConfigValue(
             desc = "Toggle the strong sticky type block dropping mechanic where all strong sticky types block drop together",
-            more = "Doesn't work with  `combinedBlockDropping`",
+            conflict = "combinedBlockDropping",
             keyword = {"block", "dropping"},
             category = Category.MECHANIC
     )
@@ -81,7 +81,7 @@ public class PistonLibConfig {
 
     @ConfigValue(
             desc = "All blocks now block drop together, `strongBlockDropping` does nothing if this is true",
-            more = "Requires `pistonStructureGrouping`",
+            requires = "pistonStructureGrouping",
             keyword = {"block", "dropping"},
             category = Category.MECHANIC
     )
@@ -124,7 +124,7 @@ public class PistonLibConfig {
 
     @ConfigValue(
             desc = "Causes all sticky types to act like indirect sticky blocks",
-            more = "Requires `indirectStickyApi`",
+            requires = "indirectStickyApi",
             keyword = {"sticky", "indirect"},
             category = {Category.EXTREME, Category.MECHANIC, Category.EXPERIMENTAL}
     )
@@ -152,8 +152,8 @@ public class PistonLibConfig {
 
     @ConfigValue(
             desc = "Fixes tnt duping using pistons",
-            more = {"This does also fix some other edge cases with modded blocks that behave the same when powered",
-                    "Requires `pistonPushingCacheFix`"},
+            more = {"This does also fix some other edge cases with modded blocks that behave the same when powered"},
+            requires = "pistonPushingCacheFix",
             keyword = {"tnt", "duping"},
             category = Category.FIX
     )
