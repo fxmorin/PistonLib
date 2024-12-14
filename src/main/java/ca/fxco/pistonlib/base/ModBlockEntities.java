@@ -1,5 +1,6 @@
 package ca.fxco.pistonlib.base;
 
+import ca.fxco.api.pistonlib.pistonLogic.structure.StructureGroup;
 import ca.fxco.pistonlib.blocks.autoCraftingBlock.AutoCraftingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurableMovingBlockEntity;
@@ -11,13 +12,18 @@ import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 import static ca.fxco.pistonlib.PistonLib.id;
 
 import ca.fxco.api.pistonlib.blockEntity.PLBlockEntities;
+import net.minecraft.world.level.block.piston.PistonMovingBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class ModBlockEntities {
 
@@ -88,12 +94,21 @@ public class ModBlockEntities {
     private static <T extends BasicMovingBlockEntity> BlockEntityType<T> register(
             String name,
             FabricBlockEntityTypeBuilder.Factory<T> factory1,
-            BasicMovingBlockEntity.Factory<T> factory2,
+            Factory<T> factory2,
             PistonFamily... families
     ) {
         return PLBlockEntities.register(id(name+"_moving_block"), factory1, factory2, families);
     }
 
     public static void bootstrap() { }
+
+    @FunctionalInterface
+    public interface Factory<T extends PistonMovingBlockEntity> {
+
+        T create(PistonFamily family, StructureGroup structureGroup, BlockPos pos, BlockState state,
+                 BlockState movedState, BlockEntity movedBlockEntity, Direction facing, boolean extending,
+                 boolean isSourcePiston);
+
+    }
 
 }

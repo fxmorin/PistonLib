@@ -1,6 +1,7 @@
 package ca.fxco.api.pistonlib.pistonLogic.structure;
 
 /**
+ * The entire piston move code as an abstracted instruction list.
  * interface is used to move blocks with pistons (or without them)
  *
  * @author FX

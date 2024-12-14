@@ -561,7 +561,7 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
 
     protected BlockState getStaticStateForCollisionShape() {
         if (!this.extending && this.isSourcePiston && this.movedState.getBlock() instanceof BasicPistonBaseBlock) {
-            return this.movedState.setValue(BasicPistonBaseBlock.EXTENDED, true);
+            return this.movedState.setValue(BlockStateProperties.EXTENDED, true);
         } else {
             return Blocks.AIR.defaultBlockState();
         }
@@ -580,14 +580,5 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
     @Override
     public long getLastTicked() {
         return this.lastTicked;
-    }
-
-    @FunctionalInterface
-    public interface Factory<T extends BasicMovingBlockEntity> {
-
-        T create(PistonFamily family, StructureGroup structureGroup, BlockPos pos, BlockState state,
-                 BlockState movedState, BlockEntity movedBlockEntity, Direction facing, boolean extending,
-                 boolean isSourcePiston);
-
     }
 }

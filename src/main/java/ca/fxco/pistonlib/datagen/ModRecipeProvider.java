@@ -3,6 +3,7 @@ package ca.fxco.pistonlib.datagen;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import ca.fxco.pistonlib.base.ModPistonFamilies;
 import net.minecraft.data.BlockFamily;
 import net.minecraft.data.recipes.*;
 import net.minecraft.resources.ResourceKey;
@@ -38,12 +39,17 @@ public class ModRecipeProvider extends FabricRecipeProvider {
             ResourceKey<PistonFamily> key = entry.getKey();
             PistonFamily family = entry.getValue();
 
+			if (family == ModPistonFamilies.VANILLA) {
+				continue;
+			}
+
             LOGGER.info("Generating recipes for piston family "+key.location()+"...");
 
             Block normalBase = family.getBase(PistonType.DEFAULT);
             Block stickyBase = family.getBase(PistonType.STICKY);
 
-            if(normalBase != null && stickyBase != null && normalBase.asItem() != Items.AIR && stickyBase.asItem() != Items.AIR) {
+            if (normalBase != null && stickyBase != null && normalBase.asItem() != Items.AIR &&
+					stickyBase.asItem() != Items.AIR) {
                 offerStickyPistonRecipe(exporter, stickyBase, normalBase);
             }
         }

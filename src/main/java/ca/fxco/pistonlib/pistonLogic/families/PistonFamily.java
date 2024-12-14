@@ -7,14 +7,15 @@ import java.util.Map;
 import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamilies;
 import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.api.pistonlib.pistonLogic.structure.StructureGroup;
+import ca.fxco.pistonlib.base.ModBlockEntities;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Delegate;
+import net.minecraft.world.level.block.piston.PistonMovingBlockEntity;
 import org.jetbrains.annotations.Nullable;
 
 import ca.fxco.pistonlib.base.ModPistonFamilies;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
-import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -38,9 +39,9 @@ public class PistonFamily {
     @Getter
     protected Block moving;
     @Getter
-    protected BlockEntityType<? extends BasicMovingBlockEntity> movingBlockEntityType;
+    protected BlockEntityType<? extends PistonMovingBlockEntity> movingBlockEntityType;
     @Getter
-    protected BasicMovingBlockEntity.Factory<? extends BasicMovingBlockEntity> movingBlockEntityFactory;
+    protected ModBlockEntities.Factory<? extends PistonMovingBlockEntity> movingBlockEntityFactory;
 
     @Override
     public String toString() {
@@ -71,24 +72,31 @@ public class PistonFamily {
         return this.base.values().iterator().next();
     }
 
-    public BasicMovingBlockEntity newMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState,
-                                                       BlockEntity movedBlockEntity, Direction facing,
-                                                       boolean extending, boolean isSourcePiston) {
-        return this.movingBlockEntityFactory
-            .create(this, null, pos, state, movedState, movedBlockEntity, facing, extending, isSourcePiston);
+    public PistonMovingBlockEntity newMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState,
+                                                        BlockEntity movedBlockEntity, Direction facing,
+                                                        boolean extending, boolean isSourcePiston) {
+        return this.movingBlockEntityFactory.create(
+                this, null,
+                pos, state, movedState,
+                movedBlockEntity,
+                facing, extending, isSourcePiston
+        );
     }
 
-    public BasicMovingBlockEntity newMovingBlockEntity(StructureGroup structureGroup, BlockPos pos, BlockState state,
-                                                       BlockState movedState, BlockEntity movedBlockEntity,
-                                                       Direction facing, boolean extending, boolean isSourcePiston) {
-        return this.movingBlockEntityFactory
-                .create(this, structureGroup, pos, state, movedState, movedBlockEntity, facing,
-                        extending, isSourcePiston);
+    public PistonMovingBlockEntity newMovingBlockEntity(StructureGroup structureGroup, BlockPos pos, BlockState state,
+                                                        BlockState movedState, BlockEntity movedBlockEntity,
+                                                        Direction facing, boolean extending, boolean isSourcePiston) {
+        return this.movingBlockEntityFactory.create(
+                this, structureGroup,
+                pos, state, movedState,
+                movedBlockEntity,
+                facing, extending, isSourcePiston
+        );
     }
 
-    public void setBase(Block base) {
+    public void setBase(PistonType type, Block base) {
         if (ModPistonFamilies.requireNotLocked()) {
-            this.base.put(((BasicPistonBaseBlock)base).getType(), base);
+            this.base.put(type, base);
         }
     }
 
@@ -111,8 +119,8 @@ public class PistonFamily {
     }
 
     public void setMovingBlockEntity(
-        BlockEntityType<? extends BasicMovingBlockEntity> type,
-        BasicMovingBlockEntity.Factory<? extends BasicMovingBlockEntity> factory
+        BlockEntityType<? extends PistonMovingBlockEntity> type,
+        ModBlockEntities.Factory<? extends PistonMovingBlockEntity> factory
     ) {
         if (ModPistonFamilies.requireNotLocked()) {
             this.movingBlockEntityType = type;

@@ -16,9 +16,9 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 
-import static ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock.EXTENDED;
 import static ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock.MAX_DISTANCE;
 import static ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock.SLIPPERY_DELAY;
 
@@ -56,7 +56,11 @@ public class SlipperyPistonHeadBlock extends BasicPistonHeadBlock {
         if (blockState.getValue(SLIPPERY_DISTANCE) >= MAX_DISTANCE && !super.canSurvive(state, level, pos)) {
             BlockPos blockPos = pos.relative(state.getValue(FACING).getOpposite());
             if (this.isFittingBase(state, level.getBlockState(blockPos)))
-                FallingBlockEntity.fall(level, blockPos, level.getBlockState(blockPos).setValue(EXTENDED,false));
+                FallingBlockEntity.fall(
+                        level,
+                        blockPos,
+                        level.getBlockState(blockPos).setValue(BlockStateProperties.EXTENDED,false)
+                );
             level.removeBlock(pos,false);
         } else if (state != blockState) {
             level.setBlock(pos, blockState, UPDATE_ALL);

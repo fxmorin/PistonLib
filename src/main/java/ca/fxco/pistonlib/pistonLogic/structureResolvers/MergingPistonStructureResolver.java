@@ -3,10 +3,11 @@ package ca.fxco.pistonlib.pistonLogic.structureResolvers;
 import java.util.ArrayList;
 import java.util.List;
 
-import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
+import ca.fxco.api.pistonlib.pistonLogic.controller.PistonController;
 import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlock;
 import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlockEntity;
 
+import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
@@ -15,12 +16,15 @@ import net.minecraft.world.level.material.PushReaction;
 
 public class MergingPistonStructureResolver extends BasicStructureResolver {
 
+    @Getter
     public final List<BlockPos> toMerge = new ArrayList<>();
+    @Getter
     public final List<BlockPos> toUnMerge = new ArrayList<>();
     public final List<BlockPos> ignore = new ArrayList<>();
 
-    public MergingPistonStructureResolver(BasicPistonBaseBlock piston, Level level, BlockPos pos, Direction facing, int length, boolean extend) {
-        super(piston, level, pos, facing, length, extend);
+    public MergingPistonStructureResolver(PistonController controller, Level level, BlockPos pos, Direction facing,
+                                          int length, boolean extend) {
+        super(controller, level, pos, facing, length, extend);
     }
 
     @Override
@@ -49,7 +53,7 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
                 this.ignore.contains(pos)) {
             return false;
         }
-        if (!this.piston.canMoveBlock(state, this.level, pos, this.pushDirection, false, dir)) {
+        if (!this.controller.canMoveBlock(state, this.level, pos, this.pushDirection, false, dir)) {
             return false;
         }
         int weight = state.pl$getWeight();
@@ -89,7 +93,7 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
                     blockPos.equals(this.pistonPos) ||
                     this.toMerge.contains(blockPos) ||
                     this.ignore.contains(blockPos) ||
-                    !this.piston.canMoveBlock(state, this.level, blockPos, this.pushDirection, false, pushDirOpposite)) {
+                    !this.controller.canMoveBlock(state, this.level, blockPos, this.pushDirection, false, pushDirOpposite)) {
                 break;
             }
             weight += state.pl$getWeight();
@@ -186,7 +190,7 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
                 return false;
             } else if (currentPos.equals(this.pistonPos)) {
                 return true;
-            } else if (!piston.canMoveBlock(state, this.level, currentPos, this.pushDirection, true, this.pushDirection)) {
+            } else if (!controller.canMoveBlock(state, this.level, currentPos, this.pushDirection, true, this.pushDirection)) {
                 return true;
             }
             if (state.pl$usesConfigurablePistonBehavior()) {
@@ -219,11 +223,4 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
         }
     }
 
-    public List<BlockPos> getToMerge() {
-        return this.toMerge;
-    }
-
-    public List<BlockPos> getToUnMerge() {
-        return this.toUnMerge;
-    }
 }

@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import ca.fxco.pistonlib.base.ModItems;
+import ca.fxco.pistonlib.base.ModPistonFamilies;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
@@ -58,6 +59,10 @@ public class ModModelProvider extends FabricModelProvider {
 		for (Map.Entry<ResourceKey<PistonFamily>, PistonFamily> entry : ModRegistries.PISTON_FAMILY.entrySet()) {
             ResourceKey<PistonFamily> key = entry.getKey();
             PistonFamily family = entry.getValue();
+
+			if (family == ModPistonFamilies.VANILLA) {
+				continue;
+			}
 
             LOGGER.info("Generating blockstate definitions and models for piston family " + key.location()+"...");
 

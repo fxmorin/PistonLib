@@ -19,11 +19,11 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 import java.util.Map;
 
 import static ca.fxco.pistonlib.base.ModProperties.SLIPPERY_DISTANCE;
-import static ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock.EXTENDED;
 import static ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock.MAX_DISTANCE;
 import static ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock.SLIPPERY_DELAY;
 
@@ -65,7 +65,7 @@ public class ConfigurablePistonHeadBlock extends BasicPistonHeadBlock {
             if (blockState.getValue(SLIPPERY_DISTANCE) == MAX_DISTANCE && !super.canSurvive(state, level, pos)) {
                 BlockPos blockPos = pos.relative(state.getValue(FACING).getOpposite());
                 if (this.isFittingBase(state, level.getBlockState(blockPos))) {
-                    FallingBlockEntity.fall(level, pos, state.setValue(EXTENDED,false));
+                    FallingBlockEntity.fall(level, pos, state.setValue(BlockStateProperties.EXTENDED,false));
                 }
                 level.removeBlock(pos, false);
             } else if (state != blockState) {

@@ -1,9 +1,9 @@
 package ca.fxco.pistonlib.network.packets;
 
+import ca.fxco.api.pistonlib.pistonLogic.controller.PistonController;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.helpers.PistonEventData;
 import ca.fxco.pistonlib.pistonLogic.structureRunners.DecoupledStructureRunner;
-import ca.fxco.api.pistonlib.pistonLogic.structure.StructureRunner;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -44,7 +44,14 @@ public class ClientboundPistonEventPacket extends PLPacket {
 
     @Override
     public void handleClient(Minecraft client, PacketSender packetSender) {
-        StructureRunner structureRunner = new DecoupledStructureRunner(this.pistonBlock.newStructureRunner(client.level, this.pos, this.dir, 1, this.extend, this.pistonBlock::newStructureResolver));
-        structureRunner.run();
+        PistonController controller = this.pistonBlock.pl$getPistonController();
+        new DecoupledStructureRunner(controller.newStructureRunner(
+                client.level,
+                this.pos,
+                this.dir,
+                1,
+                this.extend,
+                controller::newStructureResolver
+        )).run();
     }
 }

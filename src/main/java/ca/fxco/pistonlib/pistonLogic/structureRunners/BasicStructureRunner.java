@@ -15,6 +15,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.piston.PistonMovingBlockEntity;
 import net.minecraft.world.level.block.piston.PistonStructureResolver;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.PistonType;
@@ -25,6 +26,8 @@ import static net.minecraft.world.level.block.Block.*;
 
 /**
  * Abstract the entire piston move code into a structure runner
+ *
+ * @author FX
  */
 public class BasicStructureRunner implements StructureRunner {
 
@@ -187,8 +190,10 @@ public class BasicStructureRunner implements StructureRunner {
 
                 BlockState movingBlock = this.family.getMoving().defaultBlockState()
                         .setValue(BasicMovingBlock.FACING, facing);
-                BasicMovingBlockEntity movingBlockEntity = this.family
-                        .newMovingBlockEntity(structureGroup, dstPos, movingBlock, stateToMove, blockEntityToMove, facing, extend, false);
+                PistonMovingBlockEntity movingBlockEntity = this.family.newMovingBlockEntity(
+                        structureGroup, dstPos, movingBlock, stateToMove, blockEntityToMove,
+                        facing, extend, false
+                );
 
                 level.setBlock(dstPos, movingBlock, UPDATE_MOVE_BY_PISTON | UPDATE_INVISIBLE);
                 level.setBlockEntity(movingBlockEntity);

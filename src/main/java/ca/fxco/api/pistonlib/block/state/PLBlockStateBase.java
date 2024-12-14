@@ -42,6 +42,7 @@ public interface PLBlockStateBase extends BlockStatePistonBehavior,
     /**
      * for internal use - this method is equivalent to
      * {@linkplain net.minecraft.world.level.block.state.BlockBehaviour.BlockStateBase#asState BlockStateBase.asState}
+     *
      * @return block state of the BlockStateBase
      * @since 1.0.4
      */

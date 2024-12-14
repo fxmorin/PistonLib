@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 /**
  * A Structure Runner Wrapper that decouples the structure runner from having a physical piston
  * Allowing the Piston pushing code to be used anywhere**
+ *
+ * @author FX
  */
 @RequiredArgsConstructor
 public class DecoupledStructureRunner implements StructureRunner {
