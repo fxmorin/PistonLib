@@ -21,7 +21,7 @@ public interface TypeConverter {
 
     /**
      * Attempts to load an Object
-     * @param value TODO
+     * @param value default value
      * @param parsedValue to load from
      * @return null if it's unable to load this value
      * @since 1.0.4

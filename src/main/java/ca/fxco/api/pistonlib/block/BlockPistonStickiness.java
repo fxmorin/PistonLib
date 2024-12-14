@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * Allow to get stickiness of the block
- * @author Space Walker
+ * @author FX
  * @since 1.0.4
  */
 public interface BlockPistonStickiness {
