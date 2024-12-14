@@ -166,6 +166,14 @@ public class ConfigManager implements ConfigManagerEntrypoint {
         }
     }
 
+    public ParsedValue<?> getParsedValue(String valueName) {
+        return parsedValues.get(valueName);
+    }
+
+    public Collection<ParsedValue<?>> getParsedValues() {
+        return parsedValues.values();
+    }
+
     @Override
     public ConfigManager getConfigManager() {
         return this;

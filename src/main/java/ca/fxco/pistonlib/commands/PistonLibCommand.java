@@ -4,15 +4,19 @@ import ca.fxco.api.pistonlib.level.ServerLevelInteraction;
 import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.commands.arguments.DirectionArgument;
+import ca.fxco.pistonlib.commands.arguments.ParsedValueArgument;
 import ca.fxco.pistonlib.commands.arguments.PistonMoveBehaviorArgument;
+import ca.fxco.pistonlib.config.ParsedValue;
 import ca.fxco.pistonlib.helpers.BlockUtils;
 import ca.fxco.pistonlib.helpers.PistonLibBehaviorManager;
 import ca.fxco.pistonlib.helpers.PistonLibBehaviorManager.PistonMoveBehavior;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
+import com.mojang.logging.LogUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandBuildContext;
@@ -46,21 +50,37 @@ public class PistonLibCommand implements Command {
     @Override
     public void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext registryAccess, Commands.CommandSelection environment) {
         dispatcher.register(Commands.literal("pistonlib")
-            .requires(source -> source.hasPermission(4))
-            .then(pistonEventSubCommand(registryAccess, PistonEventType.PUSH)) // Push Command
-            .then(pistonEventSubCommand(registryAccess, PistonEventType.PULL)) // Pull Command
-            .then(Commands.literal("behavior")
-                .then(Commands.argument("block", BlockStateArgument.block(registryAccess))
-                    .executes(context -> queryBehavior(context.getSource(), BlockStateArgument.getBlock(context, "block")))
-                    .then(Commands.literal("default")
-                        .executes(ctx -> setBehaviorOverride(ctx.getSource(), BlockStateArgument.getBlock(ctx, "block"), PistonMoveBehavior.DEFAULT))
-                    )
-                    .then(Commands.
-                            argument("behavior", PistonMoveBehaviorArgument.pistonMoveBehavior()).
-                            executes(context -> setBehaviorOverride(context.getSource(), BlockStateArgument.getBlock(context, "block"), PistonMoveBehaviorArgument.getPistonMoveBehavior(context, "behavior")))
-                    )
+                .requires(source -> source.hasPermission(2))
+                .then(pistonEventSubCommand(registryAccess, PistonEventType.PUSH)) // Push Command
+                .then(pistonEventSubCommand(registryAccess, PistonEventType.PULL)) // Pull Command
+                .then(Commands.literal("config").requires(source -> source.hasPermission(4))
+                                .executes(ctx -> { //TODO:make return the value if there is no set or default after parsed value name
+                                    ctx.getSource().sendSuccess(Component.literal(String.valueOf(ParsedValueArgument.getParsedValue(ctx, "config option").getValue())), true);
+                                    return 1;
+                                })
+                        .then(Commands.argument("config option", ParsedValueArgument.parsedValue())
+                                .then(Commands.literal("set")
+                                        .then(Commands.argument("new value", StringArgumentType.string())
+                                                .executes(ctx -> setValue(ctx.getSource(),
+                                                        ParsedValueArgument.getParsedValue(ctx, "config option"),
+                                                        StringArgumentType.getString(ctx, "new value"), false)))) //TODO: make it suggest value
+                                .then(Commands.literal("default").executes(ctx ->
+                                        setValue(ctx.getSource(),
+                                                ParsedValueArgument.getParsedValue(ctx, "config option"),
+                                                "", true))))
+                        )
+                .then(Commands.literal("behavior").requires(source -> source.hasPermission(4))
+                        .then(Commands.argument("block", BlockStateArgument.block(registryAccess))
+                                .executes(context -> queryBehavior(context.getSource(), BlockStateArgument.getBlock(context, "block")))
+                                .then(Commands.literal("default")
+                                        .executes(ctx -> setBehaviorOverride(ctx.getSource(), BlockStateArgument.getBlock(ctx, "block"), PistonMoveBehavior.DEFAULT))
+                                )
+                                .then(Commands.
+                                        argument("behavior", PistonMoveBehaviorArgument.pistonMoveBehavior()).
+                                        executes(context -> setBehaviorOverride(context.getSource(), BlockStateArgument.getBlock(context, "block"), PistonMoveBehaviorArgument.getPistonMoveBehavior(context, "behavior")))
+                                )
+                        )
                 )
-            )
         );
     }
 
@@ -175,6 +195,16 @@ public class PistonLibCommand implements Command {
         facing = facing.getOpposite();
         ((ServerLevelInteraction) serverLevel).triggerPistonEvent(basicPistonBaseBlock, isPush ? blockPos.relative(facing) : blockPos, facing.getOpposite(), isPush);
         commandSourceStack.sendSuccess(Component.translatable("commands.pistonlib." + eventType.name().toLowerCase() + ".success", blockPos.getX(), blockPos.getY(), blockPos.getZ(), facing.getName()), true);
+        return 1;
+    }
+
+    private static int setValue(CommandSourceStack sourceStack, ParsedValue<?> parsedValue,
+                                String newValue, boolean setToDefault) {
+        if (setToDefault) {
+            parsedValue.reset();
+        } else {
+            parsedValue.parseValue(sourceStack, newValue);
+        }
         return 1;
     }
 

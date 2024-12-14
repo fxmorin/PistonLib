@@ -131,7 +131,7 @@ public class ParsedValue<T> {
     /**
      * Used when attempting to parse the value from a command as a string
      */
-    protected void parseValue(CommandSourceStack source, String inputValue) {
+    public void parseValue(CommandSourceStack source, String inputValue) {
         boolean useDefault = true;
         for (Parser<T> parser : this.parsers) {
             T newValue = parser.parse(source, inputValue, this);
