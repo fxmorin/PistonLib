@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 
 /**
  * Helper methods for registering custom moving block entity types.
+ *
  * @author Space Walker
  * @since 1.0.4
  */
@@ -22,9 +23,10 @@ public class PLBlockEntities {
     /**
      * Builds a block entity type from the given factories and
      * registers it to the given namespaced id.
-     * @param <T> the type of moving block entity
-     * @param id a namespaced id to uniquely identify the block
-     *           entity type
+     *
+     * @param <T>      the type of moving block entity
+     * @param id       a namespaced id to uniquely identify the block
+     *                 entity type
      * @param factory1 the block entity factory for the block
      *                 entity registry
      * @param factory2 the block entity factory for the piston

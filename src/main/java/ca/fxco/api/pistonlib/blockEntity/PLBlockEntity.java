@@ -12,8 +12,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * This interface collects all custom behavior that is injected into {@code BlockEntity}s.
+ * This interface collects all custom behavior that is injected into {@code BlockEntity}'s.
  * It provides default implementations for all custom behavior.
+ *
  * @author Space Walker
  * @since 1.0.4
  */
@@ -28,7 +29,8 @@ public interface PLBlockEntity extends BlockEntityPistonMerging, BlockEntityPost
     }
 
     @Override
-    default boolean pl$canMultiMerge(BlockState state, BlockState mergingIntoState, Direction dir, Map<Direction, MergeBlockEntity.MergeData> currentlyMerging) {
+    default boolean pl$canMultiMerge(BlockState state, BlockState mergingIntoState, Direction dir,
+                                     Map<Direction, MergeBlockEntity.MergeData> currentlyMerging) {
         return true;
     }
 
@@ -66,11 +68,13 @@ public interface PLBlockEntity extends BlockEntityPistonMerging, BlockEntityPost
     }
 
     @Override
-    default void pl$beforeInitialFinalMerge(BlockState finalState, Map<Direction, MergeBlockEntity.MergeData> mergedData) {
+    default void pl$beforeInitialFinalMerge(BlockState finalState,
+                                            Map<Direction, MergeBlockEntity.MergeData> mergedData) {
     }
 
     @Override
-    default void pl$afterInitialFinalMerge(BlockState finalState, Map<Direction, MergeBlockEntity.MergeData> mergedData) {
+    default void pl$afterInitialFinalMerge(BlockState finalState,
+                                           Map<Direction, MergeBlockEntity.MergeData> mergedData) {
     }
 
 
@@ -83,7 +87,10 @@ public interface PLBlockEntity extends BlockEntityPistonMerging, BlockEntityPost
 
     @Override
     default void pl$onPostLoad() {
-        if (!this.pl$shouldPostLoad())
-            throw new IllegalStateException("block entity should not post load but the post load callback was called anyway!");
+        if (!this.pl$shouldPostLoad()) {
+            throw new IllegalStateException(
+                    "block entity should not post load but the post load callback was called anyway!"
+            );
+        }
     }
 }
