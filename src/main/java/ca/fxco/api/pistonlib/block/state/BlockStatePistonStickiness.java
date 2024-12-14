@@ -5,9 +5,8 @@ import java.util.Map;
 import ca.fxco.api.pistonlib.block.BlockPistonStickiness;
 import org.jetbrains.annotations.Nullable;
 
-import ca.fxco.pistonlib.pistonLogic.sticky.StickyGroup;
-import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
-
+import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyGroup;
+import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyType;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
 

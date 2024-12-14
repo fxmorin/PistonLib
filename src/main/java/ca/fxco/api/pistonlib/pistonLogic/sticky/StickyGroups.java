@@ -1,8 +1,6 @@
 package ca.fxco.api.pistonlib.pistonLogic.sticky;
 
 import ca.fxco.pistonlib.base.ModRegistries;
-import ca.fxco.pistonlib.pistonLogic.sticky.StickyGroup;
-
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 
@@ -13,6 +11,9 @@ import net.minecraft.resources.ResourceLocation;
  * @since 1.0.4
  */
 public class StickyGroups {
+
+    public static final StickyGroup SLIME = register(new ResourceLocation("slime"), new StickyGroup(StickRules.STRICT_SAME));
+    public static final StickyGroup HONEY = register(new ResourceLocation("honey"), new StickyGroup(StickRules.STRICT_SAME));
 
     /**
      * Registers the given sticky group to the given namespaced id.

@@ -1,7 +1,5 @@
 package ca.fxco.api.pistonlib.pistonLogic.sticky;
 
-import ca.fxco.pistonlib.pistonLogic.sticky.StickyGroup;
-
 /**
  * A functional interface to test if two sticky groups can stick together.
  *
@@ -14,10 +12,10 @@ public interface StickRule {
     /**
      * Test if two sticky groups can stick together.
      *
-     * @param group1 The first group
-     * @param group2 The second group
+     * @param group    The main group
+     * @param adjGroup The adjacent group
      * @return {@code true} if they can stick together, otherwise {@code false}
      */
-    boolean test(StickyGroup group1, StickyGroup group2);
+    boolean test(StickyGroup group, StickyGroup adjGroup);
 
 }

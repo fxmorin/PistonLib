@@ -2,8 +2,8 @@ package ca.fxco.pistonlib.blocks.halfBlocks;
 
 import java.util.Map;
 
+import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyType;
 import ca.fxco.pistonlib.base.ModBlocks;
-import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;

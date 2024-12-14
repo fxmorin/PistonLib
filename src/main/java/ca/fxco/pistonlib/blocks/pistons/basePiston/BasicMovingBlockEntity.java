@@ -9,8 +9,7 @@ import ca.fxco.pistonlib.helpers.IonicReference;
 import ca.fxco.pistonlib.mixin.accessors.BlockEntityAccessor;
 import ca.fxco.api.pistonlib.block.MovingTickable;
 import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
-import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
-
+import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyType;
 import ca.fxco.pistonlib.pistonLogic.structureGroups.LoadingStructureGroup;
 import ca.fxco.pistonlib.pistonLogic.structureGroups.ServerStructureGroup;
 import ca.fxco.api.pistonlib.pistonLogic.structure.StructureGroup;
