@@ -31,7 +31,7 @@ public interface BlockStatePistonBehavior {
     /** If the block state is currently movable, for quick checks to boost performance by skipping more intensive checks early
      * However this is not always checked first in some instances, so make sure to account for that!
      * @param level of the block
-     * @param pos block pos of the block
+     * @param pos block position of the block
      * @return true if block state is movable
      * @since 1.0.4
      */

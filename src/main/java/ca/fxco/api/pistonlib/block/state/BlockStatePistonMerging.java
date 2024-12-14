@@ -11,19 +11,24 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
+/**
+ * @author FX
+ * @since 1.0.4
+ */
 public interface BlockStatePistonMerging {
 
     /**
      * These methods are only used if `usesConfigurablePistonMerging` return true
      * This allows for configurable and conditional mering/compression block logic
      * @return true if it should use configurable piston merging
+     * @since 1.0.4
      */
     boolean pl$usesConfigurablePistonMerging();
 
 
     /**
      * @param level of the block state
-     * @param pos block pos of the block state
+     * @param pos block position of the block state
      * @param mergingIntoState block state to merge into
      * @param dir direction  being pushed
      * @return true if it will be able to merge both states together
@@ -33,7 +38,7 @@ public interface BlockStatePistonMerging {
 
     /**
      * @param level of the block state
-     * @param pos block pos of the block state
+     * @param pos block position of the block state
      * @param pushDir direction it being pushed
      * @return true if the block can be merged from a given side or can be merged from that side.
      * Usually opposite of pushDirection
@@ -43,7 +48,7 @@ public interface BlockStatePistonMerging {
 
     /**
      * @param level of the block state
-     * @param pos block pos of the block state
+     * @param pos block position of the block state
      * @param mergingIntoState block state to merge into
      * @param dir direction it being pushed
      * @return the merged state
@@ -62,7 +67,7 @@ public interface BlockStatePistonMerging {
     /**
      * While merging with a block, is this block state able to merge with other block states from other directions?
      * @param level of the block state
-     * @param pos block pos of the block
+     * @param pos block position of the block
      * @param mergingIntoState block state to merge into
      * @param dir direction it being pushed
      * @param currentlyMerging is currently mering
@@ -74,7 +79,7 @@ public interface BlockStatePistonMerging {
     /**
      * merge states into one
      * @param level of the block
-     * @param pos block pos of the block
+     * @param pos block position of the block
      * @param states states around the block
      * @param mergingIntoState block state to merge into
      * @return the merged state
@@ -85,7 +90,7 @@ public interface BlockStatePistonMerging {
 
     /**
      * @param level of the block state
-     * @param pos block pos of the block state
+     * @param pos block position of the block state
      * @param neighborState block state of block state's neighbor
      * @param dir direction it being pulled
      * @return true if it will be able to unmerge into two different states
@@ -94,11 +99,11 @@ public interface BlockStatePistonMerging {
     boolean pl$canUnMerge(BlockGetter level, BlockPos pos, BlockState neighborState, Direction dir);
 
     /**
+     * The first block state in the pair is the block state that will be pulled out
      * @param level of the block state
-     * @param pos block pos of the block state
+     * @param pos block position of the block state
      * @param dir direction it being pulled
      * @return the block states that it should unmerge into.
-     * The first block state in the pair is the block state that will be pulled out
      * @since 1.0.4
      */
     @Nullable Pair<BlockState, BlockState> pl$doUnMerge(BlockGetter level, BlockPos pos, Direction dir);

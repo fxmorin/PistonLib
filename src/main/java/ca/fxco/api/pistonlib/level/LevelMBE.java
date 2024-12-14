@@ -12,16 +12,18 @@ import net.minecraft.world.level.block.state.BlockState;
 public interface LevelMBE {
 
     /**
-     * @param pos block pos of the block entity
+     * @param pos block position of the block entity
      * @param state block state of the block entity
      * @param blockEntity block entity to prepare
+     * @since 1.0.4
      */
     void pl$prepareBlockEntityPlacement(BlockPos pos, BlockState state, BlockEntity blockEntity);
 
     /**
-     * @param pos block pos of the block entity
+     * @param pos block position of the block entity
      * @param state block state of the block entity
      * @return block entity for placement
+     * @since 1.0.4
      */
     BlockEntity pl$getBlockEntityForPlacement(BlockPos pos, BlockState state);
 

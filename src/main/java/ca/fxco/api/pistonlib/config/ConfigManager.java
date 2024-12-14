@@ -81,7 +81,7 @@ public class ConfigManager implements ConfigManagerEntrypoint {
 
     /**
      * Will try to load value using converter
-     * @param value TODO
+     * @param value default value
      * @param parsedValue parsedValue to load from
      * @return returns new value or null if config manager doesn't have converters
      * @since 1.0.4
@@ -208,12 +208,6 @@ public class ConfigManager implements ConfigManagerEntrypoint {
         }
     }
 
-
-    /**
-     * Proxy method for entrypoint
-     * @return this config manager
-     * @since 1.0.4
-     */
     @Override
     public ConfigManager getConfigManager() {
         return this;

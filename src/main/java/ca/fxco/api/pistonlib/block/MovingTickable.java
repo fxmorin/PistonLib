@@ -11,15 +11,15 @@ import net.minecraft.world.level.block.state.BlockState;
  * Allows blocks to run code every tick while being moved by a piston
  * Can be used on Blocks and BlockEntities
  * The `tickingApi` config option must be enabled in order to use any of the features provided here
- * @author Space Walker
- *
+ * @author FX
+ * @since 1.0.4
  */
 public interface MovingTickable {
 
     /**
      * @param level level of the block
      * @param state block state of the block
-     * @param toPos block pos its moving to
+     * @param toPos block position its moving to
      * @param dir direction it's moving in
      * @param progress of the move
      * @param speed of the move
