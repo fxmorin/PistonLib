@@ -7,7 +7,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * This interface collects all custom behavior that is injected into {@code Level}s.
+ * This interface collects all custom behavior that is injected into {@code Level}'s.
  * It provides dummy implementations for all custom behavior. The actual implementations
  * of these methods are provided in their respective Mixin classes.
  */
