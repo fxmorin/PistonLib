@@ -2,7 +2,6 @@ package ca.fxco.pistonlib.pistonLogic.structureResolvers;
 
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonBehavior;
-import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -51,9 +50,7 @@ public class DebugStructureResolver extends BasicStructureResolver {
         // This loops through the blocks to push and creates the branches
         for (int i = 0; i < this.toPush.size(); ++i) {
             BlockPos blockPos = this.toPush.get(i);
-            state = this.level.getBlockState(blockPos);
-            ConfigurablePistonStickiness stick = (ConfigurablePistonStickiness) state.getBlock();
-            if (!attemptMove(stick, state, blockPos)) {
+            if (!attemptMove(this.level.getBlockState(blockPos), blockPos)) {
                 addResultFail(ResolverResult.FAIL_MOVELINE, blockPos); // TODO: Move this into the attemptMove method for more precision
                 return false;
             }
