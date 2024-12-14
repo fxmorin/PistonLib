@@ -1,10 +1,9 @@
 package ca.fxco.pistonlib.pistonLogic.sticky;
 
 import ca.fxco.api.pistonlib.pistonLogic.sticky.StickRule;
+import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyGroups;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
-
-import ca.fxco.pistonlib.base.ModStickyGroups;
 
 @Getter
 public class StickyGroup {
@@ -23,7 +22,7 @@ public class StickyGroup {
 
     @Override
     public String toString() {
-        return "StickyGroup{" + ModStickyGroups.getId(this) + "}";
+        return "StickyGroup{" + StickyGroups.getId(this) + "}";
     }
 
     public boolean test(StickyGroup stickyGroup) {

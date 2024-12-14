@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 
+import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamilies;
 import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.api.pistonlib.pistonLogic.structure.StructureGroup;
 import lombok.Getter;
@@ -26,7 +27,7 @@ import net.minecraft.world.level.block.state.properties.PistonType;
 @RequiredArgsConstructor
 public class PistonFamily {
 
-    @Delegate(types=PistonBehavior.class, excludes=PistonBehavior.PistonBehaviorBuilder.class)
+    @Delegate(types = PistonBehavior.class, excludes = PistonBehavior.PistonBehaviorBuilder.class)
     private final PistonBehavior behavior;
 
     protected Map<PistonType, Block> base = new EnumMap<>(PistonType.class);
@@ -43,7 +44,7 @@ public class PistonFamily {
 
     @Override
     public String toString() {
-        return "PistonFamily{" + ModPistonFamilies.getId(this) + "}";
+        return "PistonFamily{" + PistonFamilies.getId(this) + "}";
     }
 
     public boolean hasCustomTextures() {
