@@ -1,4 +1,4 @@
-package ca.fxco.pistonlib.pistonLogic.families;
+package ca.fxco.api.pistonlib.pistonLogic.families;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

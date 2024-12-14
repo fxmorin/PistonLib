@@ -4,7 +4,7 @@ import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.base.ModTags;
 import ca.fxco.pistonlib.helpers.Utils;
 import ca.fxco.api.pistonlib.pistonLogic.PistonEvents;
-import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
+import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.pistonLogic.structureResolvers.BasicStructureResolver;
 import ca.fxco.pistonlib.pistonLogic.structureResolvers.MergingPistonStructureResolver;
 import ca.fxco.pistonlib.pistonLogic.structureRunners.BasicStructureRunner;

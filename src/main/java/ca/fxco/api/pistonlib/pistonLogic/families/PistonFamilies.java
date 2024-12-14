@@ -1,7 +1,6 @@
 package ca.fxco.api.pistonlib.pistonLogic.families;
 
 import ca.fxco.pistonlib.base.ModRegistries;
-import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;

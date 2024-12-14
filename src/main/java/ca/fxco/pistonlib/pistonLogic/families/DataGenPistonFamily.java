@@ -1,6 +1,8 @@
 package ca.fxco.pistonlib.pistonLogic.families;
 
-public class DataGenPistonFamily extends PistonFamily {
+import ca.fxco.api.pistonlib.pistonLogic.families.PistonBehavior;
+
+public class DataGenPistonFamily extends ModPistonFamily {
 
     private final boolean customTextures;
 
