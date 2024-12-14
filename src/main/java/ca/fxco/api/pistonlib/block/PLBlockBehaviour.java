@@ -34,6 +34,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * {@linkplain net.minecraft.world.level.block.state.BlockBehaviour.BlockStateBase BlockStateBase},
  * many methods are deprecated to encourage the use of the methods defined in
  * {@linkplain ca.fxco.api.pistonlib.block.state.PLBlockStateBase PLBlockStateBase}.
+ *
  * @author Space Walker
  * @since 1.0.4
  */
@@ -159,12 +160,6 @@ public interface PLBlockBehaviour extends BlockPistonBehavior, BlockPistonMergin
     @Override
     default @Nullable StickyGroup pl$getStickyGroup() {
         return null;
-    }
-
-    @Deprecated
-    @Override
-    default boolean pl$hasStickyGroup() {
-        return this.pl$getStickyGroup() != null;
     }
 
     @Deprecated

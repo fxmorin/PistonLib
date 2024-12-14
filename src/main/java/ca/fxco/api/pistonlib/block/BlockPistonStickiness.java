@@ -11,7 +11,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * Allow to get stickiness of the block
+ * Allow to get stickiness of the block.
+ * This allows for more configurable and conditional piston stickiness
+ *
  * @author FX
  * @since 1.0.4
  */
@@ -29,16 +31,19 @@ public interface BlockPistonStickiness {
      * @return true if block has sticky group
      * @since 1.0.4
      */
-    boolean pl$hasStickyGroup();
+    default boolean pl$hasStickyGroup() {
+        return pl$getStickyGroup() != null;
+    }
 
     /*
-     * These methods are only used if `usesConfigurablePistonStickiness` returns true
+     * These methods are only used if `pl$usesConfigurablePistonStickiness` returns true
      * This allows for more configurable & conditional piston stickiness
      */
 
     /**
      * This must return true in order for the configurable piston stickiness to be used!
-     * @return true if piston uses configurable piston stickiness
+     *
+     * @return {@code true} if piston uses configurable piston stickiness, otherwise {@code false}
      * @since 1.0.4
      */
     boolean pl$usesConfigurablePistonStickiness() ;
@@ -46,13 +51,16 @@ public interface BlockPistonStickiness {
     /**
      * If the block is currently sticky for any side, for quick checks to boost performance by
      * skipping more intensive checks early. For some checks it might just be faster to set this to true!
+     *
      * @param state block state of the block
-     * @return true if the block is sticky
+     * @return {@code true} if the block is sticky, otherwise {@code false}
      * @since 1.0.4
      */
     boolean pl$isSticky(BlockState state);
 
     /**
+     * Gets a map of the sticky sides of this block.
+     *
      * @param state block state of the block
      * @return a map of directions that are sticky, and their stickyType.
      * @since 1.0.4
@@ -60,19 +68,22 @@ public interface BlockPistonStickiness {
     Map<Direction, StickyType> pl$stickySides(BlockState state);
 
     /**
+     * Checks the stickiness of a side of the state.
+     *
      * @param state block state of the block
-     * @param dir direction to get stickyType for
+     * @param dir   direction to get stickyType for
      * @return stickyType of the side.
      * @since 1.0.4
      */
     StickyType pl$sideStickiness(BlockState state, Direction dir);
 
     /**
-     * This only gets used if the sticky type is {@linkplain ca.fxco.pistonlib.pistonLogic.sticky.StickyType#CONDITIONAL CONDITIONAL}.
-     * @param state block state of the block
+     * This only gets used if the sticky type is {@link StickyType#CONDITIONAL}.
+     *
+     * @param state         block state of the block
      * @param neighborState block state of the block's neighbor
-     * @param dir direction to check
-     * @return true if matches sticky conditions
+     * @param dir           direction to check
+     * @return {@code true} if matches sticky conditions, otherwise {@code false}
      * @since 1.0.4
      */
     boolean pl$matchesStickyConditions(BlockState state, BlockState neighborState, Direction dir);
