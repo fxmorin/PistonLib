@@ -1,7 +1,7 @@
 package ca.fxco.pistonlib.blocks.pistons.fastPiston;
 
+import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
-import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 
 import ca.fxco.api.pistonlib.pistonLogic.structure.StructureGroup;
 import net.minecraft.core.BlockPos;
