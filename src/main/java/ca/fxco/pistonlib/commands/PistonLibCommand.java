@@ -146,13 +146,14 @@ public class PistonLibCommand implements Command {
         }
         BlockPos blockPos;
         ServerLevel serverLevel;
+        boolean isPush = eventType == PistonEventType.PUSH;
         if (globalPos == null || facing == null) {
             ServerPlayer player = commandSourceStack.getPlayerOrException();
             HitResult hitResult = player.pick(Minecraft.getInstance().gameMode.getPickRange(), 1.0F, false);
             if (hitResult.getType() == HitResult.Type.BLOCK && hitResult instanceof BlockHitResult blockHitResult) {
                 Direction face = blockHitResult.getDirection();
                 blockPos = blockHitResult.getBlockPos();
-                ((ServerLevelInteraction) commandSourceStack.getLevel()).triggerPistonEvent(basicPistonBaseBlock, blockPos.relative(face), face.getOpposite(), eventType == PistonEventType.PUSH);
+                ((ServerLevelInteraction) commandSourceStack.getLevel()).triggerPistonEvent(basicPistonBaseBlock, isPush ? blockPos.relative(facing) : blockPos, face.getOpposite(), isPush);
                 commandSourceStack.sendSuccess(Component.translatable("commands.pistonlib." + eventType.name().toLowerCase() + ".success", blockPos.getX(), blockPos.getY(), blockPos.getZ(), face.getName()), true);
                 return 1;
             } else {
@@ -172,7 +173,7 @@ public class PistonLibCommand implements Command {
             serverLevel = commandSourceStack.getServer().getLevel(globalPos.dimension());
         }
         facing = facing.getOpposite();
-        ((ServerLevelInteraction) serverLevel).triggerPistonEvent(basicPistonBaseBlock, blockPos.relative(facing), facing.getOpposite(), eventType == PistonEventType.PUSH);
+        ((ServerLevelInteraction) serverLevel).triggerPistonEvent(basicPistonBaseBlock, isPush ? blockPos.relative(facing) : blockPos, facing.getOpposite(), isPush);
         commandSourceStack.sendSuccess(Component.translatable("commands.pistonlib." + eventType.name().toLowerCase() + ".success", blockPos.getX(), blockPos.getY(), blockPos.getZ(), facing.getName()), true);
         return 1;
     }

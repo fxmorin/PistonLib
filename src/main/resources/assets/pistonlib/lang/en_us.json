@@ -35,6 +35,7 @@
   "block.pistonlib.half_redstone_lamp": "Half Redstone Lamp",
   "container.pistonlib.auto_crafting_block": "Auto Crafting Block",
   "commands.pistonlib.push.success": "Triggered push event at %s, %s, %s facing %s",
+  "commands.pistonlib.pull.success": "Triggered pull event at %s, %s, %s facing %s",
   "commands.pistonlib.notPistonBlock": "Invalid piston block '%s'",
   "argument.pistonlib.direction.invalid": "Unknown direction '%s'"
 }
