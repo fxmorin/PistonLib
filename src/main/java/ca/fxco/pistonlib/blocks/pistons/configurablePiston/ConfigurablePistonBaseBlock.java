@@ -3,7 +3,7 @@ package ca.fxco.pistonlib.blocks.pistons.configurablePiston;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock;
 import ca.fxco.pistonlib.helpers.Utils;
-import ca.fxco.api.pistonlib.pistonLogic.MotionType;
+import ca.fxco.api.pistonlib.pistonLogic.PistonEvents;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.pistonLogic.structureResolvers.BasicStructureResolver;
 
@@ -40,8 +40,8 @@ public class ConfigurablePistonBaseBlock extends BasicPistonBaseBlock {
     }
 
     @Override
-    protected int getPullType(ServerLevel level, BlockPos pos, Direction facing, int length) {
-        return this.getFamily().isRetractOnExtending() ? super.getPullType(level, pos, facing, length) : MotionType.NONE;
+    protected int getRetractType(ServerLevel level, BlockPos pos, Direction facing, int length) {
+        return this.getFamily().isRetractOnExtending() ? super.getRetractType(level, pos, facing, length) : PistonEvents.NONE;
     }
 
     @Override

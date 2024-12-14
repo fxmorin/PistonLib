@@ -3,7 +3,7 @@ package ca.fxco.pistonlib.blocks.pistons.basePiston;
 import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.base.ModTags;
 import ca.fxco.pistonlib.helpers.Utils;
-import ca.fxco.api.pistonlib.pistonLogic.MotionType;
+import ca.fxco.api.pistonlib.pistonLogic.PistonEvents;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.pistonLogic.structureResolvers.BasicStructureResolver;
 import ca.fxco.pistonlib.pistonLogic.structureResolvers.MergingPistonStructureResolver;
@@ -155,11 +155,11 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
 
         if (shouldExtend && length < this.family.getMaxLength()) {
             if (this.newStructureResolver(level, pos, facing, length, true).resolve()) {
-                level.blockEvent(pos, this, MotionType.PUSH, facing.get3DDataValue());
+                level.blockEvent(pos, this, PistonEvents.EXTEND, facing.get3DDataValue());
             }
         } else if (!shouldExtend && length > this.family.getMinLength()) {
-            int type = getPullType((ServerLevel)level, pos, facing, length);
-            if (type != MotionType.NONE) {
+            int type = getRetractType((ServerLevel)level, pos, facing, length);
+            if (type != PistonEvents.NONE) {
                 level.blockEvent(pos, this, type, facing.get3DDataValue());
             }
         }
@@ -169,7 +169,7 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
         return state.getValue(EXTENDED) ? this.family.getMaxLength() : this.family.getMinLength();
     }
 
-    protected int getPullType(ServerLevel level, BlockPos pos, Direction facing, int length) {
+    protected int getRetractType(ServerLevel level, BlockPos pos, Direction facing, int length) {
         // make sure the piston doesn't try to retract while it's already retracting
         BlockPos headPos = pos.relative(facing, length);
         BlockState headState = level.getBlockState(headPos);
@@ -177,7 +177,7 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
         if (headState.is(this.family.getMoving())) {
             if (level.getBlockEntity(headPos) instanceof PistonMovingBlockEntity mbe &&
                 mbe.isSourcePiston() && !mbe.isExtending() && mbe.getDirection() == facing) {
-                return MotionType.NONE;
+                return PistonEvents.NONE;
             }
         }
 
@@ -189,11 +189,11 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
                     mbe.isExtending() &&
                     (mbe.getProgress(0.0F) < 0.5F ||
                             mbe.getLastTicked() == level.getGameTime() || level.isHandlingTick())) {
-                return MotionType.RETRACT;
+                return PistonEvents.RETRACT_NO_PULL;
             }
         }
 
-        return MotionType.PULL;
+        return PistonEvents.RETRACT;
     }
 
     public boolean hasNeighborSignal(Level level, BlockPos pos, Direction facing) {
@@ -208,18 +208,18 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
         if (!level.isClientSide()) {
             boolean shouldExtend = this.hasNeighborSignal(level, pos, facing);
 
-            if (shouldExtend && MotionType.isRetract(type)) {
+            if (shouldExtend && PistonEvents.isRetract(type)) {
                 level.setBlock(pos, state.setValue(EXTENDED, true), UPDATE_CLIENTS);
                 return false;
             }
-            if (!shouldExtend && MotionType.isExtend(type)) {
+            if (!shouldExtend && PistonEvents.isExtend(type)) {
                 return false;
             }
         }
 
         int length = this.getLength(level, pos, state);
 
-        if (MotionType.isExtend(type)) {
+        if (PistonEvents.isExtend(type)) {
             if (!this.moveBlocks(level, pos, facing, length, true)) {
                 return false;
             }
@@ -236,7 +236,7 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
             }
 
             playEvents(level, GameEvent.PISTON_EXTEND, pos);
-        } else if (MotionType.isRetract(type)) {
+        } else if (PistonEvents.isRetract(type)) {
             BlockPos headPos = pos.relative(facing, length);
             BlockEntity headBlockEntity = level.getBlockEntity(headPos);
 
@@ -286,7 +286,7 @@ public class BasicPistonBaseBlock extends DirectionalBlock {
                     }
                 }
                 if (!droppedBlock) {
-                    if (type != MotionType.PULL || frontState.isAir() ||
+                    if (type == PistonEvents.RETRACT_NO_PULL || frontState.isAir() ||
                             (frontState.getPistonPushReaction() != PushReaction.NORMAL && !frontState.is(ModTags.PISTONS)) ||
                             !canMoveBlock(frontState, level, frontPos, facing.getOpposite(), false, facing)) {
                         if (!PistonLibConfig.illegalBreakingFix ||
