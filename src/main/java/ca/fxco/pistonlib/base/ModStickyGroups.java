@@ -1,32 +1,20 @@
 package ca.fxco.pistonlib.base;
 
+import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyGroups;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickRules;
 import ca.fxco.pistonlib.pistonLogic.sticky.StickyGroup;
 
-import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 
 import static ca.fxco.pistonlib.PistonLib.id;
 
 public class ModStickyGroups {
 
-    public static final StickyGroup SLIME = register(new ResourceLocation("slime"), new StickyGroup(StickRules.STRICT_SAME));
-    public static final StickyGroup HONEY = register(new ResourceLocation("honey"), new StickyGroup(StickRules.STRICT_SAME));
+    public static final StickyGroup SLIME = StickyGroups.register(new ResourceLocation("slime"), new StickyGroup(StickRules.STRICT_SAME));
+    public static final StickyGroup HONEY = StickyGroups.register(new ResourceLocation("honey"), new StickyGroup(StickRules.STRICT_SAME));
 
-    private static StickyGroup register(String name, StickyGroup family) {
-        return register(id(name), family);
-    }
-
-    public static StickyGroup register(ResourceLocation id, StickyGroup family) {
-        return Registry.register(ModRegistries.STICKY_GROUP, id, family);
-    }
-
-    public static StickyGroup get(ResourceLocation id) {
-        return ModRegistries.STICKY_GROUP.get(id);
-    }
-
-    public static ResourceLocation getId(StickyGroup family) {
-        return ModRegistries.STICKY_GROUP.getKey(family);
+    private static StickyGroup register(String name, StickyGroup group) {
+        return StickyGroups.register(id(name), group);
     }
 
     public static void bootstrap() { }

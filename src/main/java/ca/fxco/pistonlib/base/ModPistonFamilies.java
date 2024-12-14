@@ -1,12 +1,10 @@
 package ca.fxco.pistonlib.base;
 
+import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamilies;
 import ca.fxco.pistonlib.pistonLogic.families.PistonBehavior;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 
 import java.util.Objects;
-
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
 
 import static ca.fxco.pistonlib.PistonLib.id;
 
@@ -26,19 +24,7 @@ public class ModPistonFamilies {
     public static final PistonFamily VERY_STICKY = register("very_sticky", PistonFamily.of(PistonBehavior.builder().verySticky().build(), false));
 
     private static PistonFamily register(String name, PistonFamily family) {
-        return register(id(name), family);
-    }
-
-    public static PistonFamily register(ResourceLocation id, PistonFamily family) {
-        return Registry.register(ModRegistries.PISTON_FAMILY, id, family);
-    }
-
-    public static PistonFamily get(ResourceLocation id) {
-        return ModRegistries.PISTON_FAMILY.get(id);
-    }
-
-    public static ResourceLocation getId(PistonFamily family) {
-        return ModRegistries.PISTON_FAMILY.getKey(family);
+        return PistonFamilies.register(id(name), family);
     }
 
     public static void bootstrap() { }
