@@ -30,11 +30,14 @@ public class ParsedValue<T> {
     protected final T defaultValue; // Set by the recommended option
     protected final Parser<T>[] parsers;
     protected final Observer<T>[] observers;
+    protected final boolean mutable;
+    protected final String[] suggestions;
     protected final ConfigManager configManager;
 
     public ParsedValue(Field field, String desc, String[] more, String[] keywords, Category[] categories,
                        String[] requires, String[] conflicts, boolean requiresRestart, int[] fixes,
-                       Parser<?>[] parsers, Observer<?>[] observers, ConfigManager configManager) {
+                       Parser<?>[] parsers, Observer<?>[] observers, boolean mutable, String[] suggestions,
+                       ConfigManager configManager) {
         this.field = field;
         this.name = field.getName();
         this.description = desc;
@@ -47,6 +50,8 @@ public class ParsedValue<T> {
         this.fixes = ImmutableIntArray.copyOf(fixes);
         this.parsers = (Parser<T>[]) parsers;
         this.observers = (Observer<T>[]) observers;
+        this.mutable = mutable;
+        this.suggestions = suggestions;
         this.defaultValue = getValue();
         this.configManager = configManager;
     }

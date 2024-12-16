@@ -2,7 +2,6 @@ package ca.fxco.pistonlib.config;
 
 import ca.fxco.api.pistonlib.config.*;
 import ca.fxco.api.pistonlib.config.Observer;
-import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.pistonlib.helpers.Utils;
 import com.moandjiezana.toml.Toml;
 import com.moandjiezana.toml.TomlWriter;
@@ -118,6 +117,8 @@ public class ConfigManager implements ConfigManagerEntrypoint {
                             configValue.fixes(),
                             parsers,
                             observers,
+                            configValue.mutable(),
+                            configValue.suggestions(),
                             this
                     );
                     parsedValues.put(parsedValue.getName(), parsedValue);

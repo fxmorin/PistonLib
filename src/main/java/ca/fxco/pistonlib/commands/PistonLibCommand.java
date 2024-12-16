@@ -1,12 +1,11 @@
 package ca.fxco.pistonlib.commands;
 
 import ca.fxco.api.pistonlib.level.ServerLevelInteraction;
+import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.commands.arguments.DirectionArgument;
-import ca.fxco.pistonlib.commands.arguments.ParsedValueArgument;
 import ca.fxco.pistonlib.commands.arguments.PistonMoveBehaviorArgument;
-import ca.fxco.pistonlib.config.ParsedValue;
 import ca.fxco.pistonlib.helpers.BlockUtils;
 import ca.fxco.pistonlib.helpers.PistonLibBehaviorManager;
 import ca.fxco.pistonlib.helpers.PistonLibBehaviorManager.PistonMoveBehavior;
@@ -16,7 +15,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
-import com.mojang.logging.LogUtils;
+import com.mojang.brigadier.suggestion.Suggestions;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandBuildContext;
@@ -48,27 +47,14 @@ public class PistonLibCommand implements Command {
     private static final DynamicCommandExceptionType ERROR_CANNOT_CHANGE_PISTON_MOVE_BEHAVIOR = new DynamicCommandExceptionType(o -> Component.translatable("commands.pistonlib.behavior.illegalChange", o));
 
     @Override
-    public void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext registryAccess, Commands.CommandSelection environment) {
+    public void register(CommandDispatcher<CommandSourceStack> dispatcher,
+                         CommandBuildContext registryAccess, Commands.CommandSelection environment) {
         dispatcher.register(Commands.literal("pistonlib")
                 .requires(source -> source.hasPermission(2))
                 .then(pistonEventSubCommand(registryAccess, PistonEventType.PUSH)) // Push Command
                 .then(pistonEventSubCommand(registryAccess, PistonEventType.PULL)) // Pull Command
-                .then(Commands.literal("config").requires(source -> source.hasPermission(4))
-                                .executes(ctx -> { //TODO:make return the value if there is no set or default after parsed value name
-                                    ctx.getSource().sendSuccess(Component.literal(String.valueOf(ParsedValueArgument.getParsedValue(ctx, "config option").getValue())), true);
-                                    return 1;
-                                })
-                        .then(Commands.argument("config option", ParsedValueArgument.parsedValue())
-                                .then(Commands.literal("set")
-                                        .then(Commands.argument("new value", StringArgumentType.string())
-                                                .executes(ctx -> setValue(ctx.getSource(),
-                                                        ParsedValueArgument.getParsedValue(ctx, "config option"),
-                                                        StringArgumentType.getString(ctx, "new value"), false)))) //TODO: make it suggest value
-                                .then(Commands.literal("default").executes(ctx ->
-                                        setValue(ctx.getSource(),
-                                                ParsedValueArgument.getParsedValue(ctx, "config option"),
-                                                "", true))))
-                        )
+                .then(addOptionArgs(Commands.literal("config")
+                        .requires(source -> source.hasPermission(4))))
                 .then(Commands.literal("behavior").requires(source -> source.hasPermission(4))
                         .then(Commands.argument("block", BlockStateArgument.block(registryAccess))
                                 .executes(context -> queryBehavior(context.getSource(), BlockStateArgument.getBlock(context, "block")))
@@ -198,14 +184,54 @@ public class PistonLibCommand implements Command {
         return 1;
     }
 
-    private static int setValue(CommandSourceStack sourceStack, ParsedValue<?> parsedValue,
-                                String newValue, boolean setToDefault) {
-        if (setToDefault) {
-            parsedValue.reset();
-        } else {
-            parsedValue.parseValue(sourceStack, newValue);
-        }
-        return 1;
+    private static LiteralArgumentBuilder<CommandSourceStack> addOptionArgs(LiteralArgumentBuilder<CommandSourceStack> builder) {
+        PistonLib.getConfigManager().getParsedValues().forEach(parsedValue -> {
+            if (parsedValue.isMutable()) {
+                builder.then(Commands.literal(parsedValue.getName())
+                        .executes(ctx -> {
+                            ctx.getSource().sendSuccess(Component.translatable("commands.pistonlib.config.value",
+                                    parsedValue.getName(), parsedValue.getValue()), false);
+                            return 1;
+                        })
+                        .then(Commands.literal("set")
+                                .then(Commands.argument("new value", StringArgumentType.word())
+                                        .suggests((context, builder1) -> {
+                                            Object value = parsedValue.getValue();
+
+                                            if (parsedValue.getSuggestions().length != 0) {
+                                                for (String suggestion : parsedValue.getSuggestions()) {
+                                                    builder1.suggest(suggestion);
+                                                }
+                                            } else if (value instanceof Boolean) {
+                                                builder1.suggest("true");
+                                                builder1.suggest("false");
+                                            } else if (value instanceof Enum<?> enumValue) {
+                                                for (Enum<?> valueOfEnum : enumValue.getClass().getEnumConstants()) {
+                                                    builder1.suggest(valueOfEnum.toString());
+                                                }
+                                            } else {
+                                                return Suggestions.empty();
+                                            }
+                                            return builder1.buildFuture();
+                                        }).executes(ctx -> {
+                                            parsedValue.parseValue(ctx.getSource(),
+                                                    StringArgumentType.getString(ctx, "new value"));
+                                            ctx.getSource().sendSuccess(Component.translatable(
+                                                    "commands.pistonlib.config.success",
+                                                    parsedValue.getName(), parsedValue.getValue()), true);
+                                            return 1;
+                                        })))
+                        .then(Commands.literal("default").executes(ctx -> {
+                            parsedValue.reset();
+                            ctx.getSource().sendSuccess(Component.translatable(
+                                    "commands.pistonlib.config.success",
+                                    parsedValue.getName(), parsedValue.getValue()), true);
+                            return 1;
+                        }))
+                );
+            }
+        });
+        return builder;
     }
 
     private static int queryBehavior(CommandSourceStack source, BlockInput input) {
