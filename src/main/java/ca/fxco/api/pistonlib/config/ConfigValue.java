@@ -82,13 +82,6 @@ public @interface ConfigValue {
     Class<? extends Observer>[] observer() default {};
 
     /**
-     * Can this option be changed during runtime
-     *
-     * @since 1.0.4
-     */
-    boolean mutable() default true;
-
-    /**
      * Things to suggest in config command
      *
      * @since 1.0.4

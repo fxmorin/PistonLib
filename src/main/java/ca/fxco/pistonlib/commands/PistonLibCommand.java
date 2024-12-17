@@ -185,52 +185,52 @@ public class PistonLibCommand implements Command {
     }
 
     private static LiteralArgumentBuilder<CommandSourceStack> addOptionArgs(LiteralArgumentBuilder<CommandSourceStack> builder) {
-        PistonLib.getConfigManager().getParsedValues().forEach(parsedValue -> {
-            if (parsedValue.isMutable()) {
-                builder.then(Commands.literal(parsedValue.getName())
-                        .executes(ctx -> {
-                            ctx.getSource().sendSuccess(Component.translatable("commands.pistonlib.config.value",
-                                    parsedValue.getName(), parsedValue.getValue()), false);
-                            return 1;
-                        })
-                        .then(Commands.literal("set")
-                                .then(Commands.argument("new value", StringArgumentType.word())
-                                        .suggests((context, builder1) -> {
-                                            Object value = parsedValue.getValue();
+        PistonLib.getConfigManager().getParsedValues().forEach(parsedValue ->
+            builder.then(Commands.literal(parsedValue.getName())
+                    .executes(ctx -> {
+                        ctx.getSource().sendSuccess(Component.translatable("commands.pistonlib.config.value",
+                                parsedValue.getName(), parsedValue.getValue()), false);
+                        return 1;
+                    })
+                    .then(Commands.literal("set")
+                            .then(Commands.argument("new value", StringArgumentType.word())
+                                    .suggests((context, builder1) -> {
+                                        Object value = parsedValue.getValue();
 
-                                            if (parsedValue.getSuggestions().length != 0) {
-                                                for (String suggestion : parsedValue.getSuggestions()) {
-                                                    builder1.suggest(suggestion);
-                                                }
-                                            } else if (value instanceof Boolean) {
-                                                builder1.suggest("true");
-                                                builder1.suggest("false");
-                                            } else if (value instanceof Enum<?> enumValue) {
-                                                for (Enum<?> valueOfEnum : enumValue.getClass().getEnumConstants()) {
-                                                    builder1.suggest(valueOfEnum.toString());
-                                                }
-                                            } else {
-                                                return Suggestions.empty();
+                                        if (parsedValue.getSuggestions().length != 0) {
+                                            for (String suggestion : parsedValue.getSuggestions()) {
+                                                builder1.suggest(suggestion);
                                             }
-                                            return builder1.buildFuture();
-                                        }).executes(ctx -> {
-                                            parsedValue.parseValue(ctx.getSource(),
-                                                    StringArgumentType.getString(ctx, "new value"));
-                                            ctx.getSource().sendSuccess(Component.translatable(
-                                                    "commands.pistonlib.config.success",
-                                                    parsedValue.getName(), parsedValue.getValue()), true);
-                                            return 1;
-                                        })))
-                        .then(Commands.literal("default").executes(ctx -> {
-                            parsedValue.reset();
-                            ctx.getSource().sendSuccess(Component.translatable(
-                                    "commands.pistonlib.config.success",
-                                    parsedValue.getName(), parsedValue.getValue()), true);
-                            return 1;
-                        }))
-                );
-            }
-        });
+                                        } else if (value instanceof Boolean) {
+                                            builder1.suggest("true");
+                                            builder1.suggest("false");
+                                        } else if (value instanceof Enum<?> enumValue) {
+                                            for (Enum<?> valueOfEnum : enumValue.getClass().getEnumConstants()) {
+                                                builder1.suggest(valueOfEnum.toString());
+                                            }
+                                        } else {
+                                            return Suggestions.empty();
+                                        }
+                                        return builder1.buildFuture();
+                                    }).executes(ctx -> {
+                                        PistonLib.getConfigManager().saveValueFromCommand(parsedValue, ctx.getSource(),
+                                                StringArgumentType.getString(ctx, "new value"));
+                                        ctx.getSource().sendSuccess(Component.translatable(
+                                                "commands.pistonlib.config.success"
+                                                        + (parsedValue.isRequiresRestart() ? ".restart" : ""),
+                                                parsedValue.getName(), parsedValue.getValueToSave()), true);
+                                        return 1;
+                                    })))
+                    .then(Commands.literal("default").executes(ctx -> {
+                        PistonLib.getConfigManager().resetAndSaveValue(parsedValue);
+                        ctx.getSource().sendSuccess(Component.translatable(
+                                "commands.pistonlib.config.success"
+                                        + (parsedValue.isRequiresRestart() ? ".restart" : ""),
+                                parsedValue.getName(), parsedValue.getValueToSave()), true);
+                        return 1;
+                    }))
+            )
+        );
         return builder;
     }
 
