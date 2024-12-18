@@ -218,6 +218,10 @@ public class BasicStructureResolver extends PistonStructureResolver {
         if (PistonLibConfig.indirectStickyApi) {
             // Some conditional blocks such as double blocks, shouldn't propagate indirect sticky conditions
             if (sticky.usesConfigurablePistonStickiness() && sticky.isSticky()) {
+                StickyType type = sticky.sideStickiness(dir);
+                if (type == StickyType.CONDITIONAL) {
+                    return type.canStick(state, adjState, dir);
+                }
                 return sticky.propagatesIndirectSticky();
             }
             // All other blocks should check the blocks around them for indirect sticky blocks, except air
@@ -227,7 +231,7 @@ public class BasicStructureResolver extends PistonStructureResolver {
             if (sticky.isSticky()) {
                 StickyType type = sticky.sideStickiness(dir);
                 if (type == StickyType.CONDITIONAL) {
-                    return true; // TODO: Conditional sticky check!
+                    return type.canStick(state, adjState, dir);
                 }
                 return type.ordinal() >= StickyType.STICKY.ordinal();
             }
