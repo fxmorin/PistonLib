@@ -78,7 +78,7 @@ public class VanillaPistonController implements PistonController {
     }
 
     @Override
-    public int getLength(Level level, BlockPos pos, BlockState state) { // TODO: PistonState instead of BlockState
+    public int getLength(Level level, BlockPos pos, BlockState state) {
         return state.getValue(EXTENDED) ? getFamily().getMaxLength() : getFamily().getMinLength();
     }
 

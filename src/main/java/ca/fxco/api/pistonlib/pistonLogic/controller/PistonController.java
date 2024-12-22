@@ -83,45 +83,44 @@ public interface PistonController {
     int getLength(Level level, BlockPos pos, BlockState state);
 
     /**
-     * TODO
+     * Used to check if piston is powered
      *
-     * @param level
-     * @param pos
-     * @param facing
-     * @return
+     * @param level of the block state
+     * @param pos block position of the block state
+     * @param facing direction to not check for the signal, usually piston facing
+     * @return {@code true} if block states neighbors has signal except from one direction
      */
     boolean hasNeighborSignal(Level level, BlockPos pos, Direction facing);
 
     /**
-     * TODO
+     * Checks if piston should extend and then adds block event based on that
      *
-     * @param level
-     * @param pos
-     * @param state
+     * @param level of the block state
+     * @param pos block position of the block state
+     * @param state block state to check
      */
     void checkIfExtend(Level level, BlockPos pos, BlockState state);
 
     /**
-     * TODO
+     * What should it do on retract, nothing, retract and pull blocks or just retract without pulling
      *
-     * @param level
-     * @param pos
-     * @param facing
-     * @param length
-     * @return
+     * @param level of the block state
+     * @param pos block position of the block state
+     * @param facing the direction piston extends in
+     * @param length of the piston
+     * @return retract type of the block state
      */
     int getRetractType(ServerLevel level, BlockPos pos, Direction facing, int length);
 
     /**
-     * TODO
      * Vanilla method that we also implement
      *
-     * @param state
-     * @param level
-     * @param pos
-     * @param type
-     * @param data
-     * @return
+     * @param state block state of the piston base
+     * @param level of the block state
+     * @param pos block position of the block state
+     * @param type retract type {@link ca.fxco.api.pistonlib.pistonLogic.PistonEvents}
+     * @param data 3D data of the direction
+     * @return {@code false} if event failed
      */
     boolean triggerEvent(BlockState state, Level level, BlockPos pos, int type, int data);
 
