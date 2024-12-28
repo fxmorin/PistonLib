@@ -1,7 +1,7 @@
 package ca.fxco.api.pistonlib.pistonLogic.controller;
 
 import ca.fxco.api.pistonlib.pistonLogic.structure.StructureRunner;
-import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
+import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.pistonLogic.structureResolvers.BasicStructureResolver;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

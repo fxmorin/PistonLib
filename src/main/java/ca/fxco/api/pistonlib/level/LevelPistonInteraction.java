@@ -5,13 +5,15 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 
 /**
+ * Adds piston events to the level. Allowing for decouple pistons calls without needing pistons.
+ *
  * @author FX
  * @since 1.0.4
  */
 public interface LevelPistonInteraction {
 
     /**
-     * add a block event for the specified piston action
+     * Add a piston event for the specified piston action.
      *
      * @param pistonBase block to add to event
      * @param pos block position of the block

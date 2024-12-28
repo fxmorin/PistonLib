@@ -3,8 +3,8 @@ package ca.fxco.pistonlib.blocks.pistons.basePiston;
 import java.util.Arrays;
 import java.util.function.BiPredicate;
 
+import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.base.ModTags;
-import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 
 import lombok.Getter;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;

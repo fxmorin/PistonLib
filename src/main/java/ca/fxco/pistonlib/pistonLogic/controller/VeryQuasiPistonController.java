@@ -1,7 +1,7 @@
 package ca.fxco.pistonlib.pistonLogic.controller;
 
+import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.helpers.Utils;
-import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;

@@ -3,17 +3,16 @@ package ca.fxco.pistonlib.blocks.pistons.basePiston;
 import java.util.*;
 
 import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamilies;
+import ca.fxco.api.pistonlib.block.MovingTickable;
+import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
+import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyType;
+import ca.fxco.api.pistonlib.pistonLogic.structure.StructureGroup;
 import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.helpers.IonicReference;
 import ca.fxco.pistonlib.mixin.accessors.BlockEntityAccessor;
-import ca.fxco.api.pistonlib.block.MovingTickable;
-import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
-import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
-
 import ca.fxco.pistonlib.pistonLogic.structureGroups.LoadingStructureGroup;
 import ca.fxco.pistonlib.pistonLogic.structureGroups.ServerStructureGroup;
-import ca.fxco.api.pistonlib.pistonLogic.structure.StructureGroup;
 import it.unimi.dsi.fastutil.Pair;
 import lombok.Getter;
 import lombok.Setter;

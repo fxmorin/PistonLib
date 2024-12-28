@@ -1,8 +1,11 @@
-package ca.fxco.pistonlib.pistonLogic.sticky;
+package ca.fxco.api.pistonlib.pistonLogic.sticky;
 
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
 
+/**
+ * The sticky type defines behavior when a sticky block is moved by a piston.
+ */
 public enum StickyType {
 
     /*

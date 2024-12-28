@@ -21,53 +21,61 @@ import java.util.function.Consumer;
 public interface StructureGroup {
 
     /**
-     * @return true if it had initialized
+     * Check if this group has been initialized.
+     *
+     * @return {@code true} if it had initialized, otherwise {@code false}
      */
     default boolean hasInitialized() {
         return false;
     }
 
     /**
-     * adds block entity to the structure group
+     * Adds a block entity to the structure group.
      *
      * @param blockEntity block entity to add to structure group
      */
     void add(BasicMovingBlockEntity blockEntity);
 
     /**
-     * adds block entity to the structure group by index
+     * Adds a block entity to the structure group by index.
      *
-     * @param index index of block entity
+     * @param index       index of block entity
      * @param blockEntity block entity to add to structure group
      */
     void add(int index, BasicMovingBlockEntity blockEntity);
 
     /**
-     * removes block entity from structure group
+     * Removes a block entity from structure group.
      *
      * @param blockEntity block entity to remove
      */
     void remove(BasicMovingBlockEntity blockEntity);
 
     /**
-     * removes block entity from structure group by index
+     * Removes a block entity from structure group by index.
      *
      * @param index index of block entity to remove
      */
     void remove(int index);
 
     /**
+     * Get a block entity from the structure group by index.
+     *
      * @param index index of block entity
      * @return block entity
      */
     BasicMovingBlockEntity get(int index);
 
     /**
+     * Get the size of the structure group.
+     *
      * @return amount of block entities this structure has
      */
     int size();
 
     /**
+     * Get a state within the structure group.
+     *
      * @param blockPos block position to get block state at
      * @return block state at the block position
      */
@@ -93,8 +101,19 @@ public interface StructureGroup {
      */
     void forNonControllers(Consumer<BasicMovingBlockEntity> action);
 
+    /**
+     * Saves additional information about the structure group to nbt.
+     *
+     * @param nbt the tag to add additional info to
+     */
     void saveAdditional(CompoundTag nbt);
 
+    /**
+     * Creates a Structure Group based on the environment.
+     *
+     * @param level the level used to check the environment
+     * @return If on the client, a {@link ClientStructureGroup}, otherwise a {@link ServerStructureGroup}
+     */
     static ServerStructureGroup create(Level level) {
         if (level.isClientSide) {
             return new ClientStructureGroup(); // Holds rendering cache

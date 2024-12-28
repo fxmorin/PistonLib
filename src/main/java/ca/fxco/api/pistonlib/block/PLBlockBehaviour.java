@@ -7,10 +7,10 @@ import org.jetbrains.annotations.Nullable;
 
 import com.mojang.datafixers.util.Pair;
 
+import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyGroup;
+import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyType;
 import ca.fxco.api.pistonlib.toggle.Toggleable;
 import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlockEntity;
-import ca.fxco.pistonlib.pistonLogic.sticky.StickyGroup;
-import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -161,12 +161,6 @@ public interface PLBlockBehaviour extends BlockPistonBehavior, BlockPistonMergin
     @Override
     default @Nullable StickyGroup pl$getStickyGroup() {
         return null;
-    }
-
-    @Deprecated
-    @Override
-    default boolean pl$hasStickyGroup() {
-        return this.pl$getStickyGroup() != null;
     }
 
     @Deprecated

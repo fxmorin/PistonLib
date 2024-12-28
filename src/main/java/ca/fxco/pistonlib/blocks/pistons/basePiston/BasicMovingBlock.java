@@ -3,12 +3,11 @@ package ca.fxco.pistonlib.blocks.pistons.basePiston;
 import java.util.Collections;
 import java.util.List;
 
+import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.PistonLibConfig;
 import lombok.Getter;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.jetbrains.annotations.Nullable;
-
-import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 

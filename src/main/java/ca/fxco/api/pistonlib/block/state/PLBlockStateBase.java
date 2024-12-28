@@ -7,9 +7,9 @@ import org.jetbrains.annotations.Nullable;
 import com.mojang.datafixers.util.Pair;
 
 import ca.fxco.api.pistonlib.block.BlockPistonMerging;
+import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyGroup;
+import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyType;
 import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlockEntity;
-import ca.fxco.pistonlib.pistonLogic.sticky.StickyGroup;
-import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
@@ -19,9 +19,10 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * This interface collects all custom behavior that is injected into {@code BlockState}s.
+ * This interface collects all custom behavior that is injected into {@code BlockState}'s.
  * Similarly to {@linkplain net.minecraft.world.level.block.state.BlockBehaviour.BlockStateBase BlockStateBase},
  * it simply forwards method calls to the block's implementations.
+ *
  * @author Space Walker
  * @since 1.0.4
  */
@@ -30,8 +31,9 @@ public interface PLBlockStateBase extends BlockStatePistonBehavior,
         BlockStatePistonMerging, BlockStatePistonStickiness, BlockStateQuasiPower {
 
     /**
-     * for internal use - this method is equivalent to
-     * {@linkplain net.minecraft.world.level.block.state.BlockBehaviour.BlockStateBase#getBlock BlockStateBase.getBlock}
+     * For internal use - this method is equivalent to
+     * {@link net.minecraft.world.level.block.state.BlockBehaviour.BlockStateBase#getBlock BlockStateBase.getBlock}
+     *
      * @return block of the BlockStateBase
      * @since 1.0.4
      */
@@ -40,7 +42,7 @@ public interface PLBlockStateBase extends BlockStatePistonBehavior,
     }
 
     /**
-     * for internal use - this method is equivalent to
+     * For internal use - this method is equivalent to
      * {@linkplain net.minecraft.world.level.block.state.BlockBehaviour.BlockStateBase#asState BlockStateBase.asState}
      *
      * @return block state of the BlockStateBase

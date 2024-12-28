@@ -6,10 +6,10 @@ import java.util.function.BiConsumer;
 import ca.fxco.pistonlib.base.ModPistonFamilies;
 import org.slf4j.Logger;
 
+import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.base.ModRegistries;
-import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootTableProvider;

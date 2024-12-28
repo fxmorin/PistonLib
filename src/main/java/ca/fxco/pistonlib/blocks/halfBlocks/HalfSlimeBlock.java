@@ -4,11 +4,11 @@ import java.util.Map;
 
 import org.jetbrains.annotations.Nullable;
 
-import ca.fxco.pistonlib.base.ModStickyGroups;
+import ca.fxco.api.pistonlib.pistonLogic.sticky.StickRules;
+import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyGroup;
+import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyGroups;
+import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyType;
 import ca.fxco.pistonlib.helpers.HalfBlockUtils;
-import ca.fxco.pistonlib.pistonLogic.sticky.StickRules;
-import ca.fxco.pistonlib.pistonLogic.sticky.StickyGroup;
-import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -106,7 +106,7 @@ public class HalfSlimeBlock extends Block {
 
     @Override
     public @Nullable StickyGroup pl$getStickyGroup() {
-        return ModStickyGroups.SLIME;
+        return StickyGroups.SLIME;
     }
 
     @Override
@@ -135,7 +135,7 @@ public class HalfSlimeBlock extends Block {
         }
         StickyGroup group = neighborState.pl$getStickyGroup();
         if (group != null) {
-            return StickRules.test(ModStickyGroups.SLIME, group);
+            return StickRules.test(StickyGroups.SLIME, group);
         }
         return true;
     }

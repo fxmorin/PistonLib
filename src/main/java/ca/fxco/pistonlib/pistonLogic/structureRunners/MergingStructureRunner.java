@@ -1,10 +1,10 @@
 package ca.fxco.pistonlib.pistonLogic.structureRunners;
 
+import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlock;
 import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlock;
 import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlockEntity;
-import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.api.pistonlib.pistonLogic.structure.StructureGroup;
 import ca.fxco.pistonlib.pistonLogic.structureResolvers.BasicStructureResolver;
 import ca.fxco.pistonlib.pistonLogic.structureResolvers.MergingPistonStructureResolver;

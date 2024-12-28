@@ -1,21 +1,24 @@
 package ca.fxco.api.pistonlib.pistonLogic.sticky;
 
 import ca.fxco.pistonlib.base.ModRegistries;
-import ca.fxco.pistonlib.pistonLogic.sticky.StickyGroup;
-
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 
 /**
  * Helper methods for registering and querying sticky groups.
+ *
  * @author Space Walker
  * @since 1.0.4
  */
 public class StickyGroups {
 
+    public static final StickyGroup SLIME = register(new ResourceLocation("slime"), new StickyGroup(StickRules.STRICT_SAME));
+    public static final StickyGroup HONEY = register(new ResourceLocation("honey"), new StickyGroup(StickRules.STRICT_SAME));
+
     /**
      * Registers the given sticky group to the given namespaced id.
-     * @param id a namespaced id to uniquely identify the sticky group
+     *
+     * @param id    a namespaced id to uniquely identify the sticky group
      * @param group the sticky group to be registered
      * @return the sticky group that was registered
      * @since 1.0.4
@@ -26,6 +29,7 @@ public class StickyGroups {
 
     /**
      * Queries the sticky group registered to the given namespaced id.
+     *
      * @param id the namespaced id that uniquely identifies the sticky group
      * @return the sticky group registered to the given namespaced id, or
      *         {@code null} if no sticky group is registered to that id
@@ -37,6 +41,7 @@ public class StickyGroups {
 
     /**
      * Queries the namespaced id that the given sticky group is registered to.
+     *
      * @param group the sticky group of which the id is queried
      * @return the namespaced id that the sticky group is registered to, or
      *         {@code null} if it is not registered

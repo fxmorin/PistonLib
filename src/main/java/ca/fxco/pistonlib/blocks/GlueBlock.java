@@ -3,7 +3,7 @@ package ca.fxco.pistonlib.blocks;
 import java.util.HashMap;
 import java.util.Map;
 
-import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
+import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyType;
 
 import net.minecraft.Util;
 import net.minecraft.core.Direction;

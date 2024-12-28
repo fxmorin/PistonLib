@@ -2,9 +2,9 @@ package ca.fxco.pistonlib.blocks.pistons.veryStickyPiston;
 
 import java.util.Map;
 
+import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
+import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyType;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonHeadBlock;
-import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
-import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
