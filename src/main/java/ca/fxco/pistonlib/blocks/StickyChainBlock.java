@@ -5,6 +5,7 @@ import java.util.Map;
 
 import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyType;
 import ca.fxco.pistonlib.PistonLibConfig;
+
 import lombok.Getter;
 import net.minecraft.Util;
 import net.minecraft.core.Direction;

@@ -1,6 +1,6 @@
 package ca.fxco.api.pistonlib.block;
 
-import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
+import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;

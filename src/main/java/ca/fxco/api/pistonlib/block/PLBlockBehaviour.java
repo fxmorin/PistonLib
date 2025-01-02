@@ -11,6 +11,7 @@ import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyGroup;
 import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyType;
 import ca.fxco.api.pistonlib.toggle.Toggleable;
 import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlockEntity;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
@@ -37,7 +38,8 @@ import net.minecraft.world.level.block.state.BlockState;
  * @author Space Walker
  * @since 1.0.4
  */
-public interface PLBlockBehaviour extends BlockPistonBehavior, BlockPistonMerging, BlockPistonStickiness, BlockQuasiPower, Toggleable {
+public interface PLBlockBehaviour extends BlockPistonBehavior, BlockPistonMerging,
+        BlockPistonStickiness, BlockQuasiPower, Toggleable {
 
 
     // BlockPistonBehavior

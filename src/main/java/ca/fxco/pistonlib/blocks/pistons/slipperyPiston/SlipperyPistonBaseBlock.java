@@ -1,6 +1,6 @@
 package ca.fxco.pistonlib.blocks.pistons.slipperyPiston;
 
-import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
+import ca.fxco.api.pistonlib.pistonLogic.controller.PistonController;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock;
 
@@ -13,36 +13,39 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.PistonType;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 import static ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock.MAX_DISTANCE;
 import static ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock.SLIPPERY_DELAY;
 
 public class SlipperyPistonBaseBlock extends BasicPistonBaseBlock {
 
-    public SlipperyPistonBaseBlock(PistonFamily family, PistonType type) {
-        super(family, type);
+    public SlipperyPistonBaseBlock(PistonController pistonController) {
+        super(pistonController);
     }
 
     @Override
     public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         if (!oldState.is(state.getBlock()) && !level.isClientSide() && level.getBlockEntity(pos) == null) {
-            this.checkIfExtend(level, pos, state);
+            this.pl$getPistonController().checkIfExtend(level, pos, state);
             level.scheduleTick(pos, this, SLIPPERY_DELAY);
         }
     }
 
     @Override
-    public BlockState updateShape(BlockState state, Direction dir, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
-        if (!level.isClientSide())
+    public BlockState updateShape(BlockState state, Direction dir, BlockState neighborState, LevelAccessor level,
+                                  BlockPos pos, BlockPos neighborPos) {
+        if (!level.isClientSide()) {
             level.scheduleTick(pos, this, SLIPPERY_DELAY);
+        }
         return super.updateShape(state, dir, neighborState, level, pos, neighborPos);
     }
 
     @Override
     public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        if (BaseSlipperyBlock.calculateDistance(level, pos) >= MAX_DISTANCE)
-            FallingBlockEntity.fall(level, pos, state.setValue(EXTENDED,false));
+        if (BaseSlipperyBlock.calculateDistance(level, pos) >= MAX_DISTANCE) {
+            FallingBlockEntity.fall(level, pos, state.setValue(BlockStateProperties.EXTENDED, false));
+        }
     }
 
     @Override

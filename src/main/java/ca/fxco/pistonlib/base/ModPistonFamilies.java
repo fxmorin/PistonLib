@@ -1,9 +1,13 @@
 package ca.fxco.pistonlib.base;
 
-import ca.fxco.api.pistonlib.pistonLogic.families.PistonBehavior;
 import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamilies;
+import ca.fxco.api.pistonlib.pistonLogic.families.PistonBehavior;
 import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.pistonLogic.families.ModPistonFamily;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.piston.PistonMovingBlockEntity;
+import net.minecraft.world.level.block.state.properties.PistonType;
 
 import java.util.Objects;
 
@@ -11,6 +15,7 @@ import static ca.fxco.pistonlib.PistonLib.id;
 
 public class ModPistonFamilies {
 
+    public static final PistonFamily VANILLA = register("vanilla", ModPistonFamily.of(PistonBehavior.DEFAULT, false));
     public static final PistonFamily BASIC = register("basic", ModPistonFamily.of(PistonBehavior.DEFAULT, false));
     public static final PistonFamily LONG = register("long", ModPistonFamily.of(PistonBehavior.builder().maxLength(12).noQuasi().build(), false));
     public static final PistonFamily CONFIGURABLE = register("configurable", ModPistonFamily.of(PistonBehavior.builder().maxLength(2).noQuasi().extendingSpeed(0.1F).retractingSpeed(0.5F).build(), false));
@@ -28,7 +33,16 @@ public class ModPistonFamilies {
         return PistonFamilies.register(id(name), family);
     }
 
-    public static void bootstrap() { }
+    public static void bootstrap() {
+        // Vanilla family hack
+        VANILLA.setBase(PistonType.DEFAULT, Blocks.PISTON);
+        VANILLA.setBase(PistonType.STICKY, Blocks.STICKY_PISTON);
+        VANILLA.setHead(Blocks.PISTON_HEAD);
+        VANILLA.setMoving(Blocks.MOVING_PISTON);
+        VANILLA.setMovingBlockEntity(BlockEntityType.PISTON,
+                (family, structureGroup, pos, state, movedState,
+                 movedBlockEntity, facing, extending, isSourcePiston) -> new PistonMovingBlockEntity(pos, state));
+    }
 
     private static boolean locked;
 
@@ -44,11 +58,13 @@ public class ModPistonFamilies {
         if (!locked) {
             ModRegistries.PISTON_FAMILY.forEach(family -> {
                 try {
-                    if (family.getBases().isEmpty())
+                    if (family.getBases().isEmpty()) {
                         throw new IllegalStateException("missing base block");
+                    }
                     Objects.requireNonNull(family.getHead(), "head block");
-                    if (family.getMaxLength() > 1)
+                    if (family.getMaxLength() > 1) {
                         Objects.requireNonNull(family.getArm(), "missing arm block");
+                    }
                     Objects.requireNonNull(family.getMoving(), "moving block");
                     Objects.requireNonNull(family.getMovingBlockEntityType(), "moving block entity type");
                     Objects.requireNonNull(family.getMovingBlockEntityFactory(), "moving block entity factory");

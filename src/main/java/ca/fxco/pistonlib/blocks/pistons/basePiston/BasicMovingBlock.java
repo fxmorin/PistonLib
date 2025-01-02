@@ -6,6 +6,7 @@ import java.util.List;
 import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.PistonLibConfig;
 import lombok.Getter;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.jetbrains.annotations.Nullable;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
@@ -38,9 +39,9 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+@Getter
 public class BasicMovingBlock extends MovingPistonBlock {
 
-    @Getter
     private final PistonFamily family;
 
     public BasicMovingBlock(PistonFamily family) {
@@ -56,7 +57,8 @@ public class BasicMovingBlock extends MovingPistonBlock {
 
     @Override @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return createTickerHelper(type, this.family.getMovingBlockEntityType(), (l, p, s, mbe) -> mbe.tick());
+        return createTickerHelper(type, this.family.getMovingBlockEntityType(),
+                (l, p, s, mbe) -> ((BasicMovingBlockEntity)mbe).tick());
     }
 
     @Override
@@ -76,7 +78,7 @@ public class BasicMovingBlock extends MovingPistonBlock {
         BlockPos behindPos = pos.relative(state.getValue(FACING).getOpposite());
         BlockState behindState = level.getBlockState(behindPos);
 
-        if (behindState.is(this.family.getBase(type)) && behindState.getValue(BasicPistonBaseBlock.EXTENDED)) {
+        if (behindState.is(this.family.getBase(type)) && behindState.getValue(BlockStateProperties.EXTENDED)) {
             level.removeBlock(behindPos, false);
         }
     }

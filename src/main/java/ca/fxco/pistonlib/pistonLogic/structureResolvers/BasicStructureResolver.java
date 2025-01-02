@@ -4,12 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import ca.fxco.api.pistonlib.pistonLogic.controller.PistonController;
 import ca.fxco.api.pistonlib.pistonLogic.sticky.StickRules;
 import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyGroup;
 import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyType;
 import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
-import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
@@ -20,18 +21,18 @@ import net.minecraft.world.level.material.PushReaction;
 
 public class BasicStructureResolver extends PistonStructureResolver {
 
-    protected final BasicPistonBaseBlock piston;
+    protected final PistonController controller;
     protected final int maxMovableWeight;
     protected final int length;
     protected int movingWeight = 0; // used instead of the toPush size so some blocks can be harder to push than others
 
-    public BasicStructureResolver(BasicPistonBaseBlock piston, Level level, BlockPos pos,
+    public BasicStructureResolver(PistonController controller, Level level, BlockPos pos,
                                   Direction facing, int length, boolean extend) {
         super(level, pos, facing, extend);
 
-        this.piston = piston;
+        this.controller = controller;
         this.length = length;
-        this.maxMovableWeight = piston.getFamily().getPushLimit();
+        this.maxMovableWeight = controller.getFamily().getPushLimit();
 
         this.startPos = this.pistonPos.relative(this.pistonDirection, this.length + 1);
     }
@@ -46,7 +47,7 @@ public class BasicStructureResolver extends PistonStructureResolver {
     public boolean resolve() {
         resetResolver();
 
-        if (this.piston.getFamily().hasCustomLength() && !resolveLongPiston()) {
+        if (this.controller.getFamily().hasCustomLength() && !resolveLongPiston()) {
             return false;
         }
 
@@ -58,12 +59,12 @@ public class BasicStructureResolver extends PistonStructureResolver {
         // or retract while it's already retracting
         BlockPos headPos = this.pistonPos.relative(this.pistonDirection, this.length);
         BlockState headState = this.level.getBlockState(headPos);
-        if (headState.is(this.piston.getFamily().getMoving())) {
+        if (headState.is(this.controller.getFamily().getMoving())) {
             BlockEntity blockEntity = this.level.getBlockEntity(headPos);
             if (blockEntity == null) {
                 return false;
             }
-            if (blockEntity.getType() == this.piston.getFamily().getMovingBlockEntityType()) {
+            if (blockEntity.getType() == this.controller.getFamily().getMovingBlockEntityType()) {
                 BasicMovingBlockEntity mbe = (BasicMovingBlockEntity)blockEntity;
                 if (mbe.isSourcePiston && mbe.extending == this.extending && mbe.direction == this.pistonDirection) {
                     return false;
@@ -76,7 +77,7 @@ public class BasicStructureResolver extends PistonStructureResolver {
     protected boolean runStructureGeneration() {
         // Structure Generation
         BlockState state = this.level.getBlockState(this.startPos);
-        if (!this.piston.canMoveBlock(state, this.level, this.startPos, this.pushDirection, false, this.pistonDirection)) {
+        if (!this.controller.canMoveBlock(state, this.level, this.startPos, this.pushDirection, false, this.pistonDirection)) {
             // Block directly int front is immovable, can only be true if extending, and it can be destroyed
             if (this.extending) {
                 if (state.pl$usesConfigurablePistonBehavior()) {
@@ -218,7 +219,7 @@ public class BasicStructureResolver extends PistonStructureResolver {
     protected boolean cantMove(BlockPos pos, Direction dir) {
         BlockState state = this.level.getBlockState(pos);
         if (state.isAir() || isPiston(pos) || this.toPush.contains(pos)) return false;
-        if (!this.piston.canMoveBlock(state, this.level, pos, this.pushDirection, false, dir)) return false;
+        if (!this.controller.canMoveBlock(state, this.level, pos, this.pushDirection, false, dir)) return false;
         int weight = state.pl$getWeight();
         if (weight + this.movingWeight > this.maxMovableWeight) {
             return true;
@@ -232,7 +233,7 @@ public class BasicStructureResolver extends PistonStructureResolver {
             if (state.isAir() ||
                     !canAdjacentBlockStick(dir2, blockState2, state) ||
                     isPiston(blockPos) ||
-                    !this.piston.canMoveBlock(state, this.level, blockPos, this.pushDirection, false, dir2)) {
+                    !this.controller.canMoveBlock(state, this.level, blockPos, this.pushDirection, false, dir2)) {
                 break;
             }
             weight += state.pl$getWeight();
@@ -267,7 +268,7 @@ public class BasicStructureResolver extends PistonStructureResolver {
                 return false;
             } else if (isPiston(pos2)) {
                 return true;
-            } else if (!piston.canMoveBlock(state, this.level, pos2, this.pushDirection, true, this.pushDirection)) {
+            } else if (!controller.canMoveBlock(state, this.level, pos2, this.pushDirection, true, this.pushDirection)) {
                 return true;
             }
             if (state.pl$usesConfigurablePistonBehavior()) {
@@ -291,12 +292,9 @@ public class BasicStructureResolver extends PistonStructureResolver {
     }
 
     protected void setMovedBlocks(int from, int to) {
-        List<BlockPos> list = new ArrayList<>();
-        List<BlockPos> list2 = new ArrayList<>();
-        List<BlockPos> list3 = new ArrayList<>();
-        list.addAll(this.toPush.subList(0, to));
-        list2.addAll(this.toPush.subList(this.toPush.size() - from, this.toPush.size()));
-        list3.addAll(this.toPush.subList(to, this.toPush.size() - from));
+        List<BlockPos> list = new ArrayList<>(this.toPush.subList(0, to));
+        List<BlockPos> list2 = new ArrayList<>(this.toPush.subList(this.toPush.size() - from, this.toPush.size()));
+        List<BlockPos> list3 = new ArrayList<>(this.toPush.subList(to, this.toPush.size() - from));
         this.toPush.clear();
         this.toPush.addAll(list);
         this.toPush.addAll(list2);

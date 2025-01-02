@@ -101,7 +101,8 @@ public class BasicPistonHeadBlock extends DirectionalBlock {
     }
 
     public boolean isFittingBase(BlockState headState, BlockState behindState) {
-        return behindState.is(family.getBase(headState.getValue(TYPE))) && behindState.getValue(BasicPistonBaseBlock.EXTENDED) &&
+        return behindState.is(family.getBase(headState.getValue(TYPE))) &&
+                behindState.getValue(BlockStateProperties.EXTENDED) &&
                 behindState.getValue(FACING) == headState.getValue(FACING);
     }
 

@@ -3,16 +3,16 @@ package ca.fxco.pistonlib.blocks.pistons.basePiston;
 import java.util.*;
 
 import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamilies;
+import ca.fxco.api.pistonlib.block.MovingTickable;
+import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
+import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyType;
+import ca.fxco.api.pistonlib.pistonLogic.structure.StructureGroup;
 import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.helpers.IonicReference;
 import ca.fxco.pistonlib.mixin.accessors.BlockEntityAccessor;
-import ca.fxco.api.pistonlib.block.MovingTickable;
-import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
-import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyType;
 import ca.fxco.pistonlib.pistonLogic.structureGroups.LoadingStructureGroup;
 import ca.fxco.pistonlib.pistonLogic.structureGroups.ServerStructureGroup;
-import ca.fxco.api.pistonlib.pistonLogic.structure.StructureGroup;
 import it.unimi.dsi.fastutil.Pair;
 import lombok.Getter;
 import lombok.Setter;
@@ -560,7 +560,7 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
 
     protected BlockState getStaticStateForCollisionShape() {
         if (!this.extending && this.isSourcePiston && this.movedState.getBlock() instanceof BasicPistonBaseBlock) {
-            return this.movedState.setValue(BasicPistonBaseBlock.EXTENDED, true);
+            return this.movedState.setValue(BlockStateProperties.EXTENDED, true);
         } else {
             return Blocks.AIR.defaultBlockState();
         }
@@ -579,14 +579,5 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
     @Override
     public long getLastTicked() {
         return this.lastTicked;
-    }
-
-    @FunctionalInterface
-    public interface Factory<T extends BasicMovingBlockEntity> {
-
-        T create(PistonFamily family, StructureGroup structureGroup, BlockPos pos, BlockState state,
-                 BlockState movedState, BlockEntity movedBlockEntity, Direction facing, boolean extending,
-                 boolean isSourcePiston);
-
     }
 }

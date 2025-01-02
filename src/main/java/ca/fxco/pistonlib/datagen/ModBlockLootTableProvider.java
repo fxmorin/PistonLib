@@ -3,6 +3,7 @@ package ca.fxco.pistonlib.datagen;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
+import ca.fxco.pistonlib.base.ModPistonFamilies;
 import org.slf4j.Logger;
 
 import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
@@ -33,7 +34,11 @@ public class ModBlockLootTableProvider extends FabricBlockLootTableProvider {
             ResourceKey<PistonFamily> key = entry.getKey();
             PistonFamily family = entry.getValue();
 
-            LOGGER.info("Generating block loot tables for piston family "+key.location()+"...");
+            if (family == ModPistonFamilies.VANILLA) {
+                continue;
+            }
+
+            LOGGER.info("Generating block loot tables for piston family " + key.location() + "...");
 
             family.getBases().forEach((type, base) -> {
                 dropSelf(base);

@@ -1,9 +1,7 @@
 package ca.fxco.pistonlib.base;
 
-import ca.fxco.api.pistonlib.pistonLogic.sticky.StickRules;
 import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyGroup;
 import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyGroups;
-import net.minecraft.resources.ResourceLocation;
 
 import static ca.fxco.pistonlib.PistonLib.id;
 

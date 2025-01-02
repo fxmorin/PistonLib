@@ -2,6 +2,7 @@ package ca.fxco.pistonlib.base;
 
 import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyGroup;
+
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 
 import net.minecraft.core.Registry;

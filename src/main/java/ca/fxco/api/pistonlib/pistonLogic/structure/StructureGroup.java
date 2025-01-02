@@ -11,6 +11,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.util.function.Consumer;
 
 /**
+ * An instance of the entire piston structure as a group.
+ * Used for multiple optimizations, such as culling blocks being pushed at the same time.
  * Holds block entities of the moving structure.
  *
  * @author FX

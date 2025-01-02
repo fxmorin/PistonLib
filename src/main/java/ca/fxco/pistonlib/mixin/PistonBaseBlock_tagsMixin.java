@@ -1,7 +1,10 @@
 package ca.fxco.pistonlib.mixin;
 
-import ca.fxco.pistonlib.base.ModBlocks;
+import ca.fxco.api.pistonlib.block.PLPistonController;
+import ca.fxco.api.pistonlib.pistonLogic.controller.PistonController;
+import ca.fxco.pistonlib.base.ModPistonFamilies;
 import ca.fxco.pistonlib.base.ModTags;
+import ca.fxco.pistonlib.pistonLogic.controller.VanillaPistonController;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
@@ -9,23 +12,28 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.piston.PistonBaseBlock;
 import net.minecraft.world.level.block.piston.PistonStructureResolver;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.PistonType;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
+/*
+ * In this mixin we basically change all the !state.is(PISTON) and regular piston to instead check against the
+ * PISTONS TagKey, so that all pistons work the same with each other (Including vanilla)
+ *
+ * We also replace any instances of PistonStructureResolver with the custom ConfigurablePistonStructureResolver.
+ * This ensures even vanilla pistons will respect custom movability and sticky behavior.
+ */
 @Mixin(PistonBaseBlock.class)
-public class PistonBaseBlock_tagsMixin {
+public class PistonBaseBlock_tagsMixin implements PLPistonController {
 
-    /*
-     * In this mixin we basically change all the !state.is(PISTON) and regular piston to instead check against the
-     * PISTONS TagKey, so that all pistons work the same with each other (Including vanilla)
-     * 
-     * We also replace any instances of PistonStructureResolver with the custom ConfigurablePistonStructureResolver.
-     * This ensures even vanilla pistons will respect custom movability and sticky behavior.
-     */
-
+    @Unique
+    private static final PistonController VANILLA_CONTROLLER_DEFAULT = pl$createVanillaController(PistonType.DEFAULT);
+    @Unique
+    private static final PistonController VANILLA_CONTROLLER_STICKY  = pl$createVanillaController(PistonType.STICKY);
 
     @Shadow
     @Final
@@ -39,9 +47,9 @@ public class PistonBaseBlock_tagsMixin {
                     target = "net/minecraft/world/level/block/piston/PistonStructureResolver"
             )
     )
-    private PistonStructureResolver customStructureResolver1(Level level, BlockPos pos,
-                                                             Direction facing, boolean extend) {
-        return newStructureResolver(level, pos, facing, extend);
+    private PistonStructureResolver pl$customStructureResolver1(Level level, BlockPos pos,
+                                                                Direction facing, boolean extend) {
+        return pl$newStructureResolver(level, pos, facing, extend);
     }
 
     @Redirect(
@@ -55,9 +63,9 @@ public class PistonBaseBlock_tagsMixin {
                      "Lnet/minecraft/core/Direction;ZLnet/minecraft/core/Direction;)Z"
         )
     )
-    private boolean modifyIsMovable(BlockState state, Level level, BlockPos pos,
-                                    Direction moveDir, boolean allowDestroy, Direction pistonFacing) {
-        return ModBlocks.BASIC_PISTON.canMoveBlock(state, level, pos, moveDir, allowDestroy, pistonFacing);
+    private boolean pl$modifyIsMovable(BlockState state, Level level, BlockPos pos,
+                                       Direction moveDir, boolean allowDestroy, Direction pistonFacing) {
+        return pl$getPistonController().canMoveBlock(state, level, pos, moveDir, allowDestroy, pistonFacing);
     }
 
     @Redirect(
@@ -69,7 +77,7 @@ public class PistonBaseBlock_tagsMixin {
             ordinal = 1
         )
     )
-    public boolean allPistons(BlockState state, Block block) {
+    private boolean pl$allPistons(BlockState state, Block block) {
         return state.is(ModTags.PISTONS);
     }
 
@@ -80,9 +88,9 @@ public class PistonBaseBlock_tagsMixin {
             value = "INVOKE",
             target = "Lnet/minecraft/world/level/block/state/BlockState;is(Lnet/minecraft/world/level/block/Block;)Z",
             ordinal = 2
-       )
+        )
     )
-    public boolean skipIsPistonCheck(BlockState state, Block block) {
+    private boolean pl$skipIsPistonCheck(BlockState state, Block block) {
         return false;
     }
 
@@ -94,14 +102,25 @@ public class PistonBaseBlock_tagsMixin {
             target = "net/minecraft/world/level/block/piston/PistonStructureResolver"
         )
     )
-    private PistonStructureResolver customStructureResolver2(Level level, BlockPos pos,
-                                                             Direction facing, boolean extend) {
-        return newStructureResolver(level, pos, facing, extend);
+    private PistonStructureResolver pl$customStructureResolver2(Level level, BlockPos pos,
+                                                                Direction facing, boolean extend) {
+        return pl$newStructureResolver(level, pos, facing, extend);
     }
 
-    private PistonStructureResolver newStructureResolver(Level level, BlockPos pos, Direction facing, boolean extend) {
+    @Override
+    public PistonController pl$getPistonController() {
+        return this.isSticky ? VANILLA_CONTROLLER_STICKY : VANILLA_CONTROLLER_DEFAULT;
+    }
+
+    @Unique
+    private PistonStructureResolver pl$newStructureResolver(Level level, BlockPos pos,
+                                                            Direction facing, boolean extend) {
         // the basic pistons should act exactly as vanilla pistons anyway
-        return (this.isSticky ? ModBlocks.BASIC_STICKY_PISTON : ModBlocks.BASIC_PISTON)
-           .newStructureResolver(level, pos, facing, extend ? 0 : 1, extend);
+        return pl$getPistonController().newStructureResolver(level, pos, facing, extend ? 0 : 1, extend);
+    }
+
+    @Unique
+    private static PistonController pl$createVanillaController(final PistonType type) {
+        return new VanillaPistonController(ModPistonFamilies.VANILLA, type);
     }
 }

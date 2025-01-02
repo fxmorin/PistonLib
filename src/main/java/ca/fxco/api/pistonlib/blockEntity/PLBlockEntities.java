@@ -1,6 +1,7 @@
 package ca.fxco.api.pistonlib.blockEntity;
 
 import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
+import ca.fxco.pistonlib.base.ModBlockEntities;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
@@ -38,7 +39,7 @@ public class PLBlockEntities {
     public static <T extends BasicMovingBlockEntity> BlockEntityType<T> register(
             ResourceLocation id,
             FabricBlockEntityTypeBuilder.Factory<T> factory1,
-            BasicMovingBlockEntity.Factory<T> factory2,
+            ModBlockEntities.Factory<T> factory2,
             PistonFamily... families
     ) {
         BlockEntityType<T> type = Registry.register(

@@ -3,6 +3,7 @@ package ca.fxco.pistonlib.blocks;
 import java.util.Map;
 
 import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyType;
+
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;

@@ -1,26 +1,20 @@
-package ca.fxco.pistonlib.blocks.pistons.longPiston;
+package ca.fxco.pistonlib.pistonLogic.controller;
 
 import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
-import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.helpers.Utils;
-
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.PistonType;
 
-public class LongPistonBaseBlock extends BasicPistonBaseBlock {
+import static net.minecraft.world.level.block.state.properties.BlockStateProperties.EXTENDED;
+import static net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING;
 
-    public LongPistonBaseBlock(PistonFamily family, PistonType type) {
-        this(family, type, FabricBlockSettings.copyOf(Blocks.PISTON));
-    }
+public class LongPistonController extends VanillaPistonController {
 
-    public LongPistonBaseBlock(PistonFamily family, PistonType type, Properties properties) {
-        super(family, type, properties);
+    public LongPistonController(PistonFamily family, PistonType type) {
+        super(family, type);
     }
 
     @Override
@@ -30,7 +24,7 @@ public class LongPistonBaseBlock extends BasicPistonBaseBlock {
     }
 
     @Override
-    protected int getLength(Level level, BlockPos pos, BlockState state) {
+    public int getLength(Level level, BlockPos pos, BlockState state) {
         if (state.getValue(EXTENDED)) {
             Direction facing = state.getValue(FACING);
             int length = this.getFamily().getMinLength();

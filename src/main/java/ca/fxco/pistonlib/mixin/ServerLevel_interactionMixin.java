@@ -1,5 +1,6 @@
 package ca.fxco.pistonlib.mixin;
 
+import ca.fxco.api.pistonlib.pistonLogic.controller.PistonController;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.helpers.PistonEventData;
 import ca.fxco.pistonlib.network.PLNetwork;
@@ -60,13 +61,14 @@ public abstract class ServerLevel_interactionMixin extends Level {
         this.pl$pistonEvents.clear();
         for (PistonEventData pistonEvent : runningPistonEvents) {
             BasicPistonBaseBlock pistonBase = pistonEvent.pistonBlock();
-            StructureRunner structureRunner = new DecoupledStructureRunner(pistonBase.newStructureRunner(
+            PistonController controller = pistonBase.pl$getPistonController();
+            StructureRunner structureRunner = new DecoupledStructureRunner(controller.newStructureRunner(
                     this,
                     pistonEvent.pos(),
                     pistonEvent.dir(),
                     1, // Can't use length in decoupled piston logic
                     pistonEvent.extend(),
-                    pistonBase::newStructureResolver
+                    controller::newStructureResolver
             ));
             if (structureRunner.run()) {
                 PLNetwork.sendToClientsInRange(

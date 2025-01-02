@@ -51,6 +51,9 @@
       "net/minecraft/class_4970": [
         "ca/fxco/api/pistonlib/block/PLBlockBehaviour"
       ],
+      "net/minecraft/class_2665": [
+        "ca/fxco/api/pistonlib/block/PLPistonController"
+      ],
       "net/minecraft/class_4970\u0024class_4971": [
         "ca/fxco/api/pistonlib/block/state/PLBlockStateBase"
       ],

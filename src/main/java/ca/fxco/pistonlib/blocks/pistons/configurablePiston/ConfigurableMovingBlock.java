@@ -1,10 +1,12 @@
 package ca.fxco.pistonlib.blocks.pistons.configurablePiston;
 
+import ca.fxco.api.pistonlib.pistonLogic.controller.PistonController;
 import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyType;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlock;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -42,7 +44,8 @@ public class ConfigurableMovingBlock extends BasicMovingBlock {
             if (movingBlockEntity.isSourcePiston && movingBlockEntity.movedState.getBlock() instanceof ConfigurablePistonBaseBlock cpbb) {
                 if (!movingBlockEntity.isExtending()) {
                     Direction facing = movingBlockEntity.movedState.getValue(FACING);
-                    if (cpbb.hasNeighborSignal(level, pos, facing)) {
+                    PistonController pistonController = cpbb.pl$getPistonController();
+                    if (pistonController.hasNeighborSignal(level, pos, facing)) {
                         float progress = movingBlockEntity.progress;
                         movingBlockEntity.finalTick(false, false);
                         Set<BlockPos> positions = new HashSet<>();
@@ -54,7 +57,7 @@ public class ConfigurableMovingBlock extends BasicMovingBlock {
                             bmbe.finalTick();
                         }
                         //stuckNeighbors(level, pos.relative(facing), );
-                        cpbb.checkIfExtend(level, pos, movingBlockEntity.movedState);
+                        pistonController.checkIfExtend(level, pos, movingBlockEntity.movedState);
                         int progressInt = Float.floatToIntBits(1 - progress);
                         level.blockEvent(frontPos, this, 99, progressInt);
                         for (BlockPos pos9 : positions) {
