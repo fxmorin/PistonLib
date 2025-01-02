@@ -9,7 +9,6 @@ import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyType;
 import ca.fxco.api.pistonlib.pistonLogic.structure.StructureGroup;
 import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.base.ModBlocks;
-import ca.fxco.pistonlib.helpers.IonicReference;
 import ca.fxco.pistonlib.mixin.accessors.BlockEntityAccessor;
 import ca.fxco.pistonlib.pistonLogic.structureGroups.LoadingStructureGroup;
 import ca.fxco.pistonlib.pistonLogic.structureGroups.ServerStructureGroup;
@@ -40,6 +39,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.apache.commons.lang3.mutable.MutableObject;
 import org.jetbrains.annotations.Nullable;
 
 public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
@@ -137,14 +137,14 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
             Direction moveDir = this.getMovementDirection();
             double deltaProgress = nextProgress - this.progress;
             Map<BlockEntity, Pair<List<AABB>, AABB>> blockShapes = new HashMap<>();
-            IonicReference<AABB> combinedBounds;
+            MutableObject<AABB> combinedBounds;
             if (!blockShape.isEmpty()) {
                 AABB initialBounds = moveByPositionAndProgress(this.worldPosition, blockShape.bounds());
                 initialBounds = PistonMath.getMovementArea(initialBounds, moveDir, deltaProgress).minmax(initialBounds);
-                combinedBounds = new IonicReference<>(initialBounds);
+                combinedBounds = new MutableObject<>(initialBounds);
                 blockShapes.put(this, Pair.of(blockShape.toAabbs(), initialBounds));
             } else {
-                combinedBounds = new IonicReference<>(new AABB(0,0,0,0,0,0));
+                combinedBounds = new MutableObject<>(new AABB(0,0,0,0,0,0));
             }
 
             this.structureGroup.forNonControllers(be -> {
@@ -154,10 +154,10 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
                 }
                 AABB bound = moveByPositionAndProgress(be.worldPosition, blockShape2.bounds());
                 bound = PistonMath.getMovementArea(bound, moveDir, deltaProgress).minmax(bound);
-                combinedBounds.set(combinedBounds.get().minmax(bound));
+                combinedBounds.setValue(combinedBounds.getValue().minmax(bound));
                 blockShapes.put(be, Pair.of(blockShape2.toAabbs(), bound));
             });
-            List<Entity> entities = this.level.getEntities(null, combinedBounds.get());
+            List<Entity> entities = this.level.getEntities(null, combinedBounds.getValue());
             entities.removeIf(entity -> entity.getPistonPushReaction() == PushReaction.IGNORE);
             if (entities.isEmpty()) {
                 return;
