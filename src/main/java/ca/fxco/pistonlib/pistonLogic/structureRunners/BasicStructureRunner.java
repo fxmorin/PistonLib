@@ -1,12 +1,12 @@
 package ca.fxco.pistonlib.pistonLogic.structureRunners;
 
+import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
+import ca.fxco.api.pistonlib.pistonLogic.structure.StructureGroup;
+import ca.fxco.api.pistonlib.pistonLogic.structure.StructureRunner;
 import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlock;
-import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonHeadBlock;
 import ca.fxco.pistonlib.helpers.BlockReplaceUtils;
-import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
-import ca.fxco.pistonlib.pistonLogic.structureGroups.StructureGroup;
 import ca.fxco.pistonlib.pistonLogic.structureResolvers.BasicStructureResolver;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
@@ -14,9 +14,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseCoralFanBlock;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.piston.PistonMovingBlockEntity;
 import net.minecraft.world.level.block.piston.PistonStructureResolver;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.PistonType;
@@ -197,8 +197,10 @@ public class BasicStructureRunner implements StructureRunner {
 
                 BlockState movingBlock = this.family.getMoving().defaultBlockState()
                         .setValue(BasicMovingBlock.FACING, facing);
-                BasicMovingBlockEntity movingBlockEntity = this.family
-                        .newMovingBlockEntity(structureGroup, dstPos, movingBlock, stateToMove, blockEntityToMove, facing, extend, false);
+                PistonMovingBlockEntity movingBlockEntity = this.family.newMovingBlockEntity(
+                        structureGroup, dstPos, movingBlock, stateToMove, blockEntityToMove,
+                        facing, extend, false
+                );
 
                 level.setBlock(dstPos, movingBlock, UPDATE_MOVE_BY_PISTON | UPDATE_INVISIBLE);
                 level.setBlockEntity(movingBlockEntity);

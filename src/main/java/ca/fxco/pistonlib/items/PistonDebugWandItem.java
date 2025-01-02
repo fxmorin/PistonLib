@@ -51,7 +51,7 @@ public class PistonDebugWandItem extends PistonWandItem {
             output.add(Component.literal("PushDirection: ").withStyle(ChatFormatting.BOLD)
                     .append(Component.literal(face.getOpposite().toString()).withStyle(ChatFormatting.RESET)));
             DebugStructureResolver resolver = new DebugStructureResolver(
-                    (BasicPistonBaseBlock) ((BlockItem) wandItem.getItem()).getBlock(),
+                    ((BasicPistonBaseBlock) ((BlockItem) wandItem.getItem()).getBlock()).pl$getPistonController(),
                     level,
                     blockPos.relative(face),
                     face.getOpposite(),

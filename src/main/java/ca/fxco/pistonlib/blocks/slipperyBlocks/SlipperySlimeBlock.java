@@ -1,17 +1,16 @@
 package ca.fxco.pistonlib.blocks.slipperyBlocks;
 
-import ca.fxco.pistonlib.base.ModStickyGroups;
-import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
-import ca.fxco.pistonlib.pistonLogic.sticky.StickyGroup;
+import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyGroup;
+import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyGroups;
 
-public class SlipperySlimeBlock extends BaseSlipperyBlock implements ConfigurablePistonStickiness {
+public class SlipperySlimeBlock extends BaseSlipperyBlock {
 
     public SlipperySlimeBlock(Properties settings) {
         super(settings);
     }
 
     @Override
-    public StickyGroup getStickyGroup() {
-        return ModStickyGroups.SLIME;
+    public StickyGroup pl$getStickyGroup() {
+        return StickyGroups.SLIME;
     }
 }

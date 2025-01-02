@@ -7,7 +7,7 @@
 - Don't spawn entities within `neighborChanged()`
 - Blocks that drop as items when set to air, and can be set to air during `updateShape`  
 
-All if these can be done if you first check to make sure `PistonLibConfig.pistonPushingCacheFix` is `true`  
+All these can be done if you first check to make sure `PistonLibConfig.pistonPushingCacheFix` is `true`  
 Most people with `pistonPushingCacheFix` set to `false` probably want the duping behavior. So these rules are optional!
 
 ### Config Options
@@ -19,10 +19,10 @@ Most people with `pistonPushingCacheFix` set to `false` probably want the duping
 Move this to a FAQ md later
 
 #### All my pistons are immovable!
-This means you didn't build DataGen, and the pistons are not within the `pistonlib:pistons` block tag list.  
+This means you didn't build DataGen, and the pistons aren't within the `pistonlib:pistons` block tag list.  
 Run the `Data generation` task
 
 #### All the pistons are missing textures!
-This means that either you didn't build DataGen, and the pistons are not within the `pistonlib:pistons` block tag list.
-Or that you didn't register your pistons using DataGen  
+This means that either you didn't build DataGen, and the pistons aren't within the `pistonlib:pistons` block tag list.
+Or that you didn't register your pistons using the DataGen system.  
 Run the `Data generation` task

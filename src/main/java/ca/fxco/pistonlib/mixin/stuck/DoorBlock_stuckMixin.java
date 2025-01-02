@@ -1,10 +1,8 @@
 package ca.fxco.pistonlib.mixin.stuck;
 
+import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyType;
 import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.base.ModTags;
-import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonBehavior;
-import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
-import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.LevelAccessor;
@@ -24,8 +22,7 @@ import java.util.Map;
 import static net.minecraft.world.level.block.DoorBlock.HALF;
 
 @Mixin(DoorBlock.class)
-public abstract class DoorBlock_stuckMixin extends Block
-        implements ConfigurablePistonStickiness, ConfigurablePistonBehavior {
+public abstract class DoorBlock_stuckMixin extends Block {
 
     public DoorBlock_stuckMixin(Properties properties) {
         super(properties);
@@ -53,32 +50,32 @@ public abstract class DoorBlock_stuckMixin extends Block
     }
 
     @Override
-    public boolean usesConfigurablePistonBehavior() {
+    public boolean pl$usesConfigurablePistonBehavior() {
         return PistonLibConfig.stuckDoubleBlocks;
     }
 
     @Override
-    public boolean usesConfigurablePistonStickiness() {
+    public boolean pl$usesConfigurablePistonStickiness() {
         return PistonLibConfig.stuckDoubleBlocks;
     }
 
     @Override
-    public Map<Direction, StickyType> stickySides(BlockState state) {
+    public Map<Direction, StickyType> pl$stickySides(BlockState state) {
         return Map.of(getStickyDirection(state), StickyType.CONDITIONAL);
     }
 
     @Override
-    public StickyType sideStickiness(BlockState state, Direction dir) {
+    public StickyType pl$sideStickiness(BlockState state, Direction dir) {
         return dir == getStickyDirection(state) ? StickyType.CONDITIONAL : StickyType.DEFAULT;
     }
 
     @Override
-    public boolean matchesStickyConditions(BlockState state, BlockState neighborState, Direction dir) {
+    public boolean pl$matchesStickyConditions(BlockState state, BlockState neighborState, Direction dir) {
         return state.is(neighborState.getBlock()) && getStickyDirection(neighborState) == dir.getOpposite();
     }
 
     @Override
-    public boolean propagatesIndirectSticky(BlockState state) {
+    public boolean pl$propagatesIndirectSticky(BlockState state) {
         return false;
     }
 }

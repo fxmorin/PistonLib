@@ -1,6 +1,6 @@
 package ca.fxco.pistonlib.base;
 
-import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
+import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 
 import net.minecraft.world.item.CreativeModeTab;

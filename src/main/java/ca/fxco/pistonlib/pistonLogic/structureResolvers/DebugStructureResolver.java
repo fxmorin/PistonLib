@@ -1,11 +1,11 @@
 package ca.fxco.pistonlib.pistonLogic.structureResolvers;
 
-import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
-import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonBehavior;
+import ca.fxco.api.pistonlib.pistonLogic.controller.PistonController;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.PushReaction;
 
@@ -16,20 +16,20 @@ public class DebugStructureResolver extends BasicStructureResolver {
     @Getter
     private BlockPos resultPos = BlockPos.ZERO;
 
-    public DebugStructureResolver(BasicPistonBaseBlock piston, Level level, BlockPos pos,
+    public DebugStructureResolver(PistonController controller, Level level, BlockPos pos,
                                   Direction facing, int length, boolean extend) {
-        super(piston, level, pos, facing, length, extend);
+        super(controller, level, pos, facing, length, extend);
     }
 
     protected boolean runStructureGeneration() {
         // Structure Generation
         BlockState state = this.level.getBlockState(this.startPos);
-        if (!this.piston.canMoveBlock(state, this.level, this.startPos, this.pushDirection, false, this.pistonDirection)) {
+        if (!this.controller.canMoveBlock(state, this.level, this.startPos, this.pushDirection, false, this.pistonDirection)) {
             // Block directly int front is immovable, can only be true if extending, and it can be destroyed
             if (this.extending) {
-                ConfigurablePistonBehavior pistonBehavior = (ConfigurablePistonBehavior)state.getBlock();
-                if (pistonBehavior.usesConfigurablePistonBehavior()) {
-                    if (pistonBehavior.canDestroy(this.level, this.startPos, state)) {
+                Block piston = state.getBlock();
+                if (piston.pl$usesConfigurablePistonBehavior()) {
+                    if (piston.pl$canDestroy(this.level, this.startPos, state)) {
                         this.toDestroy.add(this.startPos);
                         return true;
                     }
