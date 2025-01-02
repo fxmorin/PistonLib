@@ -15,8 +15,6 @@
     "PistonBaseBlock_tagsMixin",
     "ServerLevel_interactionMixin",
     "accessors.BlockEntityAccessor",
-    "behavior.Block_customBehaviorMixin",
-    "behavior.BlockStateBase_pistonBehaviorMixin",
     "behavior.MovingPistonBlock_behaviorMixin",
     "behavior.PistonBaseBlock_behaviorMixin",
     "blockEntity.LevelChunk_blockEntityMixin",

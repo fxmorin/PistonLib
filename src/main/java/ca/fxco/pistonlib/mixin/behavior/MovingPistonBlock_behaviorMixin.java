@@ -1,15 +1,14 @@
 package ca.fxco.pistonlib.mixin.behavior;
 
-import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonBehavior;
+import ca.fxco.api.pistonlib.block.BlockMoveBehavior;
 import net.minecraft.world.level.block.piston.MovingPistonBlock;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(MovingPistonBlock.class)
-public class MovingPistonBlock_behaviorMixin implements ConfigurablePistonBehavior {
-
+public abstract class MovingPistonBlock_behaviorMixin implements BlockMoveBehavior {
 
     @Override
-    public boolean canChangePistonMoveBehaviorOverride() {
+    public boolean pl$canOverridePistonMoveBehavior() {
         return false;
     }
 }

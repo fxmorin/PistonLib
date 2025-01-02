@@ -3,6 +3,7 @@ package ca.fxco.api.pistonlib.block;
 import java.util.Map;
 import java.util.function.BooleanSupplier;
 
+import ca.fxco.api.pistonlib.pistonLogic.PistonMoveBehavior;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.datafixers.util.Pair;
@@ -23,12 +24,12 @@ import net.minecraft.world.level.block.state.BlockState;
  * This interface collects all custom behavior that is injected into {@code Block}s.
  * Similarly to {@linkplain net.minecraft.world.level.block.state.BlockBehaviour BlockBehaviour},
  * it provides default implementations for all custom behavior.
- * 
- * Through the magic of Loom's interface injection feature you will not need to manually
+ * </br>
+ * Through the magic of Loom's interface injection feature, you won't need to manually
  * implement this interface in your custom blocks. Simply extending
- * {@linkplain net.minecraft.world.level.block.Block Block} will allow you to override
+ * {@linkplain net.minecraft.world.level.block.Block Block} allows you to override
  * and use all these methods.
- * 
+ * </br>
  * Similar to how the methods in {@linkplain net.minecraft.world.level.block.state.BlockBehaviour BlockBehaviour}
  * are deprecated to encourage the use of the methods defined in
  * {@linkplain net.minecraft.world.level.block.state.BlockBehaviour.BlockStateBase BlockStateBase},
@@ -39,8 +40,26 @@ import net.minecraft.world.level.block.state.BlockState;
  * @since 1.0.4
  */
 public interface PLBlockBehaviour extends BlockPistonBehavior, BlockPistonMerging,
-        BlockPistonStickiness, BlockQuasiPower, Toggleable {
+        BlockPistonStickiness, BlockQuasiPower, BlockMoveBehavior, Toggleable {
 
+    // BlockMoveBehavior
+
+    @Deprecated
+    @Override
+    default boolean pl$canOverridePistonMoveBehavior() {
+        return true;
+    }
+
+    @Deprecated
+    @Override
+    default void pl$setPistonMoveBehaviorOverride(PistonMoveBehavior override) {
+    }
+
+    @Deprecated
+    @Override
+    default PistonMoveBehavior pl$getPistonMoveBehaviorOverride() {
+        return PistonMoveBehavior.DEFAULT;
+    }
 
     // BlockPistonBehavior
 

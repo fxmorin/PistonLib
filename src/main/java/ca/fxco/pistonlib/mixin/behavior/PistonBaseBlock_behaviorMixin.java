@@ -2,7 +2,6 @@ package ca.fxco.pistonlib.mixin.behavior;
 
 import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.helpers.PistonLibBehaviorManager;
-import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonBehavior;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
@@ -16,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.Slice;
 
 @Mixin(PistonBaseBlock.class)
-public class PistonBaseBlock_behaviorMixin implements ConfigurablePistonBehavior {
+public class PistonBaseBlock_behaviorMixin {
 
     @Redirect(
             method = "isPushable",
@@ -41,8 +40,7 @@ public class PistonBaseBlock_behaviorMixin implements ConfigurablePistonBehavior
         // push reaction of these blocks we make these checks fail.
         if (state.is(block)) {
             if (PistonLibConfig.behaviorOverrideApi) {
-                PistonLibBehaviorManager.PistonMoveBehavior override = PistonLibBehaviorManager.getOverride(state);
-                return !override.isPresent();
+                return !PistonLibBehaviorManager.getOverride(state).isPresent();
             }
             return true;
         }
@@ -63,12 +61,9 @@ public class PistonBaseBlock_behaviorMixin implements ConfigurablePistonBehavior
         // mining speed instead.
         float destroySpeed = state.getDestroySpeed(level, pos);
 
-        if (PistonLibConfig.behaviorOverrideApi && destroySpeed == -1.0F) {
-            PistonLibBehaviorManager.PistonMoveBehavior override = PistonLibBehaviorManager.getOverride(state);
-
-            if (override.isPresent()) {
-                return 0.0F;
-            }
+        if (PistonLibConfig.behaviorOverrideApi && destroySpeed == -1.0F &&
+                PistonLibBehaviorManager.getOverride(state).isPresent()) {
+            return 0.0F;
         }
 
         return destroySpeed;

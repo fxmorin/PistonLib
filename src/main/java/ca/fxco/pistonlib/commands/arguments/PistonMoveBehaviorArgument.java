@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 
+import ca.fxco.api.pistonlib.pistonLogic.PistonMoveBehavior;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.context.CommandContext;
@@ -12,8 +13,6 @@ import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
-import ca.fxco.pistonlib.helpers.PistonLibBehaviorManager;
-
 import lombok.NoArgsConstructor;
 
 import net.minecraft.commands.CommandSourceStack;
@@ -21,7 +20,7 @@ import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.network.chat.Component;
 
 @NoArgsConstructor
-public class PistonMoveBehaviorArgument implements ArgumentType<PistonLibBehaviorManager.PistonMoveBehavior> {
+public class PistonMoveBehaviorArgument implements ArgumentType<PistonMoveBehavior> {
     private static final Collection<String> EXAMPLES = Arrays.asList("default", "normal", "destroy", "block", "ignore", "push_only");
     public static final DynamicCommandExceptionType ERROR_INVALID_VALUE = new DynamicCommandExceptionType((object) ->
         Component.translatable("argument.pistonlib.pistonMoveBehavior.invalid", object)
@@ -31,13 +30,13 @@ public class PistonMoveBehaviorArgument implements ArgumentType<PistonLibBehavio
         return new PistonMoveBehaviorArgument();
     }
 
-    public static PistonLibBehaviorManager.PistonMoveBehavior getPistonMoveBehavior(CommandContext<CommandSourceStack> commandContext, String string) {
-        return commandContext.getArgument(string, PistonLibBehaviorManager.PistonMoveBehavior.class);
+    public static PistonMoveBehavior getPistonMoveBehavior(CommandContext<CommandSourceStack> commandContext, String string) {
+        return commandContext.getArgument(string, PistonMoveBehavior.class);
     }
 
-    public PistonLibBehaviorManager.PistonMoveBehavior parse(StringReader stringReader) throws CommandSyntaxException {
+    public PistonMoveBehavior parse(StringReader stringReader) throws CommandSyntaxException {
         String string = stringReader.readUnquotedString().toLowerCase();
-        PistonLibBehaviorManager.PistonMoveBehavior behavior = PistonLibBehaviorManager.PistonMoveBehavior.fromName(string);
+        PistonMoveBehavior behavior = PistonMoveBehavior.fromName(string);
         if (behavior != null) {
             return behavior;
         }

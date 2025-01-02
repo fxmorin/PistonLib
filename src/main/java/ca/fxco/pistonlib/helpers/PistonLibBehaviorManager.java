@@ -1,18 +1,14 @@
 package ca.fxco.pistonlib.helpers;
 
-import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonBehavior;
-import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBaseMoveBehavior;
+import ca.fxco.api.pistonlib.pistonLogic.PistonMoveBehavior;
 
 import com.moandjiezana.toml.Toml;
 import com.moandjiezana.toml.TomlWriter;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.PushReaction;
 import org.apache.commons.lang3.SerializationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,16 +25,16 @@ public class PistonLibBehaviorManager {
     private static boolean dirty;
 
     public static boolean canChangeOverride(BlockState state) {
-        return ((ConfigurablePistonBehavior)state.getBlock()).canChangePistonMoveBehaviorOverride();
+        return state.pl$canOverridePistonMoveBehavior();
     }
 
     public static PistonMoveBehavior getOverride(BlockState state) {
-        return ((BlockStateBaseMoveBehavior)state).getPistonMoveBehaviorOverride();
+        return state.pl$getPistonMoveBehaviorOverride();
     }
 
     public static void setOverride(BlockState state, PistonMoveBehavior override) {
         if (canChangeOverride(state)) {
-            ((BlockStateBaseMoveBehavior)state).setPistonMoveBehaviorOverride(override);
+            state.pl$setPistonMoveBehaviorOverride(override);
             dirty = true;
         }
     }
@@ -80,69 +76,6 @@ public class PistonLibBehaviorManager {
 
             Config.save();
             dirty = false;
-        }
-    }
-
-    /**
-     * A wrapper of {@link net.minecraft.world.level.material.PushReaction PushReaction}
-     * that includes {@code default}, to be used in the `/pistonlib behavior` command.
-     */
-    @Getter
-    @AllArgsConstructor
-    public enum PistonMoveBehavior {
-
-        DEFAULT  (0, "default"  , null), // Use vanilla behavior, no overrides
-        NORMAL   (1, "normal"   , PushReaction.NORMAL),
-        DESTROY  (2, "destroy"  , PushReaction.DESTROY),
-        BLOCK    (3, "block"    , PushReaction.BLOCK),
-        IGNORE   (4, "ignore"   , PushReaction.IGNORE),
-        PUSH_ONLY(5, "push_only", PushReaction.PUSH_ONLY);
-        // TODO: Somehow add pull_only support
-
-        public static final PistonMoveBehavior[] ALL;
-        private static final Map<String, PistonMoveBehavior> BY_NAME;
-        private static final Map<PushReaction, PistonMoveBehavior> BY_PUSH_REACTION;
-
-        static {
-
-            PistonMoveBehavior[] values = values();
-
-            ALL = new PistonMoveBehavior[values.length];
-            BY_NAME = new HashMap<>();
-            BY_PUSH_REACTION = new HashMap<>();
-
-            for (PistonMoveBehavior behavior : values) {
-                ALL[behavior.index] = behavior;
-                BY_NAME.put(behavior.name, behavior);
-
-                if (behavior.pushReaction != null) {
-                    BY_PUSH_REACTION.put(behavior.pushReaction, behavior);
-                }
-            }
-        }
-
-        private final int index;
-        private final String name;
-        private final PushReaction pushReaction;
-
-        public static PistonMoveBehavior fromIndex(int index) {
-            return (index < 0 || index >= ALL.length) ? null : ALL[index];
-        }
-
-        public static PistonMoveBehavior fromName(String name) {
-            return name == null ? null : BY_NAME.get(name);
-        }
-
-        public static PistonMoveBehavior fromPushReaction(PushReaction pushReaction) {
-            return BY_PUSH_REACTION.get(pushReaction);
-        }
-
-        public boolean isPresent() {
-            return pushReaction != null;
-        }
-
-        public boolean is(PushReaction pushReaction) {
-            return pushReaction != null && this.pushReaction == pushReaction;
         }
     }
 
@@ -241,7 +174,7 @@ public class PistonLibBehaviorManager {
                 saveOverride(state, overrides);
             }
 
-            if (overrides.size() > 0) {
+            if (!overrides.isEmpty()) {
                 serializedValues.put(BlockUtils.blockAsString(block), overrides);
             }
         }

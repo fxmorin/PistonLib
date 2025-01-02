@@ -1,6 +1,6 @@
 package ca.fxco.pistonlib.commands;
 
-import ca.fxco.api.pistonlib.level.ServerLevelInteraction;
+import ca.fxco.api.pistonlib.pistonLogic.PistonMoveBehavior;
 import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
@@ -8,7 +8,6 @@ import ca.fxco.pistonlib.commands.arguments.DirectionArgument;
 import ca.fxco.pistonlib.commands.arguments.PistonMoveBehaviorArgument;
 import ca.fxco.pistonlib.helpers.BlockUtils;
 import ca.fxco.pistonlib.helpers.PistonLibBehaviorManager;
-import ca.fxco.pistonlib.helpers.PistonLibBehaviorManager.PistonMoveBehavior;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -159,7 +158,7 @@ public class PistonLibCommand implements Command {
             if (hitResult.getType() == HitResult.Type.BLOCK && hitResult instanceof BlockHitResult blockHitResult) {
                 Direction face = blockHitResult.getDirection();
                 blockPos = blockHitResult.getBlockPos();
-                ((ServerLevelInteraction) commandSourceStack.getLevel()).triggerPistonEvent(basicPistonBaseBlock, isPush ? blockPos.relative(facing) : blockPos, face.getOpposite(), isPush);
+                commandSourceStack.getLevel().pl$addPistonEvent(basicPistonBaseBlock, isPush ? blockPos.relative(facing) : blockPos, face.getOpposite(), isPush);
                 commandSourceStack.sendSuccess(Component.translatable("commands.pistonlib." + eventType.name().toLowerCase() + ".success", blockPos.getX(), blockPos.getY(), blockPos.getZ(), face.getName()), true);
                 return 1;
             } else {
@@ -178,8 +177,11 @@ public class PistonLibCommand implements Command {
             blockPos = globalPos.pos();
             serverLevel = commandSourceStack.getServer().getLevel(globalPos.dimension());
         }
+        if (serverLevel == null) {
+            return 0;
+        }
         facing = facing.getOpposite();
-        ((ServerLevelInteraction) serverLevel).triggerPistonEvent(basicPistonBaseBlock, isPush ? blockPos.relative(facing) : blockPos, facing.getOpposite(), isPush);
+        serverLevel.pl$addPistonEvent(basicPistonBaseBlock, isPush ? blockPos.relative(facing) : blockPos, facing.getOpposite(), isPush);
         commandSourceStack.sendSuccess(Component.translatable("commands.pistonlib." + eventType.name().toLowerCase() + ".success", blockPos.getX(), blockPos.getY(), blockPos.getZ(), facing.getName()), true);
         return 1;
     }
