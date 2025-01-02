@@ -10,6 +10,7 @@ public class ModPistonFamily extends PistonFamily {
         super(behavior);
     }
 
+    @Override
     public boolean hasCustomTextures() {
         return true; // Handled in DataGenPistonFamily
     }

@@ -98,6 +98,9 @@ public class PistonFamily {
 
     // =========================================================================
 
+    public boolean hasCustomTextures() {
+        return false;
+    }
 
     public Map<PistonType, Block> getBases() {
         return Collections.unmodifiableMap(this.bases);
