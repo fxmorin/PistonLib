@@ -3,9 +3,8 @@ package ca.fxco.pistonlib.blocks;
 import java.util.HashMap;
 import java.util.Map;
 
+import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyType;
 import ca.fxco.pistonlib.PistonLibConfig;
-import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
-import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
 import lombok.Getter;
 import net.minecraft.Util;
@@ -13,7 +12,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.ChainBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class StickyChainBlock extends ChainBlock implements ConfigurablePistonStickiness {
+public class StickyChainBlock extends ChainBlock {
 
     @Getter(lazy = true)
     private static final Map<Direction, StickyType> chainSidesX_strong = Util.make(new HashMap<>(), map -> {
@@ -51,12 +50,12 @@ public class StickyChainBlock extends ChainBlock implements ConfigurablePistonSt
     }
 
     @Override
-    public boolean usesConfigurablePistonStickiness() {
+    public boolean pl$usesConfigurablePistonStickiness() {
         return true;
     }
 
     @Override
-    public Map<Direction, StickyType> stickySides(BlockState state) {
+    public Map<Direction, StickyType> pl$stickySides(BlockState state) {
         if (PistonLibConfig.strongStickyChains) {
             return switch (state.getValue(AXIS)) {
                 case X -> StickyChainBlock.getChainSidesX_strong();
@@ -72,7 +71,7 @@ public class StickyChainBlock extends ChainBlock implements ConfigurablePistonSt
     }
 
     @Override
-    public StickyType sideStickiness(BlockState state, Direction dir) {
+    public StickyType pl$sideStickiness(BlockState state, Direction dir) {
         return dir.getAxis() == state.getValue(AXIS) ?
                 (PistonLibConfig.strongStickyChains ? StickyType.STRONG : StickyType.STICKY) :
                 StickyType.NO_STICK;

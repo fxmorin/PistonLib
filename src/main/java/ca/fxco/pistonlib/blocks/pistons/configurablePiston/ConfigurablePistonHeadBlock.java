@@ -1,11 +1,9 @@
 package ca.fxco.pistonlib.blocks.pistons.configurablePiston;
 
+import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
+import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyType;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonHeadBlock;
 import ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock;
-import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonBehavior;
-import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
-import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
-import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
@@ -21,16 +19,15 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 import java.util.Map;
 
 import static ca.fxco.pistonlib.base.ModProperties.SLIPPERY_DISTANCE;
-import static ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock.EXTENDED;
 import static ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock.MAX_DISTANCE;
 import static ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock.SLIPPERY_DELAY;
 
-public class ConfigurablePistonHeadBlock extends BasicPistonHeadBlock
-        implements ConfigurablePistonBehavior, ConfigurablePistonStickiness {
+public class ConfigurablePistonHeadBlock extends BasicPistonHeadBlock {
 
     public ConfigurablePistonHeadBlock(PistonFamily family) {
         this(family, FabricBlockSettings.copyOf(Blocks.PISTON_HEAD));
@@ -68,7 +65,7 @@ public class ConfigurablePistonHeadBlock extends BasicPistonHeadBlock
             if (blockState.getValue(SLIPPERY_DISTANCE) == MAX_DISTANCE && !super.canSurvive(state, level, pos)) {
                 BlockPos blockPos = pos.relative(state.getValue(FACING).getOpposite());
                 if (this.isFittingBase(state, level.getBlockState(blockPos))) {
-                    FallingBlockEntity.fall(level, pos, state.setValue(EXTENDED,false));
+                    FallingBlockEntity.fall(level, pos, state.setValue(BlockStateProperties.EXTENDED,false));
                 }
                 level.removeBlock(pos, false);
             } else if (state != blockState) {
@@ -99,22 +96,22 @@ public class ConfigurablePistonHeadBlock extends BasicPistonHeadBlock
     }
 
     @Override
-    public boolean usesConfigurablePistonBehavior() {
+    public boolean pl$usesConfigurablePistonBehavior() {
         return this.getFamily().isVerySticky(); // Makes the piston head movable by bypassing vanilla checks
     }
 
     @Override
-    public boolean usesConfigurablePistonStickiness() {
+    public boolean pl$usesConfigurablePistonStickiness() {
         return this.getFamily().isVerySticky();
     }
 
     // Returns a list of directions that are sticky, and the stickyType.
-    public Map<Direction, StickyType> stickySides(BlockState state) {
+    public Map<Direction, StickyType> pl$stickySides(BlockState state) {
         return Map.of(state.getValue(FACING), StickyType.STICKY,
                 state.getValue(FACING).getOpposite(), StickyType.STICKY);
     }
 
-    public StickyType sideStickiness(BlockState state, Direction direction) {
+    public StickyType pl$sideStickiness(BlockState state, Direction direction) {
         return state.getValue(FACING).getAxis() == direction.getAxis() ? StickyType.STICKY : StickyType.DEFAULT;
     }
 

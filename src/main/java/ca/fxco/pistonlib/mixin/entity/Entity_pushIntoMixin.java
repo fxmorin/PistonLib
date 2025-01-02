@@ -2,7 +2,6 @@ package ca.fxco.pistonlib.mixin.entity;
 
 import ca.fxco.pistonlib.helpers.BlockPosUtils;
 import ca.fxco.pistonlib.impl.EntityPistonMechanics;
-import ca.fxco.pistonlib.pistonLogic.internal.BlockStateBasePushReaction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MoverType;
@@ -18,7 +17,8 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(Entity.class)
 public abstract class Entity_pushIntoMixin implements EntityPistonMechanics {
 
-    @Shadow protected abstract Vec3 collide(Vec3 vec3);
+    @Shadow
+    private Vec3 collide(Vec3 vec3) { return null; }
 
     @Redirect( // Make this a wrapWithCondition
             method = "move",
@@ -52,7 +52,7 @@ public abstract class Entity_pushIntoMixin implements EntityPistonMechanics {
                                 crushedAgainst = null;
                             }
                             if (((EntityPistonMechanics)instance).onPushedIntoBlock(state, pos)) {
-                                ((BlockStateBasePushReaction) state).onPushEntityInto(instance.getLevel(), pos, instance);
+                                state.pl$onPushEntityInto(instance.getLevel(), pos, instance);
                             }
                         }
                     }

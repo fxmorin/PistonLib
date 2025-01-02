@@ -4,13 +4,14 @@ import java.util.Map;
 import java.util.Optional;
 
 import ca.fxco.pistonlib.base.ModItems;
+import ca.fxco.pistonlib.base.ModPistonFamilies;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
+import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.base.ModRegistries;
-import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
@@ -58,6 +59,10 @@ public class ModModelProvider extends FabricModelProvider {
 		for (Map.Entry<ResourceKey<PistonFamily>, PistonFamily> entry : ModRegistries.PISTON_FAMILY.entrySet()) {
             ResourceKey<PistonFamily> key = entry.getKey();
             PistonFamily family = entry.getValue();
+
+			if (family == ModPistonFamilies.VANILLA) {
+				continue;
+			}
 
             LOGGER.info("Generating blockstate definitions and models for piston family " + key.location()+"...");
 
