@@ -1,14 +1,14 @@
 package ca.fxco.pistonlib.renderers;
 
 import ca.fxco.pistonlib.helpers.BlockAndTintWrapper;
-import ca.fxco.pistonlib.pistonLogic.structureGroups.StructureGroup;
+import ca.fxco.api.pistonlib.pistonLogic.structure.StructureGroup;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
+import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonHeadBlock;
-import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -28,6 +28,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 @Environment(EnvType.CLIENT)
 public class BasicMovingBlockEntityRenderer<T extends BasicMovingBlockEntity> implements BlockEntityRenderer<T> {
@@ -120,7 +121,7 @@ public class BasicMovingBlockEntityRenderer<T extends BasicMovingBlockEntity> im
             Direction facing = state.getValue(BasicPistonBaseBlock.FACING);
 
             BlockState headState = family.getHead().defaultBlockState()
-                .setValue(BasicPistonHeadBlock.TYPE, base.getType())
+                .setValue(BasicPistonHeadBlock.TYPE, base.pl$getPistonController().getType())
                 .setValue(BasicPistonHeadBlock.FACING, facing)
                 .setValue(BasicPistonHeadBlock.SHORT, mbe.getProgress(partialTick) >= 0.5F);
 
@@ -138,7 +139,7 @@ public class BasicMovingBlockEntityRenderer<T extends BasicMovingBlockEntity> im
         if (!mbe.isExtending()) {
             BlockState state = mbe.getMovedState();
             if (state.getBlock() instanceof BasicPistonBaseBlock) {
-                this.renderBlock(mbe, fromPos, state.setValue(BasicPistonBaseBlock.EXTENDED, true),
+                this.renderBlock(mbe, fromPos, state.setValue(BlockStateProperties.EXTENDED, true),
                         stack, bufferSource, level, false, overlay);
             } else if (state.getBlock() instanceof BasicPistonHeadBlock) {
                 PistonFamily family = mbe.getFamily();
