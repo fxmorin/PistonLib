@@ -1,9 +1,9 @@
 package ca.fxco.api.pistonlib.config;
 
-import ca.fxco.pistonlib.config.ParsedValue;
-
 /**
  * The Observer class is used within the {@link ConfigValue} class in order to trigger events
+ * @author FX
+ * @since 1.0.4
  */
 public interface Observer<T> {
 
@@ -12,6 +12,7 @@ public interface Observer<T> {
      * and it reloads it from the config
      * @param parsedValue the current parsed value, already set to this value
      * @param isDefault If the config option is the default value
+     * @since 1.0.4
      */
     void onLoad(ParsedValue<T> parsedValue, boolean isDefault);
 
@@ -22,6 +23,7 @@ public interface Observer<T> {
      * @param parsedValue The parsed value, it will already have the new value
      * @param oldValue the value that was originally set
      * @param newValue the value that is now currently being used
+     * @since 1.0.4
      */
     void onChange(ParsedValue<T> parsedValue, T oldValue, T newValue);
 

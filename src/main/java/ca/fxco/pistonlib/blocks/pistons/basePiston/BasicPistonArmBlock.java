@@ -3,8 +3,8 @@ package ca.fxco.pistonlib.blocks.pistons.basePiston;
 import java.util.Arrays;
 import java.util.function.BiPredicate;
 
+import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.base.ModTags;
-import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
 
 import lombok.Getter;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
@@ -120,7 +120,7 @@ public class BasicPistonArmBlock extends DirectionalBlock {
         // If it's not an arm than it must be a piston base, and a valid one
         return (behindState.is(this.family.getBase(PistonType.DEFAULT)) ||
                 behindState.is(this.family.getBase(PistonType.STICKY))) &&
-                behindState.getValue(BasicPistonBaseBlock.EXTENDED) &&
+                behindState.getValue(BlockStateProperties.EXTENDED) &&
             facing == behindState.getValue(FACING);
     }
 
@@ -136,8 +136,8 @@ public class BasicPistonArmBlock extends DirectionalBlock {
         } else { // If it's not an arm than it must be a piston base, and a valid one
             validBack = (backState.is(this.family.getBase(PistonType.DEFAULT)) ||
                     backState.is(this.family.getBase(PistonType.STICKY))) &&
-                    backState.getValue(BasicPistonBaseBlock.EXTENDED) &&
-                    backState.getValue(FACING) == backState.getValue(FACING);
+                    backState.getValue(BlockStateProperties.EXTENDED) &&
+                    backState.getValue(FACING) == state.getValue(FACING);
         }
         if (validBack) {
             level.destroyBlock(behindPos, false);
@@ -167,8 +167,8 @@ public class BasicPistonArmBlock extends DirectionalBlock {
             } else { // If it's not an arm than it must be a piston base, and a valid one
                 return backState.is(this.family.getBase(PistonType.DEFAULT)) ||
                         backState.is(this.family.getBase(PistonType.STICKY)) &&
-                                backState.getValue(BasicPistonBaseBlock.EXTENDED) &&
-                                backState.getValue(FACING) == backState.getValue(FACING);
+                                backState.getValue(BlockStateProperties.EXTENDED) &&
+                                backState.getValue(FACING) == armState.getValue(FACING);
             }
         }
         return false;
