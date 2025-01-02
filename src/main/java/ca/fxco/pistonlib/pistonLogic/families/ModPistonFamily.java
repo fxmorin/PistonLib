@@ -3,17 +3,12 @@ package ca.fxco.pistonlib.pistonLogic.families;
 import ca.fxco.api.pistonlib.pistonLogic.families.PistonBehavior;
 import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.PistonLib;
-import ca.fxco.pistonlib.base.ModPistonFamilies;
-import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
-import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 
-import lombok.RequiredArgsConstructor;
-
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-
-@RequiredArgsConstructor
 public class ModPistonFamily extends PistonFamily {
+
+    public ModPistonFamily(PistonBehavior behavior) {
+        super(behavior);
+    }
 
     public boolean hasCustomTextures() {
         return true; // Handled in DataGenPistonFamily
