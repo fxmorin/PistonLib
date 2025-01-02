@@ -31,7 +31,7 @@ import net.minecraft.world.level.block.state.properties.PistonType;
  * PistonType}, a piston head block, a moving block, a moving block
  * entity type, and a moving block entity factory. If the max length
  * of the pistons as defined in the piston behavior is more than 1,
- * the family must also hold a refernce to a piston arm block.
+ * the family must also hold a reference to a piston arm block.
  * 
  * @author FX
  * @since 1.0.4
