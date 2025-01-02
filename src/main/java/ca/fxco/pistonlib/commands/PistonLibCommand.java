@@ -21,6 +21,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.DimensionArgument;
 import net.minecraft.commands.arguments.blocks.BlockInput;
 import net.minecraft.commands.arguments.blocks.BlockStateArgument;
@@ -39,8 +40,7 @@ import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 
-import java.util.Collection;
-import java.util.LinkedList;
+import java.util.*;
 
 public class PistonLibCommand implements Command {
 
@@ -196,22 +196,22 @@ public class PistonLibCommand implements Command {
                             .then(Commands.argument("new value", StringArgumentType.word())
                                     .suggests((context, builder1) -> {
                                         Object value = parsedValue.getValue();
+                                        String[] suggestions;
 
                                         if (parsedValue.getSuggestions().length != 0) {
-                                            for (String suggestion : parsedValue.getSuggestions()) {
-                                                builder1.suggest(suggestion);
-                                            }
+                                            suggestions = parsedValue.getSuggestions();
                                         } else if (value instanceof Boolean) {
-                                            builder1.suggest("true");
-                                            builder1.suggest("false");
+                                            suggestions = new String[]{"true", "false"};
                                         } else if (value instanceof Enum<?> enumValue) {
-                                            for (Enum<?> valueOfEnum : enumValue.getClass().getEnumConstants()) {
-                                                builder1.suggest(valueOfEnum.toString());
+                                            Enum<?>[] enums = enumValue.getClass().getEnumConstants();
+                                            suggestions = new String[enums.length];
+                                            for (int i = 0; i < enums.length; i++) {
+                                                suggestions[i] = enums[i].toString();
                                             }
                                         } else {
                                             return Suggestions.empty();
                                         }
-                                        return builder1.buildFuture();
+                                        return SharedSuggestionProvider.suggest(suggestions, builder1);
                                     }).executes(ctx -> {
                                         PistonLib.getConfigManager().saveValueFromCommand(parsedValue, ctx.getSource(),
                                                 StringArgumentType.getString(ctx, "new value"));
