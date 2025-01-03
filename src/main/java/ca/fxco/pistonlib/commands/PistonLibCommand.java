@@ -43,7 +43,8 @@ import java.util.*;
 
 public class PistonLibCommand implements Command {
 
-    private static final DynamicCommandExceptionType ERROR_CANNOT_CHANGE_PISTON_MOVE_BEHAVIOR = new DynamicCommandExceptionType(o -> Component.translatable("commands.pistonlib.behavior.illegalChange", o));
+    private static final DynamicCommandExceptionType CANNOT_CHANGE_MOVE_BEHAVIOR = new DynamicCommandExceptionType(
+            o -> Component.translatable("commands.pistonlib.behavior.illegalChange", o));
 
     @Override
     public void register(CommandDispatcher<CommandSourceStack> dispatcher,
@@ -56,20 +57,31 @@ public class PistonLibCommand implements Command {
                         .requires(source -> source.hasPermission(4))))
                 .then(Commands.literal("behavior").requires(source -> source.hasPermission(4))
                         .then(Commands.argument("block", BlockStateArgument.block(registryAccess))
-                                .executes(context -> queryBehavior(context.getSource(), BlockStateArgument.getBlock(context, "block")))
+                                .executes(context -> queryBehavior(
+                                        context.getSource(), BlockStateArgument.getBlock(context, "block")
+                                ))
                                 .then(Commands.literal("default")
-                                        .executes(ctx -> setBehaviorOverride(ctx.getSource(), BlockStateArgument.getBlock(ctx, "block"), PistonMoveBehavior.DEFAULT))
+                                        .executes(ctx -> setBehaviorOverride(
+                                                ctx.getSource(),
+                                                BlockStateArgument.getBlock(ctx, "block"),
+                                                PistonMoveBehavior.DEFAULT
+                                        ))
                                 )
                                 .then(Commands.
                                         argument("behavior", PistonMoveBehaviorArgument.pistonMoveBehavior()).
-                                        executes(context -> setBehaviorOverride(context.getSource(), BlockStateArgument.getBlock(context, "block"), PistonMoveBehaviorArgument.getPistonMoveBehavior(context, "behavior")))
+                                        executes(context -> setBehaviorOverride(
+                                                context.getSource(),
+                                                BlockStateArgument.getBlock(context, "block"),
+                                                PistonMoveBehaviorArgument.getPistonMoveBehavior(context, "behavior")
+                                        ))
                                 )
                         )
                 )
         );
     }
 
-    private LiteralArgumentBuilder<CommandSourceStack> pistonEventSubCommand(CommandBuildContext registryAccess, PistonEventType eventType) {
+    private LiteralArgumentBuilder<CommandSourceStack> pistonEventSubCommand(CommandBuildContext registryAccess,
+                                                                             PistonEventType eventType) {
         return Commands.literal(eventType.name().toLowerCase())
             .executes(ctx ->
                 runPistonEvent(
@@ -144,10 +156,13 @@ public class PistonLibCommand implements Command {
             );
     }
 
-    private static int runPistonEvent(CommandSourceStack commandSourceStack, GlobalPos globalPos, Direction facing, BlockInput blockInput, PistonEventType eventType) throws CommandSyntaxException {
+    private static int runPistonEvent(CommandSourceStack commandSourceStack, GlobalPos globalPos, Direction facing,
+                                      BlockInput blockInput, PistonEventType eventType) throws CommandSyntaxException {
         Block block = blockInput == null ? ModBlocks.BASIC_STICKY_PISTON : blockInput.getState().getBlock();
         if (!(block instanceof BasicPistonBaseBlock basicPistonBaseBlock)) {
-            throw new SimpleCommandExceptionType(Component.translatable("commands.pistonlib.notPistonBlock", block)).create();
+            throw new SimpleCommandExceptionType(
+                    Component.translatable("commands.pistonlib.notPistonBlock", block)
+            ).create();
         }
         BlockPos blockPos;
         ServerLevel serverLevel;
@@ -190,12 +205,23 @@ public class PistonLibCommand implements Command {
             return 0;
         }
         facing = facing.getOpposite();
-        serverLevel.pl$addPistonEvent(basicPistonBaseBlock, isPush ? blockPos.relative(facing) : blockPos, facing.getOpposite(), isPush);
-        commandSourceStack.sendSuccess(Component.translatable("commands.pistonlib." + eventType.name().toLowerCase() + ".success", blockPos.getX(), blockPos.getY(), blockPos.getZ(), facing.getName()), true);
+        serverLevel.pl$addPistonEvent(
+                basicPistonBaseBlock,
+                isPush ? blockPos.relative(facing) : blockPos,
+                facing.getOpposite(),
+                isPush
+        );
+        commandSourceStack.sendSuccess(Component.translatable(
+                "commands.pistonlib." + eventType.name().toLowerCase() + ".success",
+                blockPos.getX(), blockPos.getY(), blockPos.getZ(),
+                facing.getName()
+        ), true);
         return 1;
     }
 
-    private static LiteralArgumentBuilder<CommandSourceStack> addOptionArgs(LiteralArgumentBuilder<CommandSourceStack> builder) {
+    private static LiteralArgumentBuilder<CommandSourceStack> addOptionArgs(
+            LiteralArgumentBuilder<CommandSourceStack> builder
+    ) {
         PistonLib.getConfigManager().getParsedValues().forEach(parsedValue ->
             builder.then(Commands.literal(parsedValue.getName())
                     .executes(ctx -> {
@@ -262,13 +288,15 @@ public class PistonLibCommand implements Command {
                         append(" (").
                         append(override.isPresent() ? "modified" : "vanilla").
                         append(")").
-                        withStyle(override.isPresent() ? ChatFormatting.GOLD : ChatFormatting.GREEN, ChatFormatting.BOLD));
+                        withStyle(override.isPresent() ?
+                                ChatFormatting.GOLD : ChatFormatting.GREEN, ChatFormatting.BOLD));
         source.sendSuccess(message, false);
 
         return 1;
     }
 
-    private static int setBehaviorOverride(CommandSourceStack source, BlockInput input, PistonMoveBehavior override) throws CommandSyntaxException {
+    private static int setBehaviorOverride(CommandSourceStack source, BlockInput input, PistonMoveBehavior override)
+            throws CommandSyntaxException {
         BlockState state = input.getState();
         Collection<Property<?>> properties = input.getDefinedProperties();
         Collection<BlockState> states = collectMatchingBlockStates(state, properties);
@@ -288,20 +316,23 @@ public class PistonLibCommand implements Command {
                 append(" to ").
                 append(Component.
                         literal(override.getName()).
-                        withStyle(override == PistonMoveBehavior.DEFAULT ? ChatFormatting.GREEN : ChatFormatting.GOLD, ChatFormatting.BOLD));
+                        withStyle(override == PistonMoveBehavior.DEFAULT ?
+                                ChatFormatting.GREEN : ChatFormatting.GOLD, ChatFormatting.BOLD));
 
         source.sendSuccess(message, true);
 
         return 1;
     }
 
-    private static Collection<BlockState> collectMatchingBlockStates(BlockState state, Collection<Property<?>> properties) throws CommandSyntaxException {
+    private static Collection<BlockState> collectMatchingBlockStates(
+            BlockState state, Collection<Property<?>> properties
+    ) throws CommandSyntaxException {
         Collection<BlockState> states = new LinkedList<>();
 
         for (BlockState blockState : state.getBlock().getStateDefinition().getPossibleStates()) {
             if (blockStatesMatchProperties(state, blockState, properties)) {
                 if (!PistonLibBehaviorManager.canChangeOverride(blockState)) {
-                    throw ERROR_CANNOT_CHANGE_PISTON_MOVE_BEHAVIOR.create(BlockUtils.blockStateAsString(blockState));
+                    throw CANNOT_CHANGE_MOVE_BEHAVIOR.create(BlockUtils.blockStateAsString(blockState));
                 }
 
                 states.add(blockState);
@@ -311,7 +342,8 @@ public class PistonLibCommand implements Command {
         return states;
     }
 
-    private static boolean blockStatesMatchProperties(BlockState state1, BlockState state2, Collection<Property<?>> properties) {
+    private static boolean blockStatesMatchProperties(BlockState state1, BlockState state2,
+                                                      Collection<Property<?>> properties) {
         for (Property<?> property : properties) {
             if (state1.getValue(property) != state2.getValue(property)) {
                 return false;
