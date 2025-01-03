@@ -95,4 +95,12 @@ public @interface ConfigValue {
      * @since 1.0.4
      */
     Class<? extends Observer>[] observer() default {};
+
+    /**
+     * Things to suggest in config command
+     *
+     * @since 1.0.4
+     */
+    String[] suggestions() default {};
+
 }

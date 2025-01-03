@@ -7,8 +7,10 @@ import java.util.function.Consumer;
 import ca.fxco.api.pistonlib.PistonLibInitializer;
 import ca.fxco.api.pistonlib.config.ConfigFieldEntrypoint;
 import ca.fxco.api.pistonlib.config.ConfigManager;
+import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyGroups;
 import ca.fxco.pistonlib.base.*;
 import ca.fxco.api.pistonlib.config.ConfigManagerEntrypoint;
+import ca.fxco.pistonlib.helpers.PistonLibBehaviorManager;
 import ca.fxco.pistonlib.network.PLNetwork;
 import lombok.Getter;
 import net.fabricmc.loader.api.FabricLoader;
@@ -61,6 +63,11 @@ public class PistonLib implements ModInitializer, PistonLibInitializer {
                     customParsedValues
             );
         }
+        PistonLibBehaviorManager.load();
+    }
+
+    public static void onStopServer() {
+        PistonLibBehaviorManager.save(false);
     }
 
     @Override
@@ -71,6 +78,7 @@ public class PistonLib implements ModInitializer, PistonLibInitializer {
     @Override
     public void registerStickyGroups() {
         ModStickyGroups.bootstrap();
+        StickyGroups.bootstrap();
     }
 
     @Override
@@ -81,6 +89,8 @@ public class PistonLib implements ModInitializer, PistonLibInitializer {
         ModCreativeModeTabs.bootstrap();
         ModMenus.boostrap();
         ModScreens.boostrap();
+        ModArgumentTypes.bootstrap();
+        ModCommands.bootstrap();
     }
 
     private void initialize(Consumer<PistonLibInitializer> invoker) {

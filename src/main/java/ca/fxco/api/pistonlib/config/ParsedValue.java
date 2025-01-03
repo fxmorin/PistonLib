@@ -33,11 +33,13 @@ public class ParsedValue<T> {
     protected final T defaultValue; // Set by the recommended option
     protected final Parser<T>[] parsers;
     protected final Observer<T>[] observers;
+    protected final String[] suggestions;
     protected final ConfigManager configManager;
+    protected T valueToSave;
 
     public ParsedValue(Field field, String desc, String[] more, String[] keywords, Category[] categories,
-                       String[] requires, String[] conflicts, boolean requiresRestart, int[] fixes,
-                       Parser<?>[] parsers, Observer<?>[] observers, ConfigManager configManager) {
+                       String[] requires, String[] conflicts, boolean requiresRestart, int[] fixes, Parser<?>[] parsers,
+                       Observer<?>[] observers, String[] suggestions, ConfigManager configManager) {
         this.field = field;
         this.name = field.getName();
         this.description = desc;
@@ -50,8 +52,10 @@ public class ParsedValue<T> {
         this.fixes = ImmutableIntArray.copyOf(fixes);
         this.parsers = (Parser<T>[]) parsers;
         this.observers = (Observer<T>[]) observers;
+        this.suggestions = suggestions;
         this.defaultValue = getValue();
         this.configManager = configManager;
+        this.valueToSave = getValue();
     }
 
     /**
@@ -90,7 +94,10 @@ public class ParsedValue<T> {
                         value = parser.modify(this, value, false);
                     }
                 }
-                this.field.set(null, value);
+                if (!requiresRestart) {
+                    this.field.set(null, value);
+                }
+                this.valueToSave = value;
                 for (Observer<T> observer : this.observers) {
                     if (load) {
                         observer.onLoad(this, isDefaultValue());
@@ -130,7 +137,7 @@ public class ParsedValue<T> {
     protected void setValueFromConfig(Object value) {
         T newValue = ConfigUtils.loadValueFromConfig(value, this);
         if (newValue == null) {
-            newValue = configManager.tryLoadingValue(value, this);
+            newValue = this.configManager.tryLoadingValue(value, this);
         }
         if (newValue != null) {
             for (Parser<T> parser : this.parsers) {
@@ -145,7 +152,7 @@ public class ParsedValue<T> {
      * @since 1.0.4
      */
     protected Object getValueForConfig() {
-        return configManager.trySavingValue(this.getValue(), this);
+        return this.configManager.trySavingValue(this.getValueToSave(), this);
     }
 
     /**
