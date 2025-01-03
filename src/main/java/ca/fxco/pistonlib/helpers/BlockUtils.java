@@ -49,9 +49,14 @@ public class BlockUtils {
     }
 
     public static Block blockFromString(String string) {
+        if (string.startsWith("\"")) {
+            string = string.substring(1, string.length() - 1);
+        }
         try {
             return BuiltInRegistries.BLOCK.get(new ResourceLocation(string));
-        } catch (ResourceLocationException ignored) {}
+        } catch (ResourceLocationException e) {
+            e.printStackTrace();
+        }
 
         return null;
     }
@@ -105,6 +110,9 @@ public class BlockUtils {
     }
 
     public static Map<Property<?>, String> propertiesFromString(Block block, String string) {
+        if (string.startsWith("\"")) {
+            string = string.substring(1, string.length() - 1);
+        }
         if (!string.startsWith("[") || !string.endsWith("]")) {
             return null;
         }
