@@ -39,9 +39,11 @@ public class PistonLibBehaviorManager {
         }
     }
 
-    private static void initOverrides() {
-        for (Block block : BuiltInRegistries.BLOCK) {
-            initOverrides(block, PistonMoveBehavior.DEFAULT);
+    private static void initOverrides(boolean resetAll) {
+        if (resetAll) {
+            for (Block block : BuiltInRegistries.BLOCK) {
+                initOverrides(block, PistonMoveBehavior.DEFAULT);
+            }
         }
 
         initOverrides(Blocks.MOVING_PISTON, PistonMoveBehavior.BLOCK);
@@ -63,7 +65,7 @@ public class PistonLibBehaviorManager {
     public static void load() {
         LOGGER.info("Loading PistonLib move behavior overrides...");
 
-        initOverrides();
+        initOverrides(false);
         Config.load();
         dirty = false;
     }
@@ -150,7 +152,7 @@ public class PistonLibBehaviorManager {
                 saveOverrides(block, serializedValues);
             });
 
-            if (serializedValues.size() == 0) {
+            if (serializedValues.isEmpty()) {
                 return; // nothing to save
             }
 
