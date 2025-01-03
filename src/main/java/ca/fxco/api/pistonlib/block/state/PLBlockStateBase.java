@@ -2,6 +2,7 @@ package ca.fxco.api.pistonlib.block.state;
 
 import java.util.Map;
 
+import ca.fxco.api.pistonlib.pistonLogic.PistonMoveBehavior;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.datafixers.util.Pair;
@@ -28,7 +29,7 @@ import net.minecraft.world.level.block.state.BlockState;
  */
 @SuppressWarnings("deprecation")
 public interface PLBlockStateBase extends BlockStatePistonBehavior,
-        BlockStatePistonMerging, BlockStatePistonStickiness, BlockStateQuasiPower {
+        BlockStatePistonMerging, BlockStatePistonStickiness, BlockStateQuasiPower, BlockStateMoveBehavior {
 
     /**
      * For internal use - this method is equivalent to
@@ -50,6 +51,23 @@ public interface PLBlockStateBase extends BlockStatePistonBehavior,
      */
     default BlockState pl$asState() {
         throw new UnsupportedOperationException();
+    }
+
+    // BlockStateMoveBehavior
+
+    @Override
+    default boolean pl$canOverridePistonMoveBehavior() {
+        return this.pl$getBlock().pl$canOverridePistonMoveBehavior();
+    }
+
+    @Override
+    default void pl$setPistonMoveBehaviorOverride(PistonMoveBehavior override) {
+        this.pl$getBlock().pl$setPistonMoveBehaviorOverride(override);
+    }
+
+    @Override
+    default PistonMoveBehavior pl$getPistonMoveBehaviorOverride() {
+        return this.pl$getBlock().pl$getPistonMoveBehaviorOverride();
     }
 
 
