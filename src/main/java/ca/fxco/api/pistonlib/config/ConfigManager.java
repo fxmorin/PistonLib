@@ -1,9 +1,11 @@
 package ca.fxco.api.pistonlib.config;
 
+import ca.fxco.api.pistonlib.config.*;
 import ca.fxco.pistonlib.helpers.Utils;
 import com.moandjiezana.toml.Toml;
 import com.moandjiezana.toml.TomlWriter;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.commands.CommandSourceStack;
 import org.apache.commons.lang3.SerializationException;
 import org.jetbrains.annotations.Nullable;
 
@@ -151,6 +153,7 @@ public class ConfigManager implements ConfigManagerEntrypoint {
                             configValue.fixes(),
                             parsers,
                             observers,
+                            configValue.suggestions(),
                             this
                     );
                     parsedValues.put(parsedValue.getName(), parsedValue);
@@ -206,6 +209,24 @@ public class ConfigManager implements ConfigManagerEntrypoint {
         } catch (IOException e) {
             throw new SerializationException(e);
         }
+    }
+
+    public void resetAndSaveValue(ParsedValue<?> value) {
+        value.reset();
+        writeValuesToConf();
+    }
+
+    public void saveValueFromCommand(ParsedValue<?> value, CommandSourceStack source, String inputValue) {
+        value.parseValue(source, inputValue);
+        writeValuesToConf();
+    }
+
+    public ParsedValue<?> getParsedValue(String valueName) {
+        return parsedValues.get(valueName);
+    }
+
+    public Collection<ParsedValue<?>> getParsedValues() {
+        return parsedValues.values();
     }
 
     @Override

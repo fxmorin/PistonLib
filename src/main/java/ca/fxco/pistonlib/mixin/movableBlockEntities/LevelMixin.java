@@ -9,6 +9,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -17,15 +18,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(Level.class)
 public class LevelMixin implements PLLevel {
 
+    @Unique
     private final Stack<BlockEntity> pl$queuedBlockEntities = new Stack<>();
 
+    @Unique
     private BlockEntity pl$nextBlockEntity;
 
     @Inject(
         method = "setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;II)Z",
         at = @At(
             value = "INVOKE",
-            target = "Lnet/minecraft/world/level/chunk/LevelChunk;setBlockState(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Z)Lnet/minecraft/world/level/block/state/BlockState;"
+            target = "Lnet/minecraft/world/level/chunk/LevelChunk;setBlockState(Lnet/minecraft/core/BlockPos;" +
+                    "Lnet/minecraft/world/level/block/state/BlockState;Z)" +
+                    "Lnet/minecraft/world/level/block/state/BlockState;"
         )
     )
     private void pl$pushBlockEntity(CallbackInfoReturnable<Boolean> cir) {
@@ -38,7 +43,9 @@ public class LevelMixin implements PLLevel {
         at = @At(
             value = "INVOKE",
             shift = Shift.AFTER,
-            target = "Lnet/minecraft/world/level/chunk/LevelChunk;setBlockState(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Z)Lnet/minecraft/world/level/block/state/BlockState;"
+            target = "Lnet/minecraft/world/level/chunk/LevelChunk;setBlockState(Lnet/minecraft/core/BlockPos;" +
+                    "Lnet/minecraft/world/level/block/state/BlockState;Z)" +
+                    "Lnet/minecraft/world/level/block/state/BlockState;"
         )
     )
     private void pl$popBlockEntity(CallbackInfoReturnable<Boolean> cir) {

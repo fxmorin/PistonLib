@@ -1,6 +1,7 @@
 package ca.fxco.pistonlib.pistonLogic.controller;
 
 import ca.fxco.api.pistonlib.pistonLogic.PistonEvents;
+import ca.fxco.api.pistonlib.pistonLogic.PistonMoveBehavior;
 import ca.fxco.api.pistonlib.pistonLogic.controller.PistonController;
 import ca.fxco.api.pistonlib.pistonLogic.structure.StructureRunner;
 import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
@@ -10,6 +11,7 @@ import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonArmBlock;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonHeadBlock;
+import ca.fxco.pistonlib.helpers.PistonLibBehaviorManager;
 import ca.fxco.pistonlib.helpers.Utils;
 import ca.fxco.pistonlib.pistonLogic.structureResolvers.BasicStructureResolver;
 import ca.fxco.pistonlib.pistonLogic.structureResolvers.MergingPistonStructureResolver;
@@ -325,29 +327,49 @@ public class VanillaPistonController implements PistonController {
             }
         } else {
             if (state.is(ModTags.UNPUSHABLE)) {
-                return false;
-            } else if (state.is(ModTags.PISTONS)) {
-                if (state.getValue(EXTENDED)) {
+                if (PistonLibConfig.behaviorOverrideApi) {
+                    PistonMoveBehavior override = PistonLibBehaviorManager.getOverride(state);
+                    if (!override.isPresent()) {
+                        return false;
+                    }
+                } else {
                     return false;
                 }
-            } else { // Pistons shouldn't be checked against destroy speed or PistonPushReaction
-                if (state.getDestroySpeed(level, pos) == -1.0F) {
+            }
+            if (state.is(ModTags.PISTONS)) {
+                if (PistonLibConfig.behaviorOverrideApi) {
+                    PistonMoveBehavior override = PistonLibBehaviorManager.getOverride(state);
+                    if (!override.isPresent()) {
+                        return !state.getValue(EXTENDED) && canMoveBlock(state);
+                    }
+                } else {
+                    return !state.getValue(EXTENDED) && canMoveBlock(state);
+                }
+            } else if (state.getDestroySpeed(level, pos) == -1.0F) {
+                if (PistonLibConfig.behaviorOverrideApi) {
+                    PistonMoveBehavior override = PistonLibBehaviorManager.getOverride(state);
+                    if (!override.isPresent()) {
+                        return false;
+                    }
+                } else {
                     return false;
                 }
-                switch (state.getPistonPushReaction()) {
-                    case BLOCK -> { return false; }
-                    case DESTROY -> {
-                        if (!allowDestroy) {
-                            return false;
-                        }
+            }
+
+            // Pistons shouldn't be checked against destroy speed or PistonPushReaction, unless using custom override
+            switch (state.getPistonPushReaction()) {
+                case BLOCK -> { return false; }
+                case DESTROY -> {
+                    if (!allowDestroy) {
+                        return false;
                     }
-                    case PUSH_ONLY -> {
-                        if (moveDir != pistonFacing) {
-                            return false;
-                        }
-                    }
-                    default -> { }
                 }
+                case PUSH_ONLY -> {
+                    if (moveDir != pistonFacing) {
+                        return false;
+                    }
+                }
+                default -> { }
             }
         }
 

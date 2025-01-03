@@ -4,6 +4,7 @@
   "package": "ca.fxco.pistonlib.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "MinecraftServer_savingMixin",
     "BlockBehaviour_coreMixin",
     "BlockProperties_coreMixin",
     "BlockStateBase_coreMixin",
@@ -14,6 +15,8 @@
     "PistonBaseBlock_tagsMixin",
     "ServerLevel_interactionMixin",
     "accessors.BlockEntityAccessor",
+    "behavior.MovingPistonBlock_behaviorMixin",
+    "behavior.PistonBaseBlock_behaviorMixin",
     "blockEntity.LevelChunk_blockEntityMixin",
     "blockEntity.PistonMovingBlockEntity_waterloggedMixin",
     "blockEntity.ServerLevel_blockEntityMixin",
