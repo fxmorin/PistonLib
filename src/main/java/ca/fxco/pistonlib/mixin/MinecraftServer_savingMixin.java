@@ -16,7 +16,7 @@ public class MinecraftServer_savingMixin {
             method = "stopServer",
             at = @At("HEAD")
     )
-    private void onStopServer(CallbackInfo ci) {
+    private void pl$onStopServer(CallbackInfo ci) {
         PistonLib.onStopServer();
     }
 
@@ -24,8 +24,8 @@ public class MinecraftServer_savingMixin {
             method = "saveEverything",
             at = @At("HEAD")
     )
-    private void savePistonMoveBehaviorOverrides(boolean quietly, boolean bl1, boolean bl2,
-                                                 CallbackInfoReturnable<Boolean> cir) {
+    private void pl$savePistonMoveBehaviorOverrides(boolean quietly, boolean bl1, boolean bl2,
+                                                    CallbackInfoReturnable<Boolean> cir) {
         PistonLibBehaviorManager.save(quietly);
     }
 }

@@ -35,7 +35,7 @@ public class PistonBaseBlock_behaviorMixin {
                             "is(Lnet/minecraft/world/level/block/Block;)Z"
             )
     )
-    private static boolean overrideObsidianPushReaction(BlockState state, Block block) {
+    private static boolean pl$overrideObsidianPushReaction(BlockState state, Block block) {
         // Several blocks are made immovable with explicit checks. To override the
         // push reaction of these blocks we make these checks fail.
         if (state.is(block)) {
@@ -55,7 +55,7 @@ public class PistonBaseBlock_behaviorMixin {
                             "getDestroySpeed(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)F"
             )
     )
-    private static float overrideBedrockPushReaction(BlockState state, BlockGetter level, BlockPos pos) {
+    private static float pl$overrideBedrockPushReaction(BlockState state, BlockGetter level, BlockPos pos) {
         // Several blocks are made immovable due to having "negative mining speed".
         // To override the push reaction of these blocks we return a non-negative
         // mining speed instead.
@@ -87,9 +87,9 @@ public class PistonBaseBlock_behaviorMixin {
                             "is(Lnet/minecraft/world/level/block/Block;)Z"
             )
     )
-    private static boolean overridePistonPushReaction(BlockState blockState, Block block, BlockState state,
-                                                      Level level, BlockPos pos, Direction moveDir,
-                                                      boolean allowDestroy, Direction pistonFacing) {
+    private static boolean pl$overridePistonPushReaction(BlockState blockState, Block block, BlockState state,
+                                                         Level level, BlockPos pos, Direction moveDir,
+                                                         boolean allowDestroy, Direction pistonFacing) {
         return state.is(block) &&
                 (!PistonLibConfig.behaviorOverrideApi || !PistonLibBehaviorManager.getOverride(state).isPresent());
     }

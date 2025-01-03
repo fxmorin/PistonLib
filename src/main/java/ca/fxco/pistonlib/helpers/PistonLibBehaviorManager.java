@@ -83,7 +83,8 @@ public class PistonLibBehaviorManager {
 
     public static class Config {
 
-        public static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("pistonlib_behavior_overrides.toml");
+        public static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir()
+                .resolve("pistonlib_behavior_overrides.toml");
         private static final TomlWriter WRITER = new TomlWriter();
 
         public static void load() {
@@ -122,18 +123,21 @@ public class PistonLibBehaviorManager {
             BlockState state = BlockUtils.blockStateFromString(block, blockStateString);
 
             if (state == null) {
-                LOGGER.info("ignoring piston move behavior overrides for unknown block state " + blockStateString + " of block " + block);
+                LOGGER.info("ignoring piston move behavior overrides for unknown block state {} of block {}",
+                        blockStateString, block);
                 return;
             }
             if (!canChangeOverride(state)) {
-                LOGGER.info("ignoring piston move behavior override for block state " + blockStateString + " of block " + block + ": not allowed to change overrides");
+                LOGGER.info("ignoring piston move behavior override for block state " + blockStateString +
+                        " of block " + block + ": not allowed to change overrides");
                 return;
             }
 
             PistonMoveBehavior override = PistonMoveBehavior.fromName(behaviorString);
 
             if (override == null) {
-                LOGGER.info("Unknown PistonLib behavior `" + behaviorString + "` given for block state `" + blockStateString + "` of block `" + block + "`");
+                LOGGER.info("Unknown PistonLib behavior `" + behaviorString + "` given for block state `" +
+                        blockStateString + "` of block `" + block + "`");
                 return;
             }
 
@@ -158,11 +162,6 @@ public class PistonLibBehaviorManager {
 
             try {
                 Files.createDirectories(CONFIG_PATH.getParent());
-                //Map<String, Object> savedValues = new HashMap<>();
-                //for (Map.Entry<String, Map<String, String>> entry : serializedValues.entrySet()) {
-                //    savedValues.put(entry.getKey(), entry.getValue().getValue());
-                //}
-                //WRITER.write(savedValues, configPath.toFile());
                 WRITER.write(serializedValues, CONFIG_PATH.toFile());
             } catch (IOException e) {
                 throw new SerializationException(e);
