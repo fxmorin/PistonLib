@@ -50,4 +50,12 @@ public class StickyGroups {
     public static ResourceLocation getId(StickyGroup group) {
         return ModRegistries.STICKY_GROUP.getKey(group);
     }
+
+    /**
+     * Bootstrap default sticky groups
+     *
+     * @since 1.0.4
+     */
+    public static void bootstrap() { }
+
 }
