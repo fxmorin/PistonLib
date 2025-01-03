@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 import ca.fxco.api.pistonlib.PistonLibInitializer;
 import ca.fxco.api.pistonlib.config.ConfigFieldEntrypoint;
 import ca.fxco.api.pistonlib.config.ConfigManager;
+import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyGroups;
 import ca.fxco.pistonlib.base.*;
 import ca.fxco.api.pistonlib.config.ConfigManagerEntrypoint;
 import ca.fxco.pistonlib.network.PLNetwork;
@@ -71,6 +72,7 @@ public class PistonLib implements ModInitializer, PistonLibInitializer {
     @Override
     public void registerStickyGroups() {
         ModStickyGroups.bootstrap();
+        StickyGroups.bootstrap();
     }
 
     @Override
