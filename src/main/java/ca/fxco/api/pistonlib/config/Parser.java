@@ -1,9 +1,13 @@
 package ca.fxco.api.pistonlib.config;
 
-import ca.fxco.pistonlib.config.ParsedValue;
 import net.minecraft.commands.CommandSourceStack;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * will make sure that the config value is valid, and will convert string inputs to a valid type.
+ * used to parse custom objects
+ * @param <T> object to parse string into
+ */
 public interface Parser<T> {
 
     /**
@@ -12,6 +16,7 @@ public interface Parser<T> {
      * @param source is only set when config option is being parsed from a command
      * @param inputValue the string value being parsed
      * @param currentValue the current parsed value of that config option
+     * @since 1.0.4
      */
     T parse(@Nullable CommandSourceStack source, String inputValue, ParsedValue<T> currentValue);
 
@@ -21,6 +26,7 @@ public interface Parser<T> {
      * @param valueToSet this is the value that is about to be set
      * @param config this is true when the value was loaded from the config file
      * @return The new value to be used
+     * @since 1.0.4
      */
     default T modify(ParsedValue<T> currentValue, T valueToSet, boolean config) {
         return valueToSet;

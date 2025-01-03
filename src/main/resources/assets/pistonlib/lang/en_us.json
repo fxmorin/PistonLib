@@ -33,5 +33,12 @@
   "block.pistonlib.half_obsidian": "Half Obsidian",
   "block.pistonlib.half_redstone": "Half Redstone",
   "block.pistonlib.half_redstone_lamp": "Half Redstone Lamp",
-  "container.pistonlib.auto_crafting_block": "Auto Crafting Block"
+  "container.pistonlib.auto_crafting_block": "Auto Crafting Block",
+  "commands.pistonlib.push.success": "Triggered push event at %s, %s, %s facing %s",
+  "commands.pistonlib.pull.success": "Triggered pull event at %s, %s, %s facing %s",
+  "commands.pistonlib.config.value": "Option %s is currently set to: %s",
+  "commands.pistonlib.config.success": "Option %s is now set to: %s",
+  "commands.pistonlib.config.success.restart": "After restart option %s will be set to: %s",
+  "commands.pistonlib.notPistonBlock": "Invalid piston block '%s'",
+  "argument.pistonlib.direction.invalid": "Unknown direction '%s'"
 }

@@ -2,19 +2,16 @@ package ca.fxco.pistonlib.blocks.pistons.basePiston;
 
 import java.util.*;
 
-import ca.fxco.api.pistonlib.impl.PistonTicking;
+import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamilies;
+import ca.fxco.api.pistonlib.block.MovingTickable;
+import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
+import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyType;
+import ca.fxco.api.pistonlib.pistonLogic.structure.StructureGroup;
 import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.base.ModBlocks;
-import ca.fxco.pistonlib.base.ModPistonFamilies;
-import ca.fxco.pistonlib.impl.BlockEntityPostLoad;
 import ca.fxco.pistonlib.mixin.accessors.BlockEntityAccessor;
-import ca.fxco.pistonlib.pistonLogic.accessible.ConfigurablePistonStickiness;
-import ca.fxco.pistonlib.pistonLogic.families.PistonFamily;
-import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
-
 import ca.fxco.pistonlib.pistonLogic.structureGroups.LoadingStructureGroup;
 import ca.fxco.pistonlib.pistonLogic.structureGroups.ServerStructureGroup;
-import ca.fxco.pistonlib.pistonLogic.structureGroups.StructureGroup;
 import it.unimi.dsi.fastutil.Pair;
 import lombok.Getter;
 import lombok.Setter;
@@ -45,7 +42,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.apache.commons.lang3.mutable.MutableObject;
 import org.jetbrains.annotations.Nullable;
 
-public class BasicMovingBlockEntity extends PistonMovingBlockEntity implements BlockEntityPostLoad {
+public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
 
     protected final PistonType type;
 
@@ -384,10 +381,8 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity implements B
             this.finishMovement(removeSource);
 
             if (!skipStickiness && PistonLibConfig.strongBlockDropping) {
-                ConfigurablePistonStickiness stick = (ConfigurablePistonStickiness) this.movedState.getBlock();
-
-                if (stick.usesConfigurablePistonStickiness() && stick.isSticky(this.movedState)) {
-                    this.finalTickStuckNeighbors(stick.stickySides(this.movedState));
+                if (this.movedState.pl$usesConfigurablePistonStickiness() && this.movedState.pl$isSticky()) {
+                    this.finalTickStuckNeighbors(this.movedState.pl$stickySides());
                 }
             }
 
@@ -400,9 +395,6 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity implements B
         tickMovement();
     }
 
-    /**
-     * @return true if it finished movement
-     */
     public void tickStart() {
         this.lastTicked = this.level.getGameTime();
         this.progressO = this.progress;
@@ -445,8 +437,8 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity implements B
     }
 
     protected void onMovingTick(Direction movingDirection, float speed) {
-        if (this.movedState.getBlock() instanceof PistonTicking pistonTicking) {
-            pistonTicking.onMovingTick(this.level, this.movedState, this.worldPosition, movingDirection, this.progressO, speed, false);
+        if (this.movedState.getBlock() instanceof MovingTickable tickable) {
+            tickable.pl$movingTick(this.level, this.movedState, this.worldPosition, movingDirection, this.progressO, speed, false);
         }
     }
 
@@ -492,12 +484,12 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity implements B
     }
 
     @Override
-    public boolean shouldPostLoad() {
+    public boolean pl$shouldPostLoad() {
         return this.isGroupController && this.structureGroup != null && !this.structureGroup.hasInitialized();
     }
 
     @Override
-    public void onPostLoad() {
+    public void pl$onPostLoad() {
         if (this.structureGroup != null && this.structureGroup instanceof LoadingStructureGroup loadingStructureGroup) {
             ServerStructureGroup controllerStructure = StructureGroup.create(this.level);
             controllerStructure.load(this.level, loadingStructureGroup.getBlockPosList());
@@ -507,7 +499,7 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity implements B
 
     @Override
     public void load(CompoundTag nbt) {
-        this.setFamily(ModPistonFamilies.get(new ResourceLocation(nbt.getString("family"))));
+        this.setFamily(PistonFamilies.get(new ResourceLocation(nbt.getString("family"))));
         this.movedState = NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), nbt.getCompound("blockState"));
         this.direction = Direction.from3DDataValue(nbt.getInt("facing"));
         this.progress = nbt.getFloat("progress");
@@ -528,7 +520,7 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity implements B
 
     @Override
     public void saveAdditional(CompoundTag nbt) {
-        nbt.putString("family", ModPistonFamilies.getId(this.family).toString());
+        nbt.putString("family", PistonFamilies.getId(this.family).toString());
         nbt.put("blockState", NbtUtils.writeBlockState(this.movedState));
         nbt.putInt("facing", this.direction.get3DDataValue());
         if (PistonLibConfig.pistonProgressFix) {
@@ -568,7 +560,7 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity implements B
 
     protected BlockState getStaticStateForCollisionShape() {
         if (!this.extending && this.isSourcePiston && this.movedState.getBlock() instanceof BasicPistonBaseBlock) {
-            return this.movedState.setValue(BasicPistonBaseBlock.EXTENDED, true);
+            return this.movedState.setValue(BlockStateProperties.EXTENDED, true);
         } else {
             return Blocks.AIR.defaultBlockState();
         }
@@ -587,14 +579,5 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity implements B
     @Override
     public long getLastTicked() {
         return this.lastTicked;
-    }
-
-    @FunctionalInterface
-    public interface Factory<T extends BasicMovingBlockEntity> {
-
-        T create(PistonFamily family, StructureGroup structureGroup, BlockPos pos, BlockState state,
-                 BlockState movedState, BlockEntity movedBlockEntity, Direction facing, boolean extending,
-                 boolean isSourcePiston);
-
     }
 }

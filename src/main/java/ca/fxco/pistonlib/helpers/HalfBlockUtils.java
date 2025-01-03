@@ -3,7 +3,7 @@ package ca.fxco.pistonlib.helpers;
 import java.util.HashMap;
 import java.util.Map;
 
-import ca.fxco.pistonlib.pistonLogic.sticky.StickyType;
+import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyType;
 
 import lombok.experimental.UtilityClass;
 import net.minecraft.Util;
@@ -40,12 +40,12 @@ public class HalfBlockUtils {
         return maps;
     });
 
-    protected static final VoxelShape UP_SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 8.0, 16.0);
-    protected static final VoxelShape DOWN_SHAPE = Block.box(0.0, 8.0, 0.0, 16.0, 16.0, 16.0);
-    protected static final VoxelShape NORTH_SHAPE = Block.box(0.0, 0.0, 8.0, 16.0, 16.0, 16.0);
-    protected static final VoxelShape SOUTH_SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 16.0, 8.0);
-    protected static final VoxelShape EAST_SHAPE = Block.box(0.0, 0.0, 0.0, 8.0, 16.0, 16.0);
-    protected static final VoxelShape WEST_SHAPE = Block.box(8.0, 0.0, 0.0, 16.0, 16.0, 16.0);
+    private static final VoxelShape UP_SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 8.0, 16.0);
+    private static final VoxelShape DOWN_SHAPE = Block.box(0.0, 8.0, 0.0, 16.0, 16.0, 16.0);
+    private static final VoxelShape NORTH_SHAPE = Block.box(0.0, 0.0, 8.0, 16.0, 16.0, 16.0);
+    private static final VoxelShape SOUTH_SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 16.0, 8.0);
+    private static final VoxelShape EAST_SHAPE = Block.box(0.0, 0.0, 0.0, 8.0, 16.0, 16.0);
+    private static final VoxelShape WEST_SHAPE = Block.box(8.0, 0.0, 0.0, 16.0, 16.0, 16.0);
 
     public static VoxelShape getSlabShape(Direction facing) {
         return switch(facing) {
