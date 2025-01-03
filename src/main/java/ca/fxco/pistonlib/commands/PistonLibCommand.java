@@ -158,8 +158,17 @@ public class PistonLibCommand implements Command {
             if (hitResult.getType() == HitResult.Type.BLOCK && hitResult instanceof BlockHitResult blockHitResult) {
                 Direction face = blockHitResult.getDirection();
                 blockPos = blockHitResult.getBlockPos();
-                commandSourceStack.getLevel().pl$addPistonEvent(basicPistonBaseBlock, isPush ? blockPos.relative(face) : blockPos, face.getOpposite(), isPush);
-                commandSourceStack.sendSuccess(Component.translatable("commands.pistonlib." + eventType.name().toLowerCase() + ".success", blockPos.getX(), blockPos.getY(), blockPos.getZ(), face.getName()), true);
+                commandSourceStack.getLevel().pl$addPistonEvent(
+                        basicPistonBaseBlock,
+                        isPush ? blockPos.relative(face) : blockPos.relative(face, 2),
+                        face.getOpposite(),
+                        isPush
+                );
+                commandSourceStack.sendSuccess(Component.translatable(
+                        "commands.pistonlib." + eventType.name().toLowerCase() + ".success",
+                        blockPos.getX(), blockPos.getY(), blockPos.getZ(),
+                        face.getName()
+                ), true);
                 return 1;
             } else {
                 if (globalPos == null) {
