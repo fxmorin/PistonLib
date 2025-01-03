@@ -1,6 +1,5 @@
 package ca.fxco.api.pistonlib.config;
 
-import ca.fxco.api.pistonlib.config.*;
 import ca.fxco.pistonlib.helpers.Utils;
 import com.moandjiezana.toml.Toml;
 import com.moandjiezana.toml.TomlWriter;
@@ -18,9 +17,12 @@ import java.nio.file.Path;
 import java.util.*;
 
 /**
- * Config Options should never be changed async. They should be changed near the end of the tick, highly recommended
- * that you do this during the MinecraftServer tickables using minecraftServer.addTickable() or during the network
- * tick. Such as during a packet
+ * Config Options should never be changed async.
+ * They should be changed near the end of the tick,
+ * highly recommended that you do this during the MinecraftServer tickables using
+ * {@code minecraftServer.addTickable()} or during the network tick.
+ * Such as during a packet.
+ *
  * @author FX
  * @since 1.0.4
  */
@@ -47,8 +49,9 @@ public class ConfigManager implements ConfigManagerEntrypoint {
     }
 
     /**
-     * Add pistonlib-configmanager entrypoint to your ConfigManager instance
+     * Add {@code pistonlib-configmanager} entrypoint to your ConfigManager instance
      * which would call this method after all Config Options from other mods are collected
+     *
      * @param modId mod id of the entrypoint provider
      * @param fieldProvider config fields added by other mods to your configManager
      * @since 1.0.4
@@ -72,7 +75,8 @@ public class ConfigManager implements ConfigManagerEntrypoint {
     }
 
     /**
-     * Will add TypeConverters to ConfigManager
+     * Add a TypeConverter to ConfigManager
+     *
      * @see TypeConverter
      * @param converter the TypeConverter to add
      * @since 1.0.4
@@ -82,10 +86,11 @@ public class ConfigManager implements ConfigManagerEntrypoint {
     }
 
     /**
-     * Will try to load value using converter
+     * Try to load value using type converters
+     *
      * @param value default value
      * @param parsedValue parsedValue to load from
-     * @return returns new value or null if config manager doesn't have converters
+     * @return new value or {@code null} if config manager doesn't have converters
      * @since 1.0.4
      */
     public <T> T tryLoadingValue(Object value, ParsedValue<T> parsedValue) {
@@ -99,10 +104,11 @@ public class ConfigManager implements ConfigManagerEntrypoint {
     }
 
     /**
-     * Will try to load value using converter
+     * Try to load value using type converters
+     *
      * @param value value to save
-     * @param parsedValue parsed value to which value will be saved
-     * @return returns new value or null if config manager doesn't have converters
+     * @param parsedValue parsed value to which the value is saved
+     * @return returns new value or {@code null} if config manager doesn't have converters
      * @since 1.0.4
      */
     public <T> Object trySavingValue(T value, ParsedValue<T> parsedValue) {
@@ -116,7 +122,9 @@ public class ConfigManager implements ConfigManagerEntrypoint {
     }
 
     /**
-     * Generates all values from a config class and then loads the config file and sets all there values
+     * Generates all values from a config class,
+     * and then loads the config file and sets all there values
+     *
      * @param fields fields to turn into ConfigValue and then add to parsedValues
      * @since 1.0.4
      */
@@ -165,7 +173,8 @@ public class ConfigManager implements ConfigManagerEntrypoint {
 
     /**
      * Loads values from config file
-     * @return values from config file or null if it doesn't exist
+     *
+     * @return values from config file or {@code null} if it doesn't exist
      * @since 1.0.4
      */
     @SuppressWarnings("unchecked")
@@ -187,7 +196,8 @@ public class ConfigManager implements ConfigManagerEntrypoint {
     }
 
     /**
-     * Writes values to config file
+     * Writes all the values to the config file
+     *
      * @since 1.0.4
      */
     private void writeValuesToConf() {
@@ -211,20 +221,43 @@ public class ConfigManager implements ConfigManagerEntrypoint {
         }
     }
 
+    /**
+     * Resets the parsed value to its default state,
+     * then writes all the values to the config file
+     *
+     * @since 1.0.4
+     */
     public void resetAndSaveValue(ParsedValue<?> value) {
         value.reset();
         writeValuesToConf();
     }
 
+    /**
+     * Sets and saves a value, which was set using the config command.
+     *
+     * @since 1.0.4
+     */
     public void saveValueFromCommand(ParsedValue<?> value, CommandSourceStack source, String inputValue) {
         value.parseValue(source, inputValue);
         writeValuesToConf();
     }
 
+    /**
+     * Gets a config value from its name.
+     *
+     * @return The parsed value associated with this name, or {@code null} if no value was found.
+     * @since 1.0.4
+     */
     public ParsedValue<?> getParsedValue(String valueName) {
         return parsedValues.get(valueName);
     }
 
+    /**
+     * Gets all the config values.
+     *
+     * @return A collection of all the parsed values.
+     * @since 1.0.4
+     */
     public Collection<ParsedValue<?>> getParsedValues() {
         return parsedValues.values();
     }
