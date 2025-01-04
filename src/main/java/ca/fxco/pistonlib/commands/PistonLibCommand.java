@@ -254,7 +254,7 @@ public class PistonLibCommand implements Command {
                                                 StringArgumentType.getString(ctx, "new value"));
                                         ctx.getSource().sendSuccess(Component.translatable(
                                                 "commands.pistonlib.config.success"
-                                                        + (parsedValue.isRequiresRestart() ? ".restart" : ""),
+                                                        + (parsedValue.requiresRestart() ? ".restart" : ""),
                                                 parsedValue.getName(), parsedValue.getValueToSave()), true);
                                         return 1;
                                     })))
@@ -262,7 +262,7 @@ public class PistonLibCommand implements Command {
                         PistonLib.getConfigManager().resetAndSaveValue(parsedValue);
                         ctx.getSource().sendSuccess(Component.translatable(
                                 "commands.pistonlib.config.success"
-                                        + (parsedValue.isRequiresRestart() ? ".restart" : ""),
+                                        + (parsedValue.requiresRestart() ? ".restart" : ""),
                                 parsedValue.getName(), parsedValue.getValueToSave()), true);
                         return 1;
                     }))

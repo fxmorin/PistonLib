@@ -5,11 +5,13 @@ import java.util.*;
 import java.util.function.Consumer;
 
 import ca.fxco.api.pistonlib.PistonLibInitializer;
+import ca.fxco.api.pistonlib.PistonLibSupplier;
 import ca.fxco.api.pistonlib.config.ConfigFieldEntrypoint;
 import ca.fxco.api.pistonlib.config.ConfigManager;
 import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyGroups;
 import ca.fxco.pistonlib.base.*;
 import ca.fxco.api.pistonlib.config.ConfigManagerEntrypoint;
+import ca.fxco.pistonlib.config.ConfigManagerImpl;
 import ca.fxco.pistonlib.helpers.PistonLibBehaviorManager;
 import ca.fxco.pistonlib.network.PLNetwork;
 import ca.fxco.pistonlib.network.packets.ClientboundModifyConfigPacket;
@@ -26,14 +28,14 @@ import net.fabricmc.loader.impl.entrypoint.EntrypointUtils;
 
 import net.minecraft.resources.ResourceLocation;
 
-public class PistonLib implements ModInitializer, PistonLibInitializer {
+public class PistonLib implements ModInitializer, PistonLibInitializer, PistonLibSupplier {
 
     public static final String MOD_ID = "pistonlib";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     public static final boolean DATAGEN_ACTIVE = System.getProperty("fabric-api.datagen") != null;
 
     @Getter
-    private static final ConfigManager configManager = new ConfigManager(MOD_ID, PistonLibConfig.class);
+    private static final ConfigManager configManager = new ConfigManagerImpl(MOD_ID, PistonLibConfig.class);
 
     @Getter
     private static Optional<MinecraftServer> server = Optional.empty();
@@ -46,6 +48,7 @@ public class PistonLib implements ModInitializer, PistonLibInitializer {
     public void onInitialize() {
         ModRegistries.bootstrap();
 
+        initialize(p -> p.initialize(this));
         initialize(PistonLibInitializer::registerPistonFamilies);
         initialize(PistonLibInitializer::registerStickyGroups);
         initialize(PistonLibInitializer::bootstrap);
@@ -93,6 +96,9 @@ public class PistonLib implements ModInitializer, PistonLibInitializer {
     }
 
     @Override
+    public void initialize(PistonLibSupplier supplier) {}
+
+    @Override
     public void registerPistonFamilies() {
         ModPistonFamilies.bootstrap();
     }
@@ -117,5 +123,10 @@ public class PistonLib implements ModInitializer, PistonLibInitializer {
 
     private void initialize(Consumer<PistonLibInitializer> invoker) {
         EntrypointUtils.invoke(MOD_ID, PistonLibInitializer.class, invoker);
+    }
+
+    @Override
+    public ConfigManager createSimpleConfigManager(String modId, Class<?> configClass) {
+        return new ConfigManagerImpl(modId, configClass);
     }
 }

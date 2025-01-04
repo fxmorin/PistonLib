@@ -1,79 +1,120 @@
 package ca.fxco.api.pistonlib.config;
 
-import ca.fxco.api.pistonlib.util.BufferUtils;
-import ca.fxco.pistonlib.PistonLib;
-import ca.fxco.pistonlib.helpers.ConfigUtils;
-import ca.fxco.pistonlib.network.PLNetwork;
-import ca.fxco.pistonlib.network.packets.ClientboundModifyConfigPacket;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
-import com.google.common.primitives.ImmutableIntArray;
-import lombok.Getter;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.FriendlyByteBuf;
 
-import java.lang.reflect.Field;
-import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 /**
- * Holds necessary info about a config field, as well as providing methods to set/get its value
+ * Holds necessary info about a config field,
+ * as well as providing methods to set/get its value
  *
  * @param <T> the class of value
  * @author FX
  * @since 1.0.4
  */
-// TODO: Make this an interface and implement the code outside the API
-@Getter
-public class ParsedValue<T> {
+public interface ParsedValue<T> {
 
-    protected final Field field;
-    protected final String name;
-    protected final String description;
-    protected final String[] moreInfo;
-    protected final Set<String> keywords;
-    protected final Set<Category> categories;
-    protected final String[] requires;
-    protected final String[] conflicts;
-    protected final ImmutableIntArray fixes;
-    protected final boolean requiresRestart;
-    protected final T defaultValue; // Set by the recommended option
-    protected final Parser<T>[] parsers;
-    protected final Observer<T>[] observers;
-    protected final String[] suggestions;
-    protected final ConfigManager configManager;
-    protected T valueToSave;
+    /**
+     * Gets the name of the value.
+     * This is also used as the ID.
+     *
+     * @return The name
+     * @since 1.0.4
+     */
+    String getName();
 
-    public ParsedValue(Field field, String desc, String[] more, String[] keywords, Category[] categories,
-                       String[] requires, String[] conflicts, boolean requiresRestart, int[] fixes, Parser<?>[] parsers,
-                       Observer<?>[] observers, String[] suggestions, ConfigManager configManager) {
-        this.field = field;
-        this.name = field.getName();
-        this.description = desc;
-        this.moreInfo = more;
-        this.keywords = ImmutableSet.copyOf(keywords);
-        this.categories = ImmutableSet.copyOf(categories);
-        this.requires = requires;
-        this.conflicts = conflicts;
-        this.requiresRestart = requiresRestart;
-        this.fixes = ImmutableIntArray.copyOf(fixes);
-        this.parsers = (Parser<T>[]) parsers;
-        this.observers = (Observer<T>[]) observers;
-        this.suggestions = suggestions;
-        this.defaultValue = getValue();
-        this.configManager = configManager;
-        this.valueToSave = getValue();
-    }
+    /**
+     * Gets the description of the value
+     *
+     * @return The description
+     * @since 1.0.4
+     */
+    String getDescription();
+
+    /**
+     * Gets extra information lines about the value
+     *
+     * @return A string array containing more info
+     * @since 1.0.4
+     */
+    String[] getMoreInfo();
+
+    /**
+     * Gets the keywords of the value,
+     * used to improve searching.
+     *
+     * @return A set containing all the keywords
+     * @since 1.0.4
+     */
+    Set<String> getKeywords();
+
+    /**
+     * Gets the categories associated with this value
+     *
+     * @return A set containing all the categories
+     * @since 1.0.4
+     */
+    Set<Category> getCategories();
+
+    /**
+     * Gets ids of required values.
+     * These values must be enabled for this value to work.
+     *
+     * @return An array of id's
+     * @since 1.0.4
+     */
+    String[] getRequires();
+
+    /**
+     * Gets ids of conflicting values.
+     * These values must be turned off for this value to work.
+     *
+     * @return An array of id's
+     * @since 1.0.4
+     */
+    String[] getConflicts();
+
+    /**
+     * Gets the mojira fix id's associated with this value.
+     * You can check the issue by going to: <a href="https://bugs.mojang.com/browse/MC-27056">https://bugs.mojang.com/browse/MC-&lt;id&gt</a>
+     *
+     * @return An array of mojira fix id's
+     * @since 1.0.4
+     */
+    int[] getFixes();
+
+    /**
+     * Checks if this value requires a restart to work.
+     *
+     * @return {@code true} if it needs a restart, otherwise {@code false}
+     * @since 1.0.4
+     */
+    boolean requiresRestart();
+
+    /**
+     * Gets command suggestions for auto-completion.
+     *
+     * @return An array of suggestions
+     * @since 1.0.4
+     */
+    String[] getSuggestions();
+
+    /**
+     * Gets the value that should be saved.
+     * This differs from the actual value when the value requires a restart.
+     *
+     * @return The value to save
+     * @since 1.0.4
+     */
+    T getValueToSave();
 
     /**
      * Sets this value to its default value
      *
      * @since 1.0.4
      */
-    public void reset() {
-        setValue(this.defaultValue);
-    }
+    void reset();
 
     /**
      * Check if it's currently the default value
@@ -81,9 +122,7 @@ public class ParsedValue<T> {
      * @return {@code true} if it's currently the default value, otherwise {@code false}
      * @since 1.0.4
      */
-    public boolean isDefaultValue() {
-        return this.defaultValue.equals(getValue());
-    }
+    boolean isDefaultValue();
 
     /**
      * Used to set the value of parsed value
@@ -91,9 +130,7 @@ public class ParsedValue<T> {
      * @param value object to set field's value to
      * @since 1.0.4
      */
-    public void setValue(T value) {
-        setValue(value, false);
-    }
+    void setValue(T value);
 
 
     /**
@@ -103,55 +140,17 @@ public class ParsedValue<T> {
      * @param load is method called on load or after
      * @since 1.0.4
      */
-    public void setValue(T value, boolean load) {
-        boolean updateClients = false;
-        try {
-            T currentValue = getValue();
-            if (!value.equals(currentValue)) {
-                if (!load) {
-                    for (Parser<T> parser : this.parsers) {
-                        value = parser.modify(this, value, false);
-                    }
-                }
-                this.valueToSave = value;
-                if (!requiresRestart) {
-                    this.field.set(null, value);
-                    for (Observer<T> observer : this.observers) {
-                        if (load) {
-                            observer.onLoad(this, isDefaultValue());
-                        } else {
-                            observer.onChange(this, currentValue, value);
-                        }
-                    }
-                    updateClients = true;
-                }
-            } else if (load) {
-                for (Observer<T> observer : this.observers) {
-                    observer.onLoad(this, isDefaultValue());
-                }
-            }
-        } catch (IllegalAccessException e) {
-            throw new IllegalStateException(e);
-        }
-        if (updateClients && !load) {
-            // Send the config value change to clients
-            PistonLib.getServer().ifPresent(server ->
-                    PLNetwork.sendToAllExternalClients(server, new ClientboundModifyConfigPacket(List.of(this))));
-        }
-    }
+    void setValue(T value, boolean load);
 
     /**
      * Used to read the value of the parsed value, from a buffer.
      * (Usually the buffer is passed over the network)
      *
      * @param buffer the buffer to extract the value from
+     * @return The object read from the buffer
      * @since 1.0.4
      */
-    @SuppressWarnings("unchecked")
-    public T readValueFromBuffer(FriendlyByteBuf buffer) {
-        // TODO: Convert to Codec's in 1.20.5+
-        return (T) BufferUtils.readFromBuffer(buffer, this.defaultValue.getClass());
-    }
+    T readValueFromBuffer(FriendlyByteBuf buffer);
 
     /**
      * Used to write the value of the parsed value, to a buffer.
@@ -160,10 +159,7 @@ public class ParsedValue<T> {
      * @param buffer the buffer to save the value into
      * @since 1.0.4
      */
-    public void writeValueToBuffer(FriendlyByteBuf buffer) {
-        // TODO: Convert to Codec's in 1.20.5+
-        BufferUtils.writeToBuffer(buffer, this.getValue());
-    }
+    void writeValueToBuffer(FriendlyByteBuf buffer);
 
     /**
      * Used to get the value of parsed value
@@ -171,14 +167,7 @@ public class ParsedValue<T> {
      * @return value of the field assigned to this parsed value
      * @since 1.0.4
      */
-    @SuppressWarnings("unchecked")
-    public T getValue() {
-        try {
-            return (T) this.field.get(null);
-        } catch (IllegalAccessException e) {
-            throw new IllegalStateException(e);
-        }
-    }
+    T getValue();
 
     /**
      * Shouldn't be used unless loading from the config
@@ -186,18 +175,7 @@ public class ParsedValue<T> {
      * @param value value to set
      * @since 1.0.4
      */
-    protected void setValueFromConfig(Object value) {
-        T newValue = ConfigUtils.loadValueFromConfig(value, this);
-        if (newValue == null) {
-            newValue = this.configManager.tryLoadingValue(value, this);
-        }
-        if (newValue != null) {
-            for (Parser<T> parser : this.parsers) {
-                newValue = parser.modify(this, newValue, true);
-            }
-            setValue(newValue, true);
-        }
-    }
+    void setValueFromConfig(Object value);
 
     /**
      * Gets the value that should be used within the config file
@@ -205,9 +183,7 @@ public class ParsedValue<T> {
      * @return The value to use within the config file
      * @since 1.0.4
      */
-    protected Object getValueForConfig() {
-        return this.configManager.trySavingValue(this.getValueToSave(), this);
-    }
+    Object getValueForConfig();
 
     /**
      * Used when attempting to parse the value from a command as a string
@@ -216,22 +192,7 @@ public class ParsedValue<T> {
      * @param inputValue string from command to parse
      * @since 1.0.4
      */
-    protected void parseValue(CommandSourceStack source, String inputValue) {
-        boolean useDefault = true;
-        for (Parser<T> parser : this.parsers) {
-            T newValue = parser.parse(source, inputValue, this);
-            if (newValue != null) {
-                setValue(newValue);
-                useDefault = false;
-            }
-        }
-        if (useDefault) {
-            T newValue = ConfigUtils.parseValueFromString(this, inputValue);
-            if (newValue != null) {
-                setValue(newValue);
-            }
-        }
-    }
+    void parseValue(CommandSourceStack source, String inputValue);
 
     /**
      * Checks if the config value name or its description matches the search term
@@ -240,13 +201,7 @@ public class ParsedValue<T> {
      * @return {@code true} if the value name or its description matches the search term, otherwise {@code false}
      * @since 1.0.4
      */
-    public boolean matchesTerm(String search) {
-        search = search.toLowerCase(Locale.ROOT);
-        if (this.name.toLowerCase(Locale.ROOT).contains(search)) {
-            return true;
-        }
-        return Sets.newHashSet(this.description.toLowerCase(Locale.ROOT).split("\\W+")).contains(search);
-    }
+    boolean matchesTerm(String search);
 
     /**
      * Checks if the search term matches one of the config values keywords
@@ -255,15 +210,7 @@ public class ParsedValue<T> {
      * @return {@code true} if the search term matches one of the values keywords, otherwise {@code false}
      * @since 1.0.4
      */
-    public boolean doKeywordMatchSearch(String search) {
-        search = search.toLowerCase(Locale.ROOT);
-        for (String keyword : this.keywords) {
-            if (keyword.toLowerCase(Locale.ROOT).startsWith(search)) {
-                return true;
-            }
-        }
-        return false;
-    }
+    boolean doKeywordMatchSearch(String search);
 
     /**
      * Checks if the config value contains a category which matches the search term
@@ -272,13 +219,5 @@ public class ParsedValue<T> {
      * @return {@code true} if the value contains a category which matches the search term, otherwise {@code false}
      * @since 1.0.4
      */
-    public boolean doCategoryMatchSearch(String search) {
-        search = search.toLowerCase(Locale.ROOT);
-        for (Category category : this.categories) {
-            if (category.name().toLowerCase(Locale.ROOT).equals(search)) {
-                return true;
-            }
-        }
-        return false;
-    }
+    boolean doCategoryMatchSearch(String search);
 }

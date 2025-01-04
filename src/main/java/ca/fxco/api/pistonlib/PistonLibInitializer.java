@@ -13,6 +13,14 @@ import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyGroups;
 public interface PistonLibInitializer {
 
     /**
+     * The first method to be called.
+     * Passes a supplier to give developers access to internal implementations.
+     *
+     * @since 1.0.4
+     */
+    void initialize(PistonLibSupplier supplier);
+
+    /**
      * Register custom piston families through {@link PistonFamilies#register}
      *
      * @since 1.0.4
