@@ -9,6 +9,7 @@ import ca.fxco.pistonlib.renderers.MergeBlockEntityRenderer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 
@@ -33,5 +34,10 @@ public class PistonLibClient implements ClientModInitializer {
         renderLayers.putBlock(ModBlocks.SLIMY_REDSTONE_BLOCK, RenderType.translucent());
         renderLayers.putBlock(ModBlocks.SLIPPERY_SLIME_BLOCK, RenderType.translucent());
         renderLayers.putBlock(ModBlocks.STICKY_CHAIN_BLOCK, RenderType.cutoutMipped());
+
+        // Reset config when leaving server
+        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
+            PistonLib.getConfigManager().resetAllToDefault();
+        });
     }
 }

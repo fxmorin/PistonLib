@@ -14,7 +14,6 @@ import ca.fxco.pistonlib.helpers.PistonLibBehaviorManager;
 import ca.fxco.pistonlib.network.PLNetwork;
 import ca.fxco.pistonlib.network.packets.ClientboundLoadConfigPacket;
 import lombok.Getter;
-import lombok.Setter;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
@@ -37,7 +36,6 @@ public class PistonLib implements ModInitializer, PistonLibInitializer {
     private static final ConfigManager configManager = new ConfigManager(MOD_ID, PistonLibConfig.class);
 
     @Getter
-    @Setter
     private static Optional<MinecraftServer> server = Optional.empty();
 
     public static ResourceLocation id(String path) {
@@ -81,6 +79,11 @@ public class PistonLib implements ModInitializer, PistonLibInitializer {
                     new ClientboundLoadConfigPacket(PistonLib.getConfigManager().getParsedValues())
             );
         });
+    }
+
+    public static void onStartServer(MinecraftServer s) {
+        server = Optional.of(s);
+        PistonLib.getConfigManager().initializeConfig();
     }
 
     public static void onStopServer() {

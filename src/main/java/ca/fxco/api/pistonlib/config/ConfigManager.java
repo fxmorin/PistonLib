@@ -1,6 +1,7 @@
 package ca.fxco.api.pistonlib.config;
 
 import ca.fxco.api.pistonlib.util.BufferUtils;
+import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.pistonlib.helpers.Utils;
 import com.moandjiezana.toml.Toml;
 import com.moandjiezana.toml.TomlWriter;
@@ -8,6 +9,7 @@ import io.netty.buffer.ByteBuf;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.storage.LevelResource;
 import org.apache.commons.lang3.SerializationException;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,7 +34,10 @@ import java.util.*;
 // TODO: Make this an interface and implement the code outside the API
 public class ConfigManager implements ConfigManagerEntrypoint {
 
-    private final Path configPath;
+    private static final boolean DEBUG_CONFIG = false;
+    private static final boolean DEBUG_NETWORK = false;
+
+    private final String modId;
     private final TomlWriter tomlWriter;
     private final List<TypeConverter> typeConverters = new ArrayList<>();
 
@@ -46,7 +51,7 @@ public class ConfigManager implements ConfigManagerEntrypoint {
      * @since 1.0.4
      */
     public ConfigManager(String modId, Class<?> configClass) {
-        this.configPath = FabricLoader.getInstance().getConfigDir().resolve(modId + ".toml");
+        this.modId = modId;
         this.tomlWriter = new TomlWriter();
 
         loadConfigFields(configClass.getDeclaredFields());
@@ -66,6 +71,15 @@ public class ConfigManager implements ConfigManagerEntrypoint {
             loadConfigFields(fields.toArray(new Field[0]));
         }
 
+        initializeConfig();
+    }
+
+    /**
+     * Initialized the config. Loading the values from the config and saving them.
+     *
+     * @since 1.0.4
+     */
+    public void initializeConfig() {
         Map<String, Object> loadedValues = loadValuesFromConf();
         if (loadedValues != null) {
             for (Map.Entry<String, Object> entry : loadedValues.entrySet()) {
@@ -76,6 +90,26 @@ public class ConfigManager implements ConfigManagerEntrypoint {
         }
 
         writeValuesToConf();
+    }
+
+    /**
+     * Resets all values to their default value. Called when leaving a server.
+     * It's not recommended to call this on the server, since all the config changes are done in individual packets.
+     *
+     * @since 1.0.4
+     */
+    public void resetAllToDefault() {
+        for (ParsedValue<?> value : parsedValues.values()) {
+            value.reset();
+        }
+    }
+
+    /**
+     * @return Empty optional if we aren't able to save values at the moment
+     */
+    private Optional<Path> getConfigFile() {
+        return PistonLib.getServer()
+                .map(s -> s.getWorldPath(LevelResource.ROOT).resolve(modId + ".toml"));
     }
 
     /**
@@ -136,7 +170,9 @@ public class ConfigManager implements ConfigManagerEntrypoint {
         nextField: for (Field field : fields) {
 
             // Only accept fields that are static & not final
-            if (!Modifier.isStatic(field.getModifiers()) || Modifier.isFinal(field.getModifiers())) continue;
+            if (!Modifier.isStatic(field.getModifiers()) || Modifier.isFinal(field.getModifiers())) {
+                continue;
+            }
 
             // Check for ConfigValue annotation
             for (Annotation annotation : field.getAnnotations()) {
@@ -183,6 +219,10 @@ public class ConfigManager implements ConfigManagerEntrypoint {
      */
     @SuppressWarnings("unchecked")
     private @Nullable Map<String, Object> loadValuesFromConf() {
+        Path configPath = getConfigFile().orElse(null);
+        if (configPath == null) {
+            return null;
+        }
         if (Files.exists(configPath)) {
             try {
                 Map<String, Object> values = new HashMap<>();
@@ -191,6 +231,12 @@ public class ConfigManager implements ConfigManagerEntrypoint {
                         values.putAll((Map<String, Object>) value);
                     }
                 });
+                if (DEBUG_CONFIG) {
+                    System.out.println("[PistonLib] Loading values from config:");
+                    for (var entry : values.entrySet()) {
+                        System.out.println(" - " + entry.getKey() + ": " + entry.getValue());
+                    }
+                }
                 return values;
             } catch (IllegalStateException e) {
                 throw new SerializationException(e);
@@ -205,24 +251,34 @@ public class ConfigManager implements ConfigManagerEntrypoint {
      * @since 1.0.4
      */
     private void writeValuesToConf() {
-        try {
-            Files.createDirectories(configPath.getParent());
-            Map<String, Map<String, Object>> savedValues = new LinkedHashMap<>();
-            savedValues.put("NONE", new LinkedHashMap<>());
-            for (Map.Entry<String, ParsedValue<?>> entry : parsedValues.entrySet()) {
-                ParsedValue<?> parsedValue = entry.getValue();
-                Category category = parsedValue.getCategories().stream().findAny().orElse(null);
-                if (category != null) {
-                    savedValues.computeIfAbsent(category.name(), string ->
-                            new LinkedHashMap<>()).put(entry.getKey(), parsedValue.getValueForConfig());
-                    continue;
+        getConfigFile().ifPresent(configPath -> {
+            try {
+                Files.createDirectories(configPath.getParent());
+                Map<String, Map<String, Object>> savedValues = new LinkedHashMap<>();
+                savedValues.put("NONE", new LinkedHashMap<>());
+                for (Map.Entry<String, ParsedValue<?>> entry : parsedValues.entrySet()) {
+                    ParsedValue<?> parsedValue = entry.getValue();
+                    Category category = parsedValue.getCategories().stream().findAny().orElse(null);
+                    if (category != null) {
+                        savedValues.computeIfAbsent(category.name(), string ->
+                                new LinkedHashMap<>()).put(entry.getKey(), parsedValue.getValueForConfig());
+                        continue;
+                    }
+                    savedValues.get("NONE").put(entry.getKey(), parsedValue.getValueForConfig());
                 }
-                savedValues.get("NONE").put(entry.getKey(), parsedValue.getValueForConfig());
+                tomlWriter.write(savedValues, configPath.toFile());
+                if (DEBUG_CONFIG) {
+                    System.out.println("[PistonLib] Saving values to config:");
+                    for (Map<String, Object> map : savedValues.values()) {
+                        for (var entry : map.entrySet()) {
+                            System.out.println(" - " + entry.getKey() + ": " + entry.getValue());
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                throw new SerializationException(e);
             }
-            tomlWriter.write(savedValues, configPath.toFile());
-        } catch (IOException e) {
-            throw new SerializationException(e);
-        }
+        });
     }
 
     /**
@@ -252,6 +308,14 @@ public class ConfigManager implements ConfigManagerEntrypoint {
                 buffer.skipBytes(sizes[i]);
             }
         }
+
+        if (DEBUG_NETWORK) {
+            System.out.println("[PistonLib] Reading values from buffer:");
+            for (var entry : changesMap.entrySet()) {
+                System.out.println(" - " + entry.getKey().name + ": " + entry.getValue());
+            }
+        }
+
         return changesMap;
     }
 
@@ -292,6 +356,15 @@ public class ConfigManager implements ConfigManagerEntrypoint {
             reservedBuffer.writeShort(sizes[i]);
         }
         reservedBuffer.release();
+
+        if (DEBUG_NETWORK) {
+            System.out.println("[PistonLib] Writing values to buffer:");
+            for (int i = 0; i < valueIds.length; i++) {
+                String id = valueIds[i];
+                Object value = values[i].getValue();
+                System.out.println(" - " + id + ": " + value);
+            }
+        }
     }
 
     /**
