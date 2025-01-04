@@ -162,7 +162,7 @@ public class ParsedValue<T> {
      */
     public void writeValueToBuffer(FriendlyByteBuf buffer) {
         // TODO: Convert to Codec's in 1.20.5+
-        BufferUtils.writeToBuffer(buffer, this.defaultValue);
+        BufferUtils.writeToBuffer(buffer, this.getValue());
     }
 
     /**
