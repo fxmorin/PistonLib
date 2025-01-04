@@ -304,6 +304,7 @@ public class PistonLibCommand implements Command {
         for (BlockState blockState : states) {
             PistonLibBehaviorManager.setOverride(blockState, override);
         }
+        PistonLibBehaviorManager.save(true);
 
         String stateString = BlockUtils.blockStateAsString(state, properties);
 

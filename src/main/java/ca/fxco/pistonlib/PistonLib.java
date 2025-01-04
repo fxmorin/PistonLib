@@ -84,11 +84,12 @@ public class PistonLib implements ModInitializer, PistonLibInitializer {
     public static void onStartServer(MinecraftServer s) {
         server = Optional.of(s);
         PistonLib.getConfigManager().initializeConfig();
+        PistonLibBehaviorManager.load();
     }
 
     public static void onStopServer() {
-        server = Optional.empty();
         PistonLibBehaviorManager.save(false);
+        server = Optional.empty();
     }
 
     @Override

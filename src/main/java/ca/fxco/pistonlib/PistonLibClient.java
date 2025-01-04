@@ -2,6 +2,7 @@ package ca.fxco.pistonlib;
 
 import ca.fxco.pistonlib.base.ModBlockEntities;
 import ca.fxco.pistonlib.base.ModBlocks;
+import ca.fxco.pistonlib.helpers.PistonLibBehaviorManager;
 import ca.fxco.pistonlib.renderers.BasicMovingBlockEntityRenderer;
 import ca.fxco.pistonlib.renderers.MBEMovingBlockEntityRenderer;
 import ca.fxco.pistonlib.renderers.MergeBlockEntityRenderer;
@@ -38,6 +39,7 @@ public class PistonLibClient implements ClientModInitializer {
         // Reset config when leaving server
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
             PistonLib.getConfigManager().resetAllToDefault();
+            PistonLibBehaviorManager.initOverrides(true);
         });
     }
 }
