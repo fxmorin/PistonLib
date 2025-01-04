@@ -21,8 +21,7 @@ public interface Observer<T> {
 
     /**
      * Called whenever the config option changes value.
-     * You can use {@code parsedValue.setValue(value)} to change the
-     * value within the method call, it's not recommended.
+     * Don't change the value within this method call!
      * Changing the value should be done within {@link Parser} whenever possible!
      *
      * @param parsedValue The parsed value, it will already have the new value

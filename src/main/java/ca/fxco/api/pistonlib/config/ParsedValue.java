@@ -113,17 +113,17 @@ public class ParsedValue<T> {
                         value = parser.modify(this, value, false);
                     }
                 }
+                this.valueToSave = value;
                 if (!requiresRestart) {
                     this.field.set(null, value);
-                    updateClients = true;
-                }
-                this.valueToSave = value;
-                for (Observer<T> observer : this.observers) {
-                    if (load) {
-                        observer.onLoad(this, isDefaultValue());
-                    } else {
-                        observer.onChange(this, currentValue, value);
+                    for (Observer<T> observer : this.observers) {
+                        if (load) {
+                            observer.onLoad(this, isDefaultValue());
+                        } else {
+                            observer.onChange(this, currentValue, value);
+                        }
                     }
+                    updateClients = true;
                 }
             } else if (load) {
                 for (Observer<T> observer : this.observers) {
