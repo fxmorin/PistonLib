@@ -1,9 +1,7 @@
 package ca.fxco.pistonlib.network;
 
 import ca.fxco.pistonlib.helpers.Utils;
-import ca.fxco.pistonlib.network.packets.ClientboundModifyConfigPacket;
-import ca.fxco.pistonlib.network.packets.ClientboundPistonEventPacket;
-import ca.fxco.pistonlib.network.packets.PLPacket;
+import ca.fxco.pistonlib.network.packets.*;
 import com.mojang.authlib.GameProfile;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -37,6 +35,8 @@ public class PLNetwork {
     public static void initialize() {
         registerClientBound(ClientboundPistonEventPacket.ID, ClientboundPistonEventPacket.class);
         registerClientBound(ClientboundModifyConfigPacket.ID, ClientboundModifyConfigPacket.class);
+        registerClientBound(ClientboundQueryMoveBehaviorPacket.ID, ClientboundQueryMoveBehaviorPacket.class);
+        registerServerBound(ClientboundQueryMoveBehaviorPacket.ID, ServerboundQueryMoveBehaviorPacket.class);
     }
 
     //
