@@ -202,7 +202,8 @@ public class BasicStructureRunner implements StructureRunner {
                         facing, extend, false
                 );
 
-                level.setBlock(dstPos, movingBlock, UPDATE_MOVE_BY_PISTON | UPDATE_INVISIBLE);
+                level.setBlock(dstPos, movingBlock, UPDATE_MOVE_BY_PISTON |
+                        (blockEntityToMove != null ? UPDATE_CLIENTS : UPDATE_INVISIBLE));
                 level.setBlockEntity(movingBlockEntity);
 
                 affectedStates[affectedIndex++] = stateToMove;
