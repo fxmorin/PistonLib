@@ -13,9 +13,11 @@ import ca.fxco.pistonlib.base.*;
 import ca.fxco.api.pistonlib.config.ConfigManagerEntrypoint;
 import ca.fxco.pistonlib.config.ConfigManagerImpl;
 import ca.fxco.pistonlib.helpers.PistonLibBehaviorManager;
-import ca.fxco.pistonlib.network.PLNetwork;
+import ca.fxco.pistonlib.network.PLClientNetwork;
+import ca.fxco.pistonlib.network.PLServerNetwork;
 import ca.fxco.pistonlib.network.packets.ClientboundModifyConfigPacket;
 import lombok.Getter;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
@@ -56,7 +58,10 @@ public class PistonLib implements ModInitializer, PistonLibInitializer, PistonLi
         ModPistonFamilies.validate();
         ModStickyGroups.validate();
 
-        PLNetwork.initialize();
+        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+            PLClientNetwork.initialize();
+        }
+        PLServerNetwork.initialize();
 
         Map<String, List<Field>> customParsedValues = new HashMap<>();
         for (EntrypointContainer<ConfigFieldEntrypoint> entrypointContainer : FabricLoader.getInstance()
@@ -77,7 +82,7 @@ public class PistonLib implements ModInitializer, PistonLibInitializer, PistonLi
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             // Send all options on player join, so that our configs match up
             // TODO: Should send only the non-default options. However this will result in version mismatch issues.
-            PLNetwork.sendToClient(
+            PLServerNetwork.sendToClient(
                     handler.player,
                     new ClientboundModifyConfigPacket(PistonLib.getConfigManager().getParsedValues())
             );
@@ -114,9 +119,11 @@ public class PistonLib implements ModInitializer, PistonLibInitializer, PistonLi
         ModBlocks.bootstrap();
         ModBlockEntities.bootstrap();
         ModItems.boostrap();
-        ModCreativeModeTabs.bootstrap();
-        ModMenus.boostrap();
-        ModScreens.boostrap();
+        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+            ModCreativeModeTabs.bootstrap();
+            ModMenus.boostrap();
+            ModScreens.boostrap();
+        }
         ModArgumentTypes.bootstrap();
         ModCommands.bootstrap();
     }

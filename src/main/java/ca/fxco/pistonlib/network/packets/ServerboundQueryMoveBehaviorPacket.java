@@ -1,12 +1,14 @@
 package ca.fxco.pistonlib.network.packets;
 
 import ca.fxco.api.pistonlib.pistonLogic.PistonMoveBehavior;
+import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.pistonlib.helpers.PistonLibBehaviorManager;
-import ca.fxco.pistonlib.network.PLNetwork;
+import ca.fxco.pistonlib.network.PLServerNetwork;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.Block;
@@ -19,6 +21,8 @@ import net.minecraft.world.level.block.state.BlockState;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ServerboundQueryMoveBehaviorPacket extends PLPacket {
+
+    public static ResourceLocation ID = PistonLib.id("query_move_behavior");
 
     private BlockState state;
 
@@ -35,6 +39,6 @@ public class ServerboundQueryMoveBehaviorPacket extends PLPacket {
     @Override
     public void handleServer(MinecraftServer server, ServerPlayer fromPlayer, PacketSender packetSender) {
         PistonMoveBehavior behavior = PistonLibBehaviorManager.getOverride(state);
-        PLNetwork.sendToClient(fromPlayer, new ClientboundQueryMoveBehaviorPacket(state, behavior));
+        PLServerNetwork.sendToClient(fromPlayer, new ClientboundQueryMoveBehaviorPacket(state, behavior));
     }
 }

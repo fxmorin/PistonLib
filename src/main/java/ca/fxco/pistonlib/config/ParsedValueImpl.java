@@ -4,7 +4,7 @@ import ca.fxco.api.pistonlib.config.*;
 import ca.fxco.api.pistonlib.config.ParsedValue;
 import ca.fxco.api.pistonlib.util.BufferUtils;
 import ca.fxco.pistonlib.PistonLib;
-import ca.fxco.pistonlib.network.PLNetwork;
+import ca.fxco.pistonlib.network.PLServerNetwork;
 import ca.fxco.pistonlib.network.packets.ClientboundModifyConfigPacket;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
@@ -130,7 +130,10 @@ public class ParsedValueImpl<T> implements ParsedValue<T> {
         if (updateClients && !load) {
             // Send the config value change to clients
             PistonLib.getServer().ifPresent(server ->
-                    PLNetwork.sendToAllExternalClients(server, new ClientboundModifyConfigPacket(List.of(this))));
+                    PLServerNetwork.sendToAllExternalClients(
+                            server,
+                            new ClientboundModifyConfigPacket(List.of(this))
+                    ));
         }
     }
 
