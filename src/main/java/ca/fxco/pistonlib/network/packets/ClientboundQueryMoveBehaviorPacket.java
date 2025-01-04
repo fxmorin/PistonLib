@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
@@ -40,7 +39,7 @@ public class ClientboundQueryMoveBehaviorPacket extends PLPacket {
     }
 
     @Override
-    public void handleClient(Minecraft client, PacketSender packetSender) {
+    public void handleClient(PacketSender packetSender) {
         QueryMoveBehaviorCallback.EVENT.invoker().handle(state, behavior);
     }
 

@@ -13,7 +13,6 @@ import ca.fxco.pistonlib.base.*;
 import ca.fxco.api.pistonlib.config.ConfigManagerEntrypoint;
 import ca.fxco.pistonlib.config.ConfigManagerImpl;
 import ca.fxco.pistonlib.helpers.PistonLibBehaviorManager;
-import ca.fxco.pistonlib.network.PLClientNetwork;
 import ca.fxco.pistonlib.network.PLServerNetwork;
 import ca.fxco.pistonlib.network.packets.ClientboundModifyConfigPacket;
 import lombok.Getter;
@@ -58,9 +57,6 @@ public class PistonLib implements ModInitializer, PistonLibInitializer, PistonLi
         ModPistonFamilies.validate();
         ModStickyGroups.validate();
 
-        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
-            PLClientNetwork.initialize();
-        }
         PLServerNetwork.initialize();
 
         Map<String, List<Field>> customParsedValues = new HashMap<>();

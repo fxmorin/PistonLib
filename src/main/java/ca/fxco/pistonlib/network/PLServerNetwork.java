@@ -3,7 +3,9 @@ package ca.fxco.pistonlib.network;
 import ca.fxco.pistonlib.helpers.Utils;
 import ca.fxco.pistonlib.network.packets.*;
 import com.mojang.authlib.GameProfile;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -22,10 +24,14 @@ import java.util.function.Supplier;
 
 public class PLServerNetwork {
 
-    private static final HashMap<Class<? extends PLPacket>, ResourceLocation> SERVERBOUND_PACKET_TYPES = new HashMap<>();
+    private static final HashMap<Class<? extends PLPacket>, ResourceLocation> PACKET_TYPES = new HashMap<>();
 
     public static void initialize() {
         registerServerBound(ServerboundQueryMoveBehaviorPacket.ID, ServerboundQueryMoveBehaviorPacket.class);
+
+        registerClientBound(ClientboundPistonEventPacket.ID, ClientboundPistonEventPacket.class);
+        registerClientBound(ClientboundModifyConfigPacket.ID, ClientboundModifyConfigPacket.class);
+        registerClientBound(ClientboundQueryMoveBehaviorPacket.ID, ClientboundQueryMoveBehaviorPacket.class);
     }
 
     //
@@ -38,12 +44,19 @@ public class PLServerNetwork {
 
     private static <T extends PLPacket> void registerServerBound(ResourceLocation id, Class<T> type,
                                                                  Supplier<T> packetGen) {
-        SERVERBOUND_PACKET_TYPES.put(type, id);
+        PACKET_TYPES.put(type, id);
         ServerPlayNetworking.registerGlobalReceiver(id, (server, player, listener, buf, packetSender) -> {
             T packet = packetGen.get();
             packet.read(buf);
             server.execute(() -> packet.handleServer(server, player, packetSender));
         });
+    }
+
+    public static <T extends PLPacket> void registerClientBound(ResourceLocation id, Class<T> type) {
+        PACKET_TYPES.put(type, id);
+        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+            PLClientNetwork.registerClientBound(id, type);
+        }
     }
 
     //
@@ -142,8 +155,8 @@ public class PLServerNetwork {
     // Validation
     //
 
-    private static ResourceLocation getPacketId(PLPacket packet) {
-        ResourceLocation id = SERVERBOUND_PACKET_TYPES.get(packet.getClass());
+    public static ResourceLocation getPacketId(PLPacket packet) {
+        ResourceLocation id = PACKET_TYPES.get(packet.getClass());
         if (id != null) {
             return id;
         }

@@ -4,7 +4,6 @@ import ca.fxco.api.pistonlib.config.ParsedValue;
 import ca.fxco.pistonlib.PistonLib;
 import lombok.NoArgsConstructor;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 
@@ -42,7 +41,7 @@ public class ClientboundModifyConfigPacket extends PLPacket {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void handleClient(Minecraft client, PacketSender packetSender) {
+    public void handleClient(PacketSender packetSender) {
         for (var entry : configValues.entrySet()) {
             entry.getKey().setValue(entry.getValue(), true);
         }

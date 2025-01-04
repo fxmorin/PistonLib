@@ -27,7 +27,7 @@ public abstract class PLPacket {
     /**
      * Called on the render thread!
      */
-    public void handleClient(Minecraft client, PacketSender packetSender) {};
+    public void handleClient(PacketSender packetSender) {};
 
     /**
      * Called on the server thread!
