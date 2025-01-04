@@ -115,9 +115,9 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
                 }
             }
             lastState = state;
-            state = this.level.getBlockState(blockPos);
             lastBlockPos = blockPos;
             blockPos = pos.relative(pullDirection, distance);
+            state = this.level.getBlockState(blockPos);
         }
         this.movingWeight += weight;
         for(int k = distance - 1; k >= 0; --k) {
