@@ -1,7 +1,7 @@
 package ca.fxco.pistonlib.network;
 
 import ca.fxco.pistonlib.helpers.Utils;
-import ca.fxco.pistonlib.network.packets.ClientboundLoadConfigPacket;
+import ca.fxco.pistonlib.network.packets.ClientboundModifyConfigPacket;
 import ca.fxco.pistonlib.network.packets.ClientboundPistonEventPacket;
 import ca.fxco.pistonlib.network.packets.PLPacket;
 import com.mojang.authlib.GameProfile;
@@ -36,7 +36,7 @@ public class PLNetwork {
 
     public static void initialize() {
         registerClientBound(ClientboundPistonEventPacket.ID, ClientboundPistonEventPacket.class);
-        registerClientBound(ClientboundLoadConfigPacket.ID, ClientboundLoadConfigPacket.class);
+        registerClientBound(ClientboundModifyConfigPacket.ID, ClientboundModifyConfigPacket.class);
     }
 
     //

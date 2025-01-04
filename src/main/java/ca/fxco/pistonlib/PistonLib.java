@@ -12,7 +12,7 @@ import ca.fxco.pistonlib.base.*;
 import ca.fxco.api.pistonlib.config.ConfigManagerEntrypoint;
 import ca.fxco.pistonlib.helpers.PistonLibBehaviorManager;
 import ca.fxco.pistonlib.network.PLNetwork;
-import ca.fxco.pistonlib.network.packets.ClientboundLoadConfigPacket;
+import ca.fxco.pistonlib.network.packets.ClientboundModifyConfigPacket;
 import lombok.Getter;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.loader.api.FabricLoader;
@@ -76,7 +76,7 @@ public class PistonLib implements ModInitializer, PistonLibInitializer {
             // TODO: Should send only the non-default options. However this will result in version mismatch issues.
             PLNetwork.sendToClient(
                     handler.player,
-                    new ClientboundLoadConfigPacket(PistonLib.getConfigManager().getParsedValues())
+                    new ClientboundModifyConfigPacket(PistonLib.getConfigManager().getParsedValues())
             );
         });
     }

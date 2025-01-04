@@ -13,15 +13,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 @NoArgsConstructor
-public class ClientboundLoadConfigPacket extends PLPacket {
+public class ClientboundModifyConfigPacket extends PLPacket {
 
-    public static ResourceLocation ID = PistonLib.id("load_config");
+    public static ResourceLocation ID = PistonLib.id("modify_config");
 
     @SuppressWarnings("rawtypes")
     private Map<ParsedValue, Object> configValues;
 
     @SuppressWarnings("rawtypes")
-    public ClientboundLoadConfigPacket(Collection<ParsedValue<?>> configValues) {
+    public ClientboundModifyConfigPacket(Collection<ParsedValue<?>> configValues) {
         HashMap<ParsedValue, Object> values = new HashMap<>();
         for (ParsedValue value : configValues) {
             // TODO: Filter out server-only values. We currently don't store the environment side in the parsed value!
