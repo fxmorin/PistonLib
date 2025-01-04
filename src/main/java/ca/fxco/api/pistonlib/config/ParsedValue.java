@@ -136,7 +136,7 @@ public class ParsedValue<T> {
         if (updateClients && !load) {
             // Send the config value change to clients
             PistonLib.getServer().ifPresent(server ->
-                    PLNetwork.sendToAllClients(server, new ClientboundLoadConfigPacket(List.of(this))));
+                    PLNetwork.sendToAllExternalClients(server, new ClientboundLoadConfigPacket(List.of(this))));
         }
     }
 

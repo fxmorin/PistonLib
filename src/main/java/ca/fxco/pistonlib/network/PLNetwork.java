@@ -4,6 +4,7 @@ import ca.fxco.pistonlib.helpers.Utils;
 import ca.fxco.pistonlib.network.packets.ClientboundLoadConfigPacket;
 import ca.fxco.pistonlib.network.packets.ClientboundPistonEventPacket;
 import ca.fxco.pistonlib.network.packets.PLPacket;
+import com.mojang.authlib.GameProfile;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -19,6 +20,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Predicate;
@@ -101,6 +103,23 @@ public class PLNetwork {
 
     public static void sendToAllClients(MinecraftServer server, PLPacket packet) {
         sendToClients(server.getPlayerList().getPlayers(), packet);
+    }
+
+    // Sends packets to all clients except the player hosting the world
+    public static void sendToAllExternalClients(MinecraftServer server, PLPacket packet) {
+        if (server.isDedicatedServer()) { // Server is independent
+            sendToAllClients(server, packet);
+        } else { // Filter out the host, and send to all others
+            GameProfile gameProfile = server.getSingleplayerProfile();
+            if (gameProfile == null) {
+                sendToAllClients(server, packet);
+                return;
+            }
+            String profileName = gameProfile.getName();
+            List<ServerPlayer> players = new ArrayList<>(server.getPlayerList().getPlayers());
+            players.removeIf(p -> profileName.equalsIgnoreCase(p.getGameProfile().getName()));
+            sendToClients(players, packet);
+        }
     }
 
     public static void sendToClientsInRange(MinecraftServer server, GlobalPos fromPos,
