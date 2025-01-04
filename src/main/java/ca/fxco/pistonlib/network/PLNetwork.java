@@ -1,6 +1,7 @@
 package ca.fxco.pistonlib.network;
 
-import ca.fxco.pistonlib.PistonLib;
+import ca.fxco.pistonlib.helpers.Utils;
+import ca.fxco.pistonlib.network.packets.ClientboundLoadConfigPacket;
 import ca.fxco.pistonlib.network.packets.ClientboundPistonEventPacket;
 import ca.fxco.pistonlib.network.packets.PLPacket;
 import net.fabricmc.api.EnvType;
@@ -32,20 +33,23 @@ public class PLNetwork {
     private static final HashMap<Class<? extends PLPacket>, ResourceLocation> SERVERBOUND_PACKET_TYPES = new HashMap<>();
 
     public static void initialize() {
-        EnvType envType = FabricLoader.getInstance().getEnvironmentType();
-        registerClientReceiver(envType, "piston_event", ClientboundPistonEventPacket.class, ClientboundPistonEventPacket::new);
+        registerClientBound(ClientboundPistonEventPacket.ID, ClientboundPistonEventPacket.class);
+        registerClientBound(ClientboundLoadConfigPacket.ID, ClientboundLoadConfigPacket.class);
     }
 
     //
     // Registering Packets
     //
 
-    private static <T extends PLPacket> void registerClientReceiver(EnvType envType, String id, Class<T> type,
-                                                                    Supplier<T> packetGen) {
-        ResourceLocation resourceId = PistonLib.id(id);
-        CLIENTBOUND_PACKET_TYPES.put(type, resourceId);
-        if (envType == EnvType.CLIENT) {
-            ClientPlayNetworking.registerGlobalReceiver(resourceId, (client, handler, buf, packetSender) -> {
+    private static <T extends PLPacket> void registerClientBound(ResourceLocation id, Class<T> type) {
+        registerClientBound(id, type, () -> Utils.createInstance(type));
+    }
+
+    private static <T extends PLPacket> void registerClientBound(ResourceLocation id, Class<T> type,
+                                                                 Supplier<T> packetGen) {
+        CLIENTBOUND_PACKET_TYPES.put(type, id);
+        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+            ClientPlayNetworking.registerGlobalReceiver(id, (client, handler, buf, packetSender) -> {
                 T packet = packetGen.get();
                 packet.read(buf);
                 client.execute(() -> packet.handleClient(client, packetSender));
@@ -53,12 +57,15 @@ public class PLNetwork {
         }
     }
 
-    private static <T extends PLPacket> void registerServerReceiver(EnvType envType, String id, Class<T> type,
-                                                                    Supplier<T> packetGen) {
-        ResourceLocation resourceId = PistonLib.id(id);
-        SERVERBOUND_PACKET_TYPES.put(type, resourceId);
-        if (envType == EnvType.SERVER) {
-            ServerPlayNetworking.registerGlobalReceiver(resourceId, (server, player, listener, buf, packetSender) -> {
+    private static <T extends PLPacket> void registerServerBound(ResourceLocation id, Class<T> type) {
+        registerServerBound(id, type, () -> Utils.createInstance(type));
+    }
+
+    private static <T extends PLPacket> void registerServerBound(ResourceLocation id, Class<T> type,
+                                                                 Supplier<T> packetGen) {
+        SERVERBOUND_PACKET_TYPES.put(type, id);
+        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.SERVER) {
+            ServerPlayNetworking.registerGlobalReceiver(id, (server, player, listener, buf, packetSender) -> {
                 T packet = packetGen.get();
                 packet.read(buf);
                 server.execute(() -> packet.handleServer(server, player, packetSender));
@@ -92,13 +99,17 @@ public class PLNetwork {
         }
     }
 
+    public static void sendToAllClients(MinecraftServer server, PLPacket packet) {
+        sendToClients(server.getPlayerList().getPlayers(), packet);
+    }
+
     public static void sendToClientsInRange(MinecraftServer server, GlobalPos fromPos,
                                             PLPacket packet, double distance) {
         ResourceLocation id = getPacketId(packet, EnvType.SERVER);
         FriendlyByteBuf buf = null;
         BlockPos pos = fromPos.pos();
         ResourceKey<Level> dimensionKey = fromPos.dimension();
-        for(ServerPlayer serverPlayer : server.getPlayerList().getPlayers()) {
+        for (ServerPlayer serverPlayer : server.getPlayerList().getPlayers()) {
             if (serverPlayer.level.dimension() == dimensionKey &&
                     pos.closerToCenterThan(serverPlayer.position(), distance)) {
                 if (buf == null) { // Don't create packet if it doesn't get sent to anyone
@@ -115,7 +126,7 @@ public class PLNetwork {
         FriendlyByteBuf buf = null;
         BlockPos pos = fromPos.pos();
         ResourceKey<Level> dimensionKey = fromPos.dimension();
-        for(ServerPlayer serverPlayer : server.getPlayerList().getPlayers()) {
+        for (ServerPlayer serverPlayer : server.getPlayerList().getPlayers()) {
             if (serverPlayer != exclude && serverPlayer.level.dimension() == dimensionKey &&
                     pos.closerToCenterThan(serverPlayer.position(), distance)) {
                 if (buf == null) { // Don't create packet if it doesn't get sent to anyone
@@ -132,7 +143,7 @@ public class PLNetwork {
         FriendlyByteBuf buf = null;
         BlockPos pos = fromPos.pos();
         ResourceKey<Level> dimensionKey = fromPos.dimension();
-        for(ServerPlayer serverPlayer : server.getPlayerList().getPlayers()) {
+        for (ServerPlayer serverPlayer : server.getPlayerList().getPlayers()) {
             if (serverPlayer.level.dimension() == dimensionKey &&
                     pos.closerToCenterThan(serverPlayer.position(), distance) && predicate.test(serverPlayer)) {
                 if (buf == null) { // Don't create packet if it doesn't get sent to anyone
@@ -148,20 +159,22 @@ public class PLNetwork {
     //
 
     private static ResourceLocation getPacketId(PLPacket packet, EnvType envType) {
-        ResourceLocation id = (envType == EnvType.SERVER ? CLIENTBOUND_PACKET_TYPES : SERVERBOUND_PACKET_TYPES).get(packet.getClass());
-        if (id == null) {
-            // Used to create the exception to throw, gets the other list to check if its there
-            ResourceLocation inWrongBounds = (envType != EnvType.SERVER ? CLIENTBOUND_PACKET_TYPES : SERVERBOUND_PACKET_TYPES).get(packet.getClass());
-            if (inWrongBounds != null) {
-                throw new IllegalArgumentException(
-                        (envType == EnvType.SERVER ?
-                                "Cannot send C2S packet to clients - " : "Cannot send S2C packet to server - ") +
-                                packet.getClass().getSimpleName()
-                );
-            } else {
-                throw new IllegalArgumentException("Invalid packet type!");
-            }
+        ResourceLocation id = (envType == EnvType.SERVER ? CLIENTBOUND_PACKET_TYPES : SERVERBOUND_PACKET_TYPES)
+                .get(packet.getClass());
+        if (id != null) {
+            return id;
         }
-        return id;
+        // Used to create the exception to throw, gets the other list to check if its there
+        ResourceLocation wrong = (envType != EnvType.SERVER ? CLIENTBOUND_PACKET_TYPES : SERVERBOUND_PACKET_TYPES)
+                .get(packet.getClass());
+        if (wrong != null) {
+            throw new IllegalArgumentException(
+                    (envType == EnvType.SERVER ?
+                            "Cannot send C2S packet to clients - " : "Cannot send S2C packet to server - ") +
+                            packet.getClass().getSimpleName()
+            );
+        } else {
+            throw new IllegalArgumentException("Invalid packet type!");
+        }
     }
 }

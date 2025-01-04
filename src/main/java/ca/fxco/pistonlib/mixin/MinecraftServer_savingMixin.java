@@ -9,8 +9,18 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.Optional;
+
 @Mixin(MinecraftServer.class)
 public class MinecraftServer_savingMixin {
+
+    @Inject(
+            method = "<init>",
+            at = @At("RETURN")
+    )
+    private void pl$onStartServer(CallbackInfo ci) {
+        PistonLib.setServer(Optional.of((MinecraftServer)(Object)this));
+    }
 
     @Inject(
             method = "stopServer",

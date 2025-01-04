@@ -1,6 +1,7 @@
 package ca.fxco.pistonlib.network.packets;
 
 import ca.fxco.api.pistonlib.pistonLogic.controller.PistonController;
+import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.helpers.PistonEventData;
 import ca.fxco.pistonlib.pistonLogic.structureRunners.DecoupledStructureRunner;
@@ -12,10 +13,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 
 @AllArgsConstructor
 @NoArgsConstructor
 public class ClientboundPistonEventPacket extends PLPacket {
+
+    public static ResourceLocation ID = PistonLib.id("piston_event");
 
     private BasicPistonBaseBlock pistonBlock;
     private BlockPos pos;

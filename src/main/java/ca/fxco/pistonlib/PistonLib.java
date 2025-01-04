@@ -12,9 +12,13 @@ import ca.fxco.pistonlib.base.*;
 import ca.fxco.api.pistonlib.config.ConfigManagerEntrypoint;
 import ca.fxco.pistonlib.helpers.PistonLibBehaviorManager;
 import ca.fxco.pistonlib.network.PLNetwork;
+import ca.fxco.pistonlib.network.packets.ClientboundLoadConfigPacket;
 import lombok.Getter;
+import lombok.Setter;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
+import net.minecraft.server.MinecraftServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +35,10 @@ public class PistonLib implements ModInitializer, PistonLibInitializer {
 
     @Getter
     private static final ConfigManager configManager = new ConfigManager(MOD_ID, PistonLibConfig.class);
+
+    @Getter
+    @Setter
+    private static Optional<MinecraftServer> server = Optional.empty();
 
     public static ResourceLocation id(String path) {
         return new ResourceLocation(MOD_ID, path);
@@ -64,9 +72,19 @@ public class PistonLib implements ModInitializer, PistonLibInitializer {
             );
         }
         PistonLibBehaviorManager.load();
+
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            // Send all options on player join, so that our configs match up
+            // TODO: Should send only the non-default options. However this will result in version mismatch issues.
+            PLNetwork.sendToClient(
+                    handler.player,
+                    new ClientboundLoadConfigPacket(PistonLib.getConfigManager().getParsedValues())
+            );
+        });
     }
 
     public static void onStopServer() {
+        server = Optional.empty();
         PistonLibBehaviorManager.save(false);
     }
 

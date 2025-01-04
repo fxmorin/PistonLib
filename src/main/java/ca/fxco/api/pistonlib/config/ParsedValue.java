@@ -1,13 +1,19 @@
 package ca.fxco.api.pistonlib.config;
 
+import ca.fxco.api.pistonlib.util.BufferUtils;
+import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.pistonlib.helpers.ConfigUtils;
+import ca.fxco.pistonlib.network.PLNetwork;
+import ca.fxco.pistonlib.network.packets.ClientboundLoadConfigPacket;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.ImmutableIntArray;
 import lombok.Getter;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.FriendlyByteBuf;
 
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -18,6 +24,7 @@ import java.util.Set;
  * @author FX
  * @since 1.0.4
  */
+// TODO: Make this an interface and implement the code outside the API
 @Getter
 public class ParsedValue<T> {
 
@@ -97,6 +104,7 @@ public class ParsedValue<T> {
      * @since 1.0.4
      */
     public void setValue(T value, boolean load) {
+        boolean updateClients = false;
         try {
             T currentValue = getValue();
             if (!value.equals(currentValue)) {
@@ -107,6 +115,7 @@ public class ParsedValue<T> {
                 }
                 if (!requiresRestart) {
                     this.field.set(null, value);
+                    updateClients = true;
                 }
                 this.valueToSave = value;
                 for (Observer<T> observer : this.observers) {
@@ -124,6 +133,36 @@ public class ParsedValue<T> {
         } catch (IllegalAccessException e) {
             throw new IllegalStateException(e);
         }
+        if (updateClients && !load) {
+            // Send the config value change to clients
+            PistonLib.getServer().ifPresent(server ->
+                    PLNetwork.sendToAllClients(server, new ClientboundLoadConfigPacket(List.of(this))));
+        }
+    }
+
+    /**
+     * Used to load the value of the parsed value, from a buffer.
+     * (Usually the buffer is passed over the network)
+     *
+     * @param buffer the buffer to extract the value from
+     * @since 1.0.4
+     */
+    @SuppressWarnings("unchecked")
+    public T loadValueFromBuffer(FriendlyByteBuf buffer) {
+        // TODO: Convert to Codec's in 1.20.5+
+        return (T) BufferUtils.loadFromBuffer(buffer, this.defaultValue.getClass());
+    }
+
+    /**
+     * Used to save the value of the parsed value, from a buffer.
+     * (Usually the buffer is passed over the network)
+     *
+     * @param buffer the buffer to save the value into
+     * @since 1.0.4
+     */
+    public void saveValueToBuffer(FriendlyByteBuf buffer) {
+        // TODO: Convert to Codec's in 1.20.5+
+        BufferUtils.saveToBuffer(buffer, this.defaultValue);
     }
 
     /**

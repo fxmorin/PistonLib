@@ -1,10 +1,13 @@
 package ca.fxco.api.pistonlib.config;
 
+import ca.fxco.api.pistonlib.util.BufferUtils;
 import ca.fxco.pistonlib.helpers.Utils;
 import com.moandjiezana.toml.Toml;
 import com.moandjiezana.toml.TomlWriter;
+import io.netty.buffer.ByteBuf;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.FriendlyByteBuf;
 import org.apache.commons.lang3.SerializationException;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,6 +29,7 @@ import java.util.*;
  * @author FX
  * @since 1.0.4
  */
+// TODO: Make this an interface and implement the code outside the API
 public class ConfigManager implements ConfigManagerEntrypoint {
 
     private final Path configPath;
@@ -219,6 +223,75 @@ public class ConfigManager implements ConfigManagerEntrypoint {
         } catch (IOException e) {
             throw new SerializationException(e);
         }
+    }
+
+    /**
+     * Used to read the value of the parsed values, from a buffer.
+     * (Usually the buffer is passed over the network)
+     *
+     * @param buffer the buffer to read the values from
+     * @since 1.0.4
+     */
+    @SuppressWarnings("rawtypes")
+    public Map<ParsedValue, Object> readValuesFromBuffer(FriendlyByteBuf buffer) {
+        // List of values to change
+        String[] values = BufferUtils.loadFromBuffer(buffer, String[].class);
+        // Size of each value, in-case the client doesn't have that value (outdated client)
+        // TODO: Could remove this by including the mod version within a register packet
+        short[] sizes = new short[values.length];
+        for (int i = 0; i < values.length; i++) {
+            sizes[i] = buffer.readShort();
+        }
+
+        Map<ParsedValue, Object> changesMap = new HashMap<>(values.length);
+        for (int i = 0; i < values.length; i++) {
+            ParsedValue<?> parsedValue = getParsedValue(values[i]);
+            if (parsedValue != null) {
+                changesMap.put(parsedValue, parsedValue.loadValueFromBuffer(buffer));
+            } else {
+                buffer.skipBytes(sizes[i]);
+            }
+        }
+        return changesMap;
+    }
+
+    /**
+     * Used to write the value of the parsed values, to a buffer.
+     * (Usually the buffer is passed over the network)
+     *
+     * @param buffer the buffer to write the values into
+     * @since 1.0.4
+     */
+    public void writeValuesToBuffer(FriendlyByteBuf buffer, ParsedValue<?>[] values) {
+        // Save list of values
+        String[] valueIds = new String[values.length];
+        for (int i = 0; i < values.length; i++) {
+            valueIds[i] = values[i].name;
+        }
+        BufferUtils.saveToBuffer(buffer, valueIds);
+
+        // Skip the size table for now, we write this at the end
+        short[] sizes = new short[valueIds.length];
+        int sizeTableIndex = buffer.writerIndex();
+        int sizeTableSize = sizes.length * 2;
+        buffer.writerIndex(sizeTableIndex + sizeTableSize);
+
+        // Save each value individually
+        int lastIndex = buffer.writerIndex();
+        for (int i = 0; i < valueIds.length; i++) {
+            values[i].saveValueToBuffer(buffer);
+            int currentIndex = buffer.writerIndex();
+            sizes[i] = (short) (currentIndex - lastIndex);
+            lastIndex = currentIndex;
+        }
+
+        // Write sizes table
+        ByteBuf reservedBuffer = buffer.retainedSlice(sizeTableIndex, sizeTableSize);
+        reservedBuffer.writerIndex(0);
+        for (int i = 0; i < valueIds.length; i++) {
+            reservedBuffer.writeShort(sizes[i]);
+        }
+        reservedBuffer.release();
     }
 
     /**
