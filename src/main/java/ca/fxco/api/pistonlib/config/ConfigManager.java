@@ -235,7 +235,7 @@ public class ConfigManager implements ConfigManagerEntrypoint {
     @SuppressWarnings("rawtypes")
     public Map<ParsedValue, Object> readValuesFromBuffer(FriendlyByteBuf buffer) {
         // List of values to change
-        String[] values = BufferUtils.loadFromBuffer(buffer, String[].class);
+        String[] values = BufferUtils.readFromBuffer(buffer, String[].class);
         // Size of each value, in-case the client doesn't have that value (outdated client)
         // TODO: Could remove this by including the mod version within a register packet
         short[] sizes = new short[values.length];
@@ -247,7 +247,7 @@ public class ConfigManager implements ConfigManagerEntrypoint {
         for (int i = 0; i < values.length; i++) {
             ParsedValue<?> parsedValue = getParsedValue(values[i]);
             if (parsedValue != null) {
-                changesMap.put(parsedValue, parsedValue.loadValueFromBuffer(buffer));
+                changesMap.put(parsedValue, parsedValue.readValueFromBuffer(buffer));
             } else {
                 buffer.skipBytes(sizes[i]);
             }
@@ -268,7 +268,7 @@ public class ConfigManager implements ConfigManagerEntrypoint {
         for (int i = 0; i < values.length; i++) {
             valueIds[i] = values[i].name;
         }
-        BufferUtils.saveToBuffer(buffer, valueIds);
+        BufferUtils.writeToBuffer(buffer, valueIds);
 
         // Skip the size table for now, we write this at the end
         short[] sizes = new short[valueIds.length];
@@ -279,7 +279,7 @@ public class ConfigManager implements ConfigManagerEntrypoint {
         // Save each value individually
         int lastIndex = buffer.writerIndex();
         for (int i = 0; i < valueIds.length; i++) {
-            values[i].saveValueToBuffer(buffer);
+            values[i].writeValueToBuffer(buffer);
             int currentIndex = buffer.writerIndex();
             sizes[i] = (short) (currentIndex - lastIndex);
             lastIndex = currentIndex;

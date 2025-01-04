@@ -141,28 +141,28 @@ public class ParsedValue<T> {
     }
 
     /**
-     * Used to load the value of the parsed value, from a buffer.
+     * Used to read the value of the parsed value, from a buffer.
      * (Usually the buffer is passed over the network)
      *
      * @param buffer the buffer to extract the value from
      * @since 1.0.4
      */
     @SuppressWarnings("unchecked")
-    public T loadValueFromBuffer(FriendlyByteBuf buffer) {
+    public T readValueFromBuffer(FriendlyByteBuf buffer) {
         // TODO: Convert to Codec's in 1.20.5+
-        return (T) BufferUtils.loadFromBuffer(buffer, this.defaultValue.getClass());
+        return (T) BufferUtils.readFromBuffer(buffer, this.defaultValue.getClass());
     }
 
     /**
-     * Used to save the value of the parsed value, from a buffer.
+     * Used to write the value of the parsed value, to a buffer.
      * (Usually the buffer is passed over the network)
      *
      * @param buffer the buffer to save the value into
      * @since 1.0.4
      */
-    public void saveValueToBuffer(FriendlyByteBuf buffer) {
+    public void writeValueToBuffer(FriendlyByteBuf buffer) {
         // TODO: Convert to Codec's in 1.20.5+
-        BufferUtils.saveToBuffer(buffer, this.defaultValue);
+        BufferUtils.writeToBuffer(buffer, this.defaultValue);
     }
 
     /**

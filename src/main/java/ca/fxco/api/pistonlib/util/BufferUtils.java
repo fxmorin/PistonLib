@@ -11,12 +11,12 @@ import java.util.BitSet;
 public class BufferUtils {
 
     /**
-     * Attempt to save an object to the buffer.
+     * Attempt to write an object to the buffer.
      *
-     * @param buffer The buffer to save the object into
-     * @param object The object to save into the buffer
+     * @param buffer The buffer to write the object into
+     * @param object The object to write into the buffer
      */
-    public static void saveToBuffer(FriendlyByteBuf buffer, Object object) {
+    public static void writeToBuffer(FriendlyByteBuf buffer, Object object) {
         if (object instanceof Boolean bool) {
             buffer.writeBoolean(bool);
         } else if (object instanceof Integer i) {
@@ -77,23 +77,23 @@ public class BufferUtils {
         } else if (object instanceof Object[] a) {
             buffer.writeVarInt(a.length); // Array size
             for (Object value : a) {
-                saveToBuffer(buffer, value);
+                writeToBuffer(buffer, value);
             }
         } else {
-            throw new IllegalArgumentException("Failed to save to buffer - Unsupported type: " +
+            throw new IllegalArgumentException("Failed to write to buffer - Unsupported type: " +
                     object.getClass().getSimpleName());
         }
     }
 
     /**
-     * Attempt to load an object from the buffer.
+     * Attempt to read an object from the buffer.
      *
-     * @param buffer The buffer to load the object from
+     * @param buffer The buffer to read the object from
      * @param clazz  The class of the type we want to extract from the buffer
-     * @return A new object loaded from the buffer
+     * @return A new object read from the buffer
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public static <T> T loadFromBuffer(FriendlyByteBuf buffer, Class<T> clazz) {
+    public static <T> T readFromBuffer(FriendlyByteBuf buffer, Class<T> clazz) {
         if (Boolean.class.isAssignableFrom(clazz)) {
             return (T) (Boolean) buffer.readBoolean();
         } else if (Integer.class.isAssignableFrom(clazz)) {
@@ -166,7 +166,7 @@ public class BufferUtils {
             Class<?> componentType = clazz.getComponentType();
             Object[] array = new Object[size];
             for (int i = 0; i < size; i++) {
-                array[i] = loadFromBuffer(buffer, componentType);
+                array[i] = readFromBuffer(buffer, componentType);
             }
             Object[] copy = (clazz == Object[].class)
                     ? new Object[array.length]
@@ -174,7 +174,7 @@ public class BufferUtils {
             System.arraycopy(array, 0, copy, 0, array.length);
             return (T) copy;
         } else {
-            throw new IllegalArgumentException("Failed to load from buffer - Unsupported type: " +
+            throw new IllegalArgumentException("Failed to read from buffer - Unsupported type: " +
                     clazz.getSimpleName());
         }
     }
