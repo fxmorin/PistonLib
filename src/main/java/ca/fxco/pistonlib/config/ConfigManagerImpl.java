@@ -263,7 +263,7 @@ public class ConfigManagerImpl implements ConfigManager, ConfigManagerEntrypoint
      */
     private Optional<Path> getConfigFile() {
         return PistonLib.getServer()
-                .map(s -> s.getWorldPath(LevelResource.ROOT).resolve(modId + ".toml"));
+                .map(s -> s.getWorldPath(LevelResource.ROOT).resolve("serverconfig").resolve(modId + ".toml"));
     }
 
     /**
