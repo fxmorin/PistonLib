@@ -4,6 +4,7 @@ import ca.fxco.pistonlib.helpers.Utils;
 import ca.fxco.pistonlib.network.packets.*;
 import com.mojang.authlib.GameProfile;
 import net.fabricmc.api.EnvType;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;
@@ -27,8 +28,10 @@ public class PLServerNetwork {
     private static final HashMap<Class<? extends PLPacket>, ResourceLocation> PACKET_TYPES = new HashMap<>();
 
     public static void initialize() {
+        //server to client
         registerServerBound(ServerboundQueryMoveBehaviorPacket.ID, ServerboundQueryMoveBehaviorPacket.class);
 
+        //client to server
         registerClientBound(ClientboundPistonEventPacket.ID, ClientboundPistonEventPacket.class);
         registerClientBound(ClientboundModifyConfigPacket.ID, ClientboundModifyConfigPacket.class);
         registerClientBound(ClientboundQueryMoveBehaviorPacket.ID, ClientboundQueryMoveBehaviorPacket.class);
