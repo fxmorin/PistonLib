@@ -28,7 +28,7 @@ public class ConfigurablePistonBaseBlock extends BasicPistonBaseBlock {
     public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         if (!oldState.is(this) && level.getBlockEntity(pos) == null) {
             PistonController controller = this.pl$getPistonController();
-            controller.checkIfExtend(level, pos, state);
+            controller.checkIfExtend(level, pos, state, true);
             if (controller.getFamily().isSlippery() && !level.isClientSide) {
                 level.scheduleTick(pos, this, SLIPPERY_DELAY);
             }

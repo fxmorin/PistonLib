@@ -72,18 +72,18 @@ public class BasicPistonBaseBlock extends DirectionalBlock implements PLPistonCo
 
     @Override
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity entity, ItemStack stack) {
-        this.controller.checkIfExtend(level, pos, state);
+        this.controller.checkIfExtend(level, pos, state, true);
     }
 
     @Override
     public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
-        this.controller.checkIfExtend(level, pos, state);
+        this.controller.checkIfExtend(level, pos, state, false);
     }
 
     @Override
     public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         if (!oldState.is(this) && level.getBlockEntity(pos) == null) {
-            this.controller.checkIfExtend(level, pos, state);
+            this.controller.checkIfExtend(level, pos, state, true);
         }
     }
 

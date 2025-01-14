@@ -91,7 +91,7 @@ public class VanillaPistonController implements PistonController {
     }
 
     @Override
-    public void checkIfExtend(Level level, BlockPos pos, BlockState state) {
+    public void checkIfExtend(Level level, BlockPos pos, BlockState state, boolean onPlace) {
         if (level.isClientSide()) {
             return;
         }
@@ -101,7 +101,7 @@ public class VanillaPistonController implements PistonController {
         boolean shouldExtend = hasNeighborSignal(level, pos, facing);
 
         PistonFamily family = getFamily();
-        if (PistonLibConfig.headlessPistonFix && length > family.getMinLength()) {
+        if (PistonLibConfig.headlessPistonFix && !onPlace && length > family.getMinLength()) {
             BlockState blockState = level.getBlockState(pos.relative(facing, length));
             if (shouldExtend && !blockState.is(family.getMoving()) && !blockState.is(family.getHead())) {
                 level.removeBlock(pos, false);
