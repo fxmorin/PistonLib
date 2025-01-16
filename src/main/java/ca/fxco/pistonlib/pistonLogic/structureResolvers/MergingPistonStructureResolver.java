@@ -44,10 +44,10 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
         return false;
     }
 
-    protected boolean cantMove(BlockPos pos, Direction dir) {
+    protected boolean attemptMoveLine(BlockPos pos, Direction dir) {
         BlockState state = this.level.getBlockState(pos);
         if (state.isAir() ||
-                pos.equals(this.pistonPos) ||
+                isPiston(pos) ||
                 this.toPush.contains(pos) ||
                 this.toMerge.contains(pos) ||
                 this.ignore.contains(pos)) {
@@ -89,11 +89,12 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
             state = this.level.getBlockState(blockPos);
 
             if (state.isAir() ||
-                    !canAdjacentBlockStick(pushDirOpposite, lastState, state) ||
-                    blockPos.equals(this.pistonPos) ||
+                    isPiston(blockPos) ||
+                    !canMoveAdjacentBlock(pushDirOpposite, lastState, state) ||
                     this.toMerge.contains(blockPos) ||
                     this.ignore.contains(blockPos) ||
-                    !this.controller.canMoveBlock(state, this.level, blockPos, this.pushDirection, false, pushDirOpposite)) {
+                    !this.controller.canMoveBlock(state, this.level, blockPos,
+                            this.pushDirection, false, pushDirOpposite)) {
                 break;
             }
             weight += state.pl$getWeight();
@@ -136,7 +137,7 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
                 for(int m = 0; m <= lastIndex + distance; ++m) {
                     BlockPos pos3 = this.toPush.get(m);
                     state = this.level.getBlockState(pos3);
-                    if (!attemptMove(state, pos3)) {
+                    if (attemptCreateBranchesAtBlock(state, pos3)) {
                         return true;
                     }
                 }
@@ -190,7 +191,8 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
                 return false;
             } else if (currentPos.equals(this.pistonPos)) {
                 return true;
-            } else if (!controller.canMoveBlock(state, this.level, currentPos, this.pushDirection, true, this.pushDirection)) {
+            } else if (!controller.canMoveBlock(state, this.level, currentPos,
+                    this.pushDirection, true, this.pushDirection)) {
                 return true;
             }
             if (state.pl$usesConfigurablePistonBehavior()) {
