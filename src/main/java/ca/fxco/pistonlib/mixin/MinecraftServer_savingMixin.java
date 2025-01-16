@@ -13,6 +13,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class MinecraftServer_savingMixin {
 
     @Inject(
+            method = "<init>",
+            at = @At("RETURN")
+    )
+    private void pl$onStartServer(CallbackInfo ci) {
+        PistonLib.onStartServer((MinecraftServer)(Object)this);
+    }
+
+    @Inject(
             method = "stopServer",
             at = @At("HEAD")
     )
