@@ -117,4 +117,14 @@ public @interface ConfigValue {
      */
     String[] suggestions() default {};
 
+    /**
+     * Set the test values that should be used for this field.
+     * This is an array so that it can be set to a fake null value.
+     * We only accept one
+     *
+     * @see TestValues
+     * @since 1.0.4
+     */
+    TestValues[] testValues() default {};
+
 }
