@@ -1,23 +1,27 @@
 package ca.fxco.pistonlib.network.packets;
 
-import ca.fxco.api.pistonlib.pistonLogic.controller.PistonController;
+import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.helpers.PistonEventData;
-import ca.fxco.pistonlib.pistonLogic.structureRunners.DecoupledStructureRunner;
+import ca.fxco.pistonlib.network.ClientPacketHandler;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class ClientboundPistonEventPacket extends PLPacket {
+
+    public static ResourceLocation ID = PistonLib.id("piston_event");
 
     private BasicPistonBaseBlock pistonBlock;
     private BlockPos pos;
@@ -46,15 +50,7 @@ public class ClientboundPistonEventPacket extends PLPacket {
 
     @Environment(EnvType.CLIENT)
     @Override
-    public void handleClient(Minecraft client, PacketSender packetSender) {
-        PistonController controller = this.pistonBlock.pl$getPistonController();
-        new DecoupledStructureRunner(controller.newStructureRunner(
-                client.level,
-                this.pos,
-                this.dir,
-                1,
-                this.extend,
-                controller::newStructureResolver
-        )).run();
+    public void handleClient(PacketSender packetSender) {
+        ClientPacketHandler.handle(this, packetSender);
     }
 }
