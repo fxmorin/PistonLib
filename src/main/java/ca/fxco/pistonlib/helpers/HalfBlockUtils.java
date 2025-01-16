@@ -28,12 +28,12 @@ public class HalfBlockUtils {
             Direction dir = dirs[i];
 
             maps[i] = Util.make(new HashMap<>(), map -> {
-                map.put(Utils.applyFacing(Direction.UP, dir), StickyType.STICKY);
-                map.put(Utils.applyFacing(Direction.DOWN, dir), StickyType.DEFAULT);
-                map.put(Utils.applyFacing(Direction.NORTH, dir), StickyType.CONDITIONAL);
-                map.put(Utils.applyFacing(Direction.SOUTH, dir), StickyType.CONDITIONAL);
-                map.put(Utils.applyFacing(Direction.EAST, dir), StickyType.CONDITIONAL);
+                map.put(Utils.applyFacing(Direction.NORTH, dir), StickyType.STICKY);
+                map.put(Utils.applyFacing(Direction.SOUTH, dir), StickyType.DEFAULT);
+                map.put(Utils.applyFacing(Direction.UP, dir), StickyType.CONDITIONAL);
+                map.put(Utils.applyFacing(Direction.DOWN, dir), StickyType.CONDITIONAL);
                 map.put(Utils.applyFacing(Direction.WEST, dir), StickyType.CONDITIONAL);
+                map.put(Utils.applyFacing(Direction.EAST, dir), StickyType.CONDITIONAL);
             });
         }
 

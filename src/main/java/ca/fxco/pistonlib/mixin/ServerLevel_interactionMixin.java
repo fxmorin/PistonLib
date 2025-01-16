@@ -3,7 +3,7 @@ package ca.fxco.pistonlib.mixin;
 import ca.fxco.api.pistonlib.pistonLogic.controller.PistonController;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.helpers.PistonEventData;
-import ca.fxco.pistonlib.network.PLNetwork;
+import ca.fxco.pistonlib.network.PLServerNetwork;
 import ca.fxco.pistonlib.network.packets.ClientboundPistonEventPacket;
 import ca.fxco.pistonlib.pistonLogic.structureRunners.DecoupledStructureRunner;
 import ca.fxco.api.pistonlib.pistonLogic.structure.StructureRunner;
@@ -71,7 +71,7 @@ public abstract class ServerLevel_interactionMixin extends Level {
                     controller::newStructureResolver
             ));
             if (structureRunner.run()) {
-                PLNetwork.sendToClientsInRange(
+                PLServerNetwork.sendToClientsInRange(
                         this.getServer(),
                         GlobalPos.of(this.dimension(), pistonEvent.pos()),
                         new ClientboundPistonEventPacket(pistonEvent),

@@ -3,7 +3,6 @@ package ca.fxco.pistonlib.network.packets;
 import io.netty.buffer.Unpooled;
 import lombok.NoArgsConstructor;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -27,7 +26,7 @@ public abstract class PLPacket {
     /**
      * Called on the render thread!
      */
-    public void handleClient(Minecraft client, PacketSender packetSender) {};
+    public void handleClient(PacketSender packetSender) {};
 
     /**
      * Called on the server thread!

@@ -2,13 +2,14 @@ package ca.fxco.pistonlib.helpers;
 
 import ca.fxco.api.pistonlib.pistonLogic.PistonMoveBehavior;
 
+import ca.fxco.pistonlib.PistonLib;
 import com.moandjiezana.toml.Toml;
 import com.moandjiezana.toml.TomlWriter;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.LevelResource;
 import org.apache.commons.lang3.SerializationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,6 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class PistonLibBehaviorManager {
 
@@ -39,7 +41,7 @@ public class PistonLibBehaviorManager {
         }
     }
 
-    private static void initOverrides(boolean resetAll) {
+    public static void initOverrides(boolean resetAll) {
         if (resetAll) {
             for (Block block : BuiltInRegistries.BLOCK) {
                 initOverrides(block, PistonMoveBehavior.DEFAULT);
@@ -83,27 +85,36 @@ public class PistonLibBehaviorManager {
 
     public static class Config {
 
-        public static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir()
-                .resolve("pistonlib_behavior_overrides.toml");
         private static final TomlWriter WRITER = new TomlWriter();
 
-        public static void load() {
-            if (!Files.exists(CONFIG_PATH)) {
-                return;
-            }
-            if (!Files.isRegularFile(CONFIG_PATH) || !Files.isReadable(CONFIG_PATH)) {
-                LOGGER.warn("PistonLib behavior overrides config is not readable!");
-                return;
-            }
+        /**
+         * @return Empty optional if we aren't able to save values at the moment
+         */
+        private static Optional<Path> getConfigFile() {
+            return PistonLib.getServer().map(s ->
+                    s.getWorldPath(LevelResource.ROOT).resolve("pistonlib_behavior_overrides.toml"));
+        }
 
-            try {
-                Map<String, Object> configData = new Toml().read(CONFIG_PATH.toFile()).toMap();
-                for (Map.Entry<String, Object> entry : configData.entrySet()) {
-                    loadOverrides(entry.getKey(), (Map<String, String>) entry.getValue());
+        @SuppressWarnings("unchecked")
+        public static void load() {
+            getConfigFile().ifPresent(configPath -> {
+                if (!Files.exists(configPath)) {
+                    return;
                 }
-            } catch (IllegalStateException e) {
-                throw new SerializationException(e);
-            }
+                if (!Files.isRegularFile(configPath) || !Files.isReadable(configPath)) {
+                    LOGGER.warn("PistonLib behavior overrides config is not readable!");
+                    return;
+                }
+
+                try {
+                    Map<String, Object> configData = new Toml().read(configPath.toFile()).toMap();
+                    for (Map.Entry<String, Object> entry : configData.entrySet()) {
+                        loadOverrides(entry.getKey(), (Map<String, String>) entry.getValue());
+                    }
+                } catch (IllegalStateException e) {
+                    throw new SerializationException(e);
+                }
+            });
         }
 
         private static void loadOverrides(String blockString, Map<String, String> stateOverrides) {
@@ -145,27 +156,29 @@ public class PistonLibBehaviorManager {
         }
 
         public static void save() {
-            if (Files.exists(CONFIG_PATH) && !Files.isWritable(CONFIG_PATH)) {
-                LOGGER.warn("unable to write piston move behavior overrides config!");
-                return;
-            }
+            getConfigFile().ifPresent(configPath -> {
+                if (Files.exists(configPath) && !Files.isWritable(configPath)) {
+                    LOGGER.warn("unable to write piston move behavior overrides config!");
+                    return;
+                }
 
-            Map<String, Map<String, String>> serializedValues = new HashMap<>();
+                Map<String, Map<String, String>> serializedValues = new HashMap<>();
 
-            BuiltInRegistries.BLOCK.forEach(block -> {
-                saveOverrides(block, serializedValues);
+                BuiltInRegistries.BLOCK.forEach(block -> {
+                    saveOverrides(block, serializedValues);
+                });
+
+                if (serializedValues.isEmpty()) {
+                    return; // nothing to save
+                }
+
+                try {
+                    Files.createDirectories(configPath.getParent());
+                    WRITER.write(serializedValues, configPath.toFile());
+                } catch (IOException e) {
+                    throw new SerializationException(e);
+                }
             });
-
-            if (serializedValues.isEmpty()) {
-                return; // nothing to save
-            }
-
-            try {
-                Files.createDirectories(CONFIG_PATH.getParent());
-                WRITER.write(serializedValues, CONFIG_PATH.toFile());
-            } catch (IOException e) {
-                throw new SerializationException(e);
-            }
         }
 
         private static void saveOverrides(Block block, Map<String, Map<String, String>> serializedValues) {
