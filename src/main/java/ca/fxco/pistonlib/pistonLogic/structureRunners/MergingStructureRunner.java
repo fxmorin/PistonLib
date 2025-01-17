@@ -113,7 +113,8 @@ public class MergingStructureRunner extends BasicStructureRunner {
                     BlockEntity movingBlockEntity = this.family
                             .newMovingBlockEntity(structureGroup, dstPos, movingBlock, stateToMove, blockEntityToMove, facing, extend, false);
 
-                    level.setBlock(dstPos, movingBlock, UPDATE_MOVE_BY_PISTON | UPDATE_INVISIBLE);
+                    level.setBlock(dstPos, movingBlock, UPDATE_MOVE_BY_PISTON |
+                            (blockEntityToMove != null ? UPDATE_CLIENTS : UPDATE_INVISIBLE));
                     level.setBlockEntity(movingBlockEntity);
 
                     if (move) {

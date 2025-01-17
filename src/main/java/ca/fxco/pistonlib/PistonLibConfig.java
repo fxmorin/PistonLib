@@ -67,6 +67,13 @@ public class PistonLibConfig {
     )
     public static boolean strongStickyChains = true;
 
+    @ConfigValue(
+            desc = "Double blocks such as Chests, Doors, and Beds will now move as one",
+            keyword = {"sticky", "group", "double"},
+            category = Category.FEATURE
+    )
+    public static boolean stuckDoubleBlocks = true;
+
 
     // ===============
     //    Mechanics
@@ -170,7 +177,7 @@ public class PistonLibConfig {
     @ConfigValue(
             desc = "Fixes tnt duping using pistons",
             more = "This does also fix some other edge cases with modded blocks that behave the same when powered",
-            keyword = {"tnt", "duping"},
+            keyword = {"waterlog"},
             category = Category.FIX,
             testValues = @TestValues(stringValues = {"NONE", "VANILLA", "ALL"})
     )
@@ -221,8 +228,9 @@ public class PistonLibConfig {
     @ConfigValue(
             desc = "Fixes the way piston pushing cache works",
             more = {"Prevents multiple duping methods based on update order and internal cache",
-                    "Disable this rule in order to have the exact same vanilla duping behaviour"},
-            keyword = {"cache", "duping"},
+                    "Disable this rule in order to have the exact same vanilla duping behaviour",
+                    "Only allows Coral based tnt duping to work!"},
+            keyword = {"cache", "duping", "tnt"},
             category = Category.FIX
     )
     public static boolean pistonPushingCacheFix = true;
