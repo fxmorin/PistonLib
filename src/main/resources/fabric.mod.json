@@ -37,6 +37,7 @@
     ],
     "gametestlib-gametest": [
       "ca.fxco.pistonlib.gametest.testSuites.BasicTestSuite",
+      "ca.fxco.pistonlib.gametest.testSuites.IndirectSuite",
       "ca.fxco.pistonlib.gametest.testSuites.MergingSuite"
     ],
     "gametestlib-binders": [
