@@ -1,7 +1,7 @@
 //file:noinspection All
 
 plugins {
-    id 'fabric-loom' version '1.0-SNAPSHOT'
+    id 'fabric-loom'
     id 'maven-publish'
 }
 
@@ -9,25 +9,21 @@ version = project.mod_version
 group = project.maven_group
 
 loom {
-    accessWidenerPath = file("src/main/resources/pistonlib.accesswidener")
+    accessWidenerPath = project(':').file("src/main/resources/pistonlib.accesswidener")
     runs {
-        datagenClient {
-            client()
-            name "Data Generation"
-            vmArg "-Dfabric-api.datagen"
-            vmArg "-Dfabric-api.datagen.output-dir=${file("src/generated/resources")}"
-            vmArg "-Dfabric-api.datagen.strict-validation"
-
-            ideConfigGenerated = true
-            runDir "build/datagen"
-            source sourceSets.main
+        gametest {
+            server()
+            name "Game Test"
+            vmArg "-Dfabric-api.gametest"
+            vmArg "-Dfabric-api.gametest.server=true"
+            vmArg "-Dfabric-api.gametest.command=true"
+            vmArg "-Dgametestlib.keepAlive=true"
+            runDir "build/gametest"
         }
     }
 }
 
-if (!project.file("src/generated").exists()) {
-    runClient.dependsOn runDatagenClient
-}
+test.dependsOn runGametest
 
 repositories {
     allprojects {
@@ -68,15 +64,11 @@ dependencies {
 
     // MixinExtras
     include(implementation(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-fabric:${project.mixinextras_Version}")))
-}
 
-processResources {
-    inputs.property "version", project.version
-    filteringCharset "UTF-8"
+    modImplementation(project(':'))
 
-    filesMatching("fabric.mod.json") {
-        expand "version": project.version
-    }
+    // GameTestLib
+    modImplementation("com.github.fxmorin:GameTestLib:cb4f041d45")
 }
 
 def targetJavaVersion = 17
@@ -96,24 +88,6 @@ java {
     }
     archivesBaseName = project.archives_base_name
     withSourcesJar()
-}
-
-jar {
-    from("LICENSE") {
-        rename { "${it}_${project.archivesBaseName}" }
-    }
-    manifest {
-        attributes([
-                "Specification-Title"     : "${archives_base_name}",
-                "Specification-Vendor"    : "${maven_group}",
-                "Specification-Version"   : "${mod_version}",
-                "Implementation-Title"    : "${archives_base_name}",
-                "Implementation-Version"  : "${mod_version}",
-                "Implementation-Vendor"   : "${maven_group}",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-                "MixinConfigs"            : "${mod_name}.mixins.json"
-        ])
-    }
 }
 
 // configure the maven publication
