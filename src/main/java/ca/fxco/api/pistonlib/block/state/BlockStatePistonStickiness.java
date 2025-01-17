@@ -86,10 +86,4 @@ public interface BlockStatePistonStickiness {
      */
     boolean pl$matchesStickyConditions(BlockState neighborState, Direction dir);
 
-    /**
-     * If this block state propagates indirect sticky behaviour to all sides
-     *
-     * @return {@code true} If this block state propagates indirect sticky behaviour to all sides
-     */
-    boolean pl$propagatesIndirectSticky();
 }

@@ -228,7 +228,7 @@ public class BasicStructureResolver extends PistonStructureResolver {
                 if (type == StickyType.CONDITIONAL) {
                     return type.canStick(state, adjState, dir);
                 }
-                return state.pl$propagatesIndirectSticky();
+                return true;
             }
             // All other blocks should check the blocks around them for indirect sticky blocks, except air
             return !state.isAir();
