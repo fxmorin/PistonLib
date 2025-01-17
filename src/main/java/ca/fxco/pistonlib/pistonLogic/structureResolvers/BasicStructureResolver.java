@@ -79,7 +79,7 @@ public class BasicStructureResolver extends PistonStructureResolver {
         BlockState state = this.level.getBlockState(this.startPos);
         if (!this.controller.canMoveBlock(state, this.level, this.startPos,
                 this.pushDirection, false, this.pistonDirection)) {
-            // Block directly int front is immovable, can only be true if extending, and it can be destroyed
+            // Block directly in front is immovable, can only be true if extending, and it can be destroyed
             if (this.extending) {
                 if (state.pl$usesConfigurablePistonBehavior()) {
                     if (state.pl$canDestroy(this.level, this.startPos)) {
@@ -101,7 +101,7 @@ public class BasicStructureResolver extends PistonStructureResolver {
         }
 
         // This loops through the blocks to push and creates the branches
-        for (int i = 0; i < this.toPush.size(); ++i) {
+        for (int i = 0; i < this.toPush.size(); i++) {
             BlockPos blockPos = this.toPush.get(i);
             state = this.level.getBlockState(blockPos);
             if (attemptCreateBranchesAtBlock(state, blockPos)) {
@@ -134,10 +134,16 @@ public class BasicStructureResolver extends PistonStructureResolver {
             }
             Direction oppositeDir = dir.getOpposite();
             StickyType type = adjState.pl$sideStickiness(oppositeDir);
-            if (type == StickyType.CONDITIONAL && !type.canStick(state, adjState, oppositeDir)) {
-                return true;
+            if (type == StickyType.CONDITIONAL) {
+                if (type.canStick(state, adjState, dir)) {
+                    return true;
+                }
+                return attemptIndirect && canIndirectBlockStick(dir, state, adjState);
             }
-            return type != StickyType.NO_STICK; // If NO_STICKY, even indirect sticky cannot stick to this side!
+
+            if (type != StickyType.DEFAULT) {
+                return type != StickyType.NO_STICK; // If NO_STICKY, even indirect sticky cannot stick to this side!
+            }
         }
         StickyGroup stickyGroup1 = state.pl$getStickyGroup();
         if (stickyGroup1 != null) {
@@ -151,10 +157,7 @@ public class BasicStructureResolver extends PistonStructureResolver {
             if (PistonLibConfig.allStickyTypesAreIndirect) {
                 return canAdjacentBlockStick(dir.getOpposite(), adjState, state, false);
             }
-            if (state.pl$usesConfigurablePistonStickiness()) {
-                if (!state.pl$isSticky()) {
-                    return false;
-                }
+            if (state.pl$usesConfigurablePistonStickiness() && state.pl$isSticky()) {
                 StickyType type = state.pl$sideStickiness(dir);
                 return type.ordinal() >= StickyType.STRONG.ordinal();
             }
@@ -217,13 +220,28 @@ public class BasicStructureResolver extends PistonStructureResolver {
         return canAdjacentBlockStick(dir, state, adjState);
     }
 
-    protected static boolean isSticky(BlockState state, Direction dir) {
+    protected boolean isSticky(BlockState state, BlockState adjState, Direction dir) {
         if (PistonLibConfig.indirectStickyApi) {
-            // Basically all blocks should check the blocks around them for indirect sticky blocks, except air
+            // Some conditional blocks such as double blocks, shouldn't propagate indirect sticky conditions
+            if (state.pl$usesConfigurablePistonStickiness() && state.pl$isSticky()) {
+                StickyType type = state.pl$sideStickiness(dir);
+                if (type == StickyType.CONDITIONAL) {
+                    return type.canStick(state, adjState, dir);
+                }
+                return state.pl$propagatesIndirectSticky();
+            }
+            // All other blocks should check the blocks around them for indirect sticky blocks, except air
             return !state.isAir();
         }
         if (state.pl$usesConfigurablePistonStickiness()) {
-            return state.pl$isSticky() && state.pl$sideStickiness(dir).ordinal() >= StickyType.STICKY.ordinal();
+            if (state.pl$isSticky()) {
+                StickyType type = state.pl$sideStickiness(dir);
+                if (type == StickyType.CONDITIONAL) {
+                    return type.canStick(state, adjState, dir);
+                }
+                return type.ordinal() >= StickyType.STICKY.ordinal();
+            }
+            return false;
         }
         return state.pl$hasStickyGroup();
     }
@@ -241,15 +259,16 @@ public class BasicStructureResolver extends PistonStructureResolver {
             return true;
         }
         int i = 1;
-        Direction dir2 = this.pushDirection.getOpposite();
-        while (isSticky(state, dir2)) {
-            BlockPos blockPos = pos.relative(dir2, i);
-            BlockState blockState2 = state;
-            state = this.level.getBlockState(blockPos);
-            if (state.isAir() ||
-                    isPiston(blockPos) ||
-                    !canMoveAdjacentBlock(dir2, blockState2, state) ||
-                    !this.controller.canMoveBlock(state, this.level, blockPos, this.pushDirection, false, dir2)) {
+        Direction pullDirection = this.pushDirection.getOpposite();
+        BlockState currentBlockState = state;
+        BlockPos nextPos = pos.relative(pullDirection, i);
+        BlockState nextState = this.level.getBlockState(nextPos);
+        while (isSticky(currentBlockState, nextState, pullDirection)) {
+            if (nextState.isAir() ||
+                    isPiston(nextPos) ||
+                    !canMoveAdjacentBlock(pullDirection, currentBlockState, state) ||
+                    !this.controller.canMoveBlock(nextState, this.level, nextPos,
+                            this.pushDirection, false, pullDirection)) {
                 break;
             }
             weight += state.pl$getWeight();
@@ -257,11 +276,14 @@ public class BasicStructureResolver extends PistonStructureResolver {
                 return true;
             }
             ++i;
+            nextPos = pos.relative(pullDirection, i);
+            currentBlockState = nextState;
+            nextState = this.level.getBlockState(nextPos);
         }
         this.movingWeight += weight;
         int j = 0, k;
-        for(k = i - 1; k >= 0; --k) {
-            this.toPush.add(pos.relative(dir2, k));
+        for (k = i - 1; k >= 0; --k) {
+            this.toPush.add(pos.relative(pullDirection, k));
             ++j;
         }
         k = 1;
