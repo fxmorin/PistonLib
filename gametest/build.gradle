@@ -1,5 +1,3 @@
-//file:noinspection All
-
 plugins {
     id 'fabric-loom'
     id 'maven-publish'
@@ -65,7 +63,7 @@ dependencies {
     implementation project(path: ":", configuration: "namedElements")
 
     // GameTestLib
-    modImplementation("com.github.fxmorin:GameTestLib:cb4f041d45")
+    modImplementation("com.github.fxmorin:GameTestLib:d21abbd5b0")
 }
 
 def targetJavaVersion = 17
