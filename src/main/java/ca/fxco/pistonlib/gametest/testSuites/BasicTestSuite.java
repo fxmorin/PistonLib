@@ -95,4 +95,16 @@ public class BasicTestSuite {
     public void headRetractionUpdate(GameTestHelper helper) {
         GameTestUtil.initializeGameTestLib(helper);
     }
+
+    // Check half slime block side behavior
+    @GameTest(timeoutTicks = 4)
+    public void halfSlimeSides(GameTestHelper helper) {
+        GameTestUtil.initializeGameTestLib(helper);
+    }
+
+    // Check half slime and half honey interaction
+    @GameTest(timeoutTicks = 4)
+    public void halfSlimeHoney(GameTestHelper helper) {
+        GameTestUtil.initializeGameTestLib(helper);
+    }
 }
