@@ -23,8 +23,6 @@ loom {
     }
 }
 
-test.dependsOn runGametest
-
 repositories {
     allprojects {
         repositories {
@@ -57,13 +55,12 @@ dependencies {
 
     // Toml
     modImplementation "com.moandjiezana.toml:toml4j:${project.toml4j_version}"
-    include "com.moandjiezana.toml:toml4j:${project.toml4j_version}"
 
     // Lombok
     compileOnly(annotationProcessor("org.projectlombok:lombok:${project.lombok_version}"))
 
     // MixinExtras
-    include(implementation(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-fabric:${project.mixinextras_Version}")))
+    implementation(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-fabric:${project.mixinextras_Version}"))
 
     implementation project(path: ":", configuration: "namedElements")
 
@@ -80,15 +77,6 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 repositories {}
-
-java {
-    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
-    if (JavaVersion.current() < javaVersion) {
-        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
-    }
-    archivesBaseName = project.archives_base_name
-    withSourcesJar()
-}
 
 // configure the maven publication
 publishing {
