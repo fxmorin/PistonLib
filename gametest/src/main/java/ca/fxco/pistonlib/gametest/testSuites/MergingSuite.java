@@ -28,4 +28,12 @@ public class MergingSuite {
     /*@GameTestConfig(value = {"indirectStickyApi", "pistonStructureGrouping", "tntDupingFix", "pistonPushingCacheFix"})
     @GameTest(timeoutTicks = 6) // Change timeout to: 3
     public void multiSlabs1(GameTestHelper helper) {}*/
+
+    // Check if a slab directly in front of the piston is able to be merged, into an immovable block
+    @GameTest(timeoutTicks = 4)
+    public void slabinfront(GameTestHelper helper) {}
+
+    // Make sure slabs don't unmerge when it doesn't make sense.
+    @GameTest(timeoutTicks = 4)
+    public void slabside(GameTestHelper helper) {}
 }

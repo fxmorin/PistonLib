@@ -32,7 +32,7 @@ public class StickylessBlock extends Block {
 
     @Override // Might try setting this to false, and not using the list. Should work the same
     public boolean pl$isSticky(BlockState state) {
-        return true;
+        return true; // TODO: Currently true so that we can test NO_STICK in gametests
     }
 
     @Override
