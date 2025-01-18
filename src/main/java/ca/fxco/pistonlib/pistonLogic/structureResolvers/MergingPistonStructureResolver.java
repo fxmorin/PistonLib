@@ -45,8 +45,7 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
     }
 
     @Override
-    protected boolean attemptMoveLine(BlockPos pos, Direction dir) {
-        BlockState state = this.level.getBlockState(pos);
+    protected boolean attemptMoveLine(BlockState state, BlockPos pos, Direction dir) {
         if (state.isAir() ||
                 isPiston(pos) ||
                 this.toPush.contains(pos) ||

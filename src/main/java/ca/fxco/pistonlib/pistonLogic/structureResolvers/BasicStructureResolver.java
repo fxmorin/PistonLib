@@ -101,7 +101,7 @@ public class BasicStructureResolver extends PistonStructureResolver {
             return false;
         }
         // Start block isn't immovable, we can check if it's possible to move this line
-        if (this.attemptMoveLine(this.startPos, pushDir)) {
+        if (this.attemptMoveLine(state, this.startPos, pushDir)) {
             return false;
         }
 
@@ -199,7 +199,8 @@ public class BasicStructureResolver extends PistonStructureResolver {
                 if (dir.getAxis() != this.pushDirection.getAxis()) {
                     BlockPos adjPos = pos.relative(dir);
                     BlockState adjState = this.level.getBlockState(adjPos);
-                    if (!state.isAir() && canMoveAdjacentBlock(dir, state, adjState) && attemptMoveLine(adjPos, dir)) {
+                    if (!state.isAir() && canMoveAdjacentBlock(dir, state, adjState) &&
+                            attemptMoveLine(adjState, adjPos, dir)) {
                         return true;
                     }
                 }
@@ -216,7 +217,7 @@ public class BasicStructureResolver extends PistonStructureResolver {
             if (stickyType == StickyType.CONDITIONAL && !stickyType.canStick(state, adjState, dir)) {
                 return false;
             }
-            return canMoveAdjacentBlock(dir, state, adjState) && attemptMoveLine(adjPos, dir);
+            return canMoveAdjacentBlock(dir, state, adjState) && attemptMoveLine(adjState, adjPos, dir);
         }
         return false;
     }
@@ -258,8 +259,7 @@ public class BasicStructureResolver extends PistonStructureResolver {
         return state.pl$hasStickyGroup();
     }
 
-    protected boolean attemptMoveLine(BlockPos pos, Direction dir) {
-        BlockState state = this.level.getBlockState(pos);
+    protected boolean attemptMoveLine(BlockState state, BlockPos pos, Direction dir) {
         if (state.isAir() || isPiston(pos) || this.toPush.contains(pos)) {
             return false;
         }

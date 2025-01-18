@@ -42,7 +42,7 @@ public class DebugStructureResolver extends BasicStructureResolver {
             return false;
         } else { // Start block isn't immovable, we can check if it's possible to move this line
             Direction pushDir = !this.extending ? this.pushDirection.getOpposite() : this.pushDirection;
-            if (this.attemptMoveLine(this.startPos, pushDir)) {
+            if (this.attemptMoveLine(state, this.startPos, pushDir)) {
                 addResultFail(ResolverResult.FAIL_IMMOVABLE, this.startPos); // TODO: Move this into the attemptMoveLine method for more precision
                 return false;
             }
