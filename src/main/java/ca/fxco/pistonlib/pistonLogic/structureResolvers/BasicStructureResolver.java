@@ -94,8 +94,13 @@ public class BasicStructureResolver extends PistonStructureResolver {
             }
             return false;
         }
-        // Start block isn't immovable, we can check if it's possible to move this line
         Direction pushDir = !this.extending ? this.pushDirection.getOpposite() : this.pushDirection;
+        // Make sure we don't pull a NO_STICK block
+        if (!this.extending && state.pl$usesConfigurablePistonStickiness() &&
+                state.pl$sideStickiness(pushDir) == StickyType.NO_STICK) {
+            return false;
+        }
+        // Start block isn't immovable, we can check if it's possible to move this line
         if (this.attemptMoveLine(this.startPos, pushDir)) {
             return false;
         }
@@ -230,11 +235,10 @@ public class BasicStructureResolver extends PistonStructureResolver {
 
     protected boolean isSticky(BlockState state, BlockState adjState, Direction dir) {
         if (PistonLibConfig.indirectStickyApi) {
-            // Some conditional blocks such as double blocks, shouldn't propagate indirect sticky conditions
             if (state.pl$usesConfigurablePistonStickiness() && state.pl$isSticky()) {
                 StickyType type = state.pl$sideStickiness(dir);
-                if (type == StickyType.CONDITIONAL) {
-                    return type.canStick(state, adjState, dir);
+                if (type == StickyType.NO_STICK) {
+                    return false;
                 }
                 return true;
             }
@@ -274,7 +278,7 @@ public class BasicStructureResolver extends PistonStructureResolver {
         while (isSticky(currentBlockState, nextState, pullDirection)) {
             if (nextState.isAir() ||
                     isPiston(nextPos) ||
-                    !canMoveAdjacentBlock(pullDirection, currentBlockState, state) ||
+                    !canMoveAdjacentBlock(pullDirection, currentBlockState, nextState) ||
                     !this.controller.canMoveBlock(nextState, this.level, nextPos,
                             this.pushDirection, false, pullDirection)) {
                 break;

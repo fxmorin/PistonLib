@@ -25,7 +25,7 @@ public class DebugStructureResolver extends BasicStructureResolver {
         BlockState state = this.level.getBlockState(this.startPos);
         if (!this.controller.canMoveBlock(state, this.level, this.startPos,
                 this.pushDirection, false, this.pistonDirection)) {
-            // Block directly int front is immovable, can only be true if extending, and it can be destroyed
+            // Block directly in front is immovable, can only be true if extending, and it can be destroyed
             if (this.extending) {
                 Block piston = state.getBlock();
                 if (piston.pl$usesConfigurablePistonBehavior()) {
@@ -43,7 +43,7 @@ public class DebugStructureResolver extends BasicStructureResolver {
         } else { // Start block isn't immovable, we can check if it's possible to move this line
             Direction pushDir = !this.extending ? this.pushDirection.getOpposite() : this.pushDirection;
             if (this.attemptMoveLine(this.startPos, pushDir)) {
-                addResultFail(ResolverResult.FAIL_IMMOVABLE, this.startPos); // TODO: Move this into the cantMove method for more precision
+                addResultFail(ResolverResult.FAIL_IMMOVABLE, this.startPos); // TODO: Move this into the attemptMoveLine method for more precision
                 return false;
             }
         }
@@ -52,7 +52,7 @@ public class DebugStructureResolver extends BasicStructureResolver {
         for (int i = 0; i < this.toPush.size(); ++i) {
             BlockPos blockPos = this.toPush.get(i);
             if (!attemptCreateBranchesAtBlock(this.level.getBlockState(blockPos), blockPos)) {
-                addResultFail(ResolverResult.FAIL_MOVELINE, blockPos); // TODO: Move this into the attemptMove method for more precision
+                addResultFail(ResolverResult.FAIL_MOVELINE, blockPos); // TODO: Move this into the attemptCreateBranchesAtBlock method for more precision
                 return false;
             }
         }
