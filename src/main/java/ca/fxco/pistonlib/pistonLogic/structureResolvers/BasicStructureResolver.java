@@ -142,7 +142,7 @@ public class BasicStructureResolver extends PistonStructureResolver {
             }
 
             if (type != StickyType.DEFAULT) {
-                return type != StickyType.NO_STICK; // If NO_STICKY, even indirect sticky cannot stick to this side!
+                return type != StickyType.NO_STICK; // If NO_STICKY, even indirect sticky can't stick to this side!
             }
         }
         StickyGroup stickyGroup1 = state.pl$getStickyGroup();
@@ -168,39 +168,50 @@ public class BasicStructureResolver extends PistonStructureResolver {
     protected boolean attemptCreateBranchesAtBlock(BlockState state, BlockPos pos) {
         if (state.pl$usesConfigurablePistonStickiness()) {
             if (!PistonLibConfig.indirectStickyApi && !state.pl$isSticky()) {
-                return false; // If block itself isn't sticky, no need to check the block line
+                return false; // Can't do this early exit when `indirectStickyApi` is used.
             }
             Map<Direction, StickyType> sides = state.pl$stickySides();
-            for (Map.Entry<Direction, StickyType> sideData : sides.entrySet()) {
-                StickyType stickyType = sideData.getValue();
-                if (stickyType == StickyType.NO_STICK) {
-                    continue;
-                }
-                Direction dir = sideData.getKey();
-                if (dir.getAxis() != this.pushDirection.getAxis()) {
-                    BlockPos adjPos = pos.relative(dir);
-                    BlockState adjState = this.level.getBlockState(adjPos);
-                    if (stickyType == StickyType.CONDITIONAL && !stickyType.canStick(state, adjState, dir)) {
-                        continue;
+            // We need to make sure all sides are attempted when using the `indirectStickyApi`
+            if (PistonLibConfig.indirectStickyApi && sides.size() != Direction.values().length) {
+                for (Direction dir : Direction.values()) {
+                    StickyType type = sides.getOrDefault(dir, StickyType.DEFAULT);
+                    if (attemptCreateBranchForStickySide(state, pos, type, dir)) {
+                        return true;
                     }
-                    if (canMoveAdjacentBlock(dir, state, adjState) && attemptMoveLine(adjPos, dir)) {
+                }
+            } else { // Probably won't check all sides, just the sides with custom sticky behavior
+                for (Map.Entry<Direction, StickyType> sideData : sides.entrySet()) {
+                    if (attemptCreateBranchForStickySide(state, pos, sideData.getValue(), sideData.getKey())) {
                         return true;
                     }
                 }
             }
-            return false;
-        }
-        if (!PistonLibConfig.indirectStickyApi && !state.pl$hasStickyGroup()) {
-            return false; // If block itself isn't sticky, no need to check the block line
-        }
-        for (Direction dir : Direction.values()) {
-            if (dir.getAxis() != this.pushDirection.getAxis()) {
-                BlockPos adjPos = pos.relative(dir);
-                BlockState adjState = this.level.getBlockState(adjPos);
-                if (!state.isAir() && canMoveAdjacentBlock(dir, state, adjState) && attemptMoveLine(adjPos, dir)) {
-                    return true;
+        } else {
+            if (!PistonLibConfig.indirectStickyApi && !state.pl$hasStickyGroup()) {
+                return false; // Can't do this early exit when `indirectStickyApi` is used.
+            }
+            for (Direction dir : Direction.values()) {
+                if (dir.getAxis() != this.pushDirection.getAxis()) {
+                    BlockPos adjPos = pos.relative(dir);
+                    BlockState adjState = this.level.getBlockState(adjPos);
+                    if (!state.isAir() && canMoveAdjacentBlock(dir, state, adjState) && attemptMoveLine(adjPos, dir)) {
+                        return true;
+                    }
                 }
             }
+        }
+        return false;
+    }
+
+    protected boolean attemptCreateBranchForStickySide(BlockState state, BlockPos pos,
+                                                       StickyType stickyType, Direction dir) {
+        if (stickyType != StickyType.NO_STICK && dir.getAxis() != this.pushDirection.getAxis()) {
+            BlockPos adjPos = pos.relative(dir);
+            BlockState adjState = this.level.getBlockState(adjPos);
+            if (stickyType == StickyType.CONDITIONAL && !stickyType.canStick(state, adjState, dir)) {
+                return false;
+            }
+            return canMoveAdjacentBlock(dir, state, adjState) && attemptMoveLine(adjPos, dir);
         }
         return false;
     }
@@ -210,12 +221,9 @@ public class BasicStructureResolver extends PistonStructureResolver {
             StickyType stickyType = state.pl$sideStickiness(dir);
             if (stickyType == StickyType.NO_STICK) {
                 return false;
-            } else if (stickyType == StickyType.CONDITIONAL) {
-                return stickyType.canStick(state, adjState, dir) && canAdjacentBlockStick(dir, state, adjState);
-            } else if (stickyType.ordinal() >= StickyType.STICKY.ordinal()) {
-                return canAdjacentBlockStick(dir, state, adjState);
+            } else if (stickyType == StickyType.CONDITIONAL && !stickyType.canStick(state, adjState, dir)) {
+                return false;
             }
-            return false;
         }
         return canAdjacentBlockStick(dir, state, adjState);
     }
