@@ -272,31 +272,31 @@ public class BasicStructureResolver extends PistonStructureResolver {
         if (weight + this.movingWeight > this.maxMovableWeight) {
             return true;
         }
-        int i = 1;
+        int distance = 1;
         Direction pullDirection = this.pushDirection.getOpposite();
-        BlockState currentBlockState = state;
-        BlockPos nextPos = pos.relative(pullDirection, i);
+        BlockState currentState = state;
+        BlockPos nextPos = pos.relative(pullDirection, distance);
         BlockState nextState = this.level.getBlockState(nextPos);
-        while (isSticky(currentBlockState, nextState, pullDirection)) {
+        while (isSticky(currentState, nextState, pullDirection)) {
             if (nextState.isAir() ||
                     isPiston(nextPos) ||
-                    !canMoveAdjacentBlock(pullDirection, currentBlockState, nextState) ||
+                    !canMoveAdjacentBlock(pullDirection, currentState, nextState) ||
                     !this.controller.canMoveBlock(nextState, this.level, nextPos,
                             this.pushDirection, false, pullDirection)) {
                 break;
             }
-            weight += state.pl$getWeight();
+            weight += nextState.pl$getWeight();
             if (weight + this.movingWeight > this.maxMovableWeight) {
                 return true;
             }
-            ++i;
-            nextPos = pos.relative(pullDirection, i);
-            currentBlockState = nextState;
+            ++distance;
+            nextPos = pos.relative(pullDirection, distance);
+            currentState = nextState;
             nextState = this.level.getBlockState(nextPos);
         }
         this.movingWeight += weight;
         int j = 0, k;
-        for (k = i - 1; k >= 0; --k) {
+        for (k = distance - 1; k >= 0; --k) {
             this.toPush.add(pos.relative(pullDirection, k));
             ++j;
         }

@@ -83,42 +83,42 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
         // Do sticky checks on initial line blocks
         int distance = 1;
         BlockPos lastBlockPos = pos;
-        BlockPos blockPos = pos.relative(pullDirection, distance);
-        BlockState lastState = state;
-        BlockState tempState = this.level.getBlockState(blockPos);
-        while (isSticky(lastState, tempState, pullDirection)) {
-            if (tempState.isAir() ||
-                    isPiston(blockPos) ||
-                    !canMoveAdjacentBlock(pullDirection, lastState, state) ||
-                    this.toMerge.contains(blockPos) ||
-                    this.ignore.contains(blockPos) ||
-                    !this.controller.canMoveBlock(tempState, this.level, blockPos,
+        BlockState currentState = state;
+        BlockPos nextPos = pos.relative(pullDirection, distance);
+        BlockState nextState = this.level.getBlockState(nextPos);
+        while (isSticky(currentState, nextState, pullDirection)) {
+            if (nextState.isAir() ||
+                    isPiston(nextPos) ||
+                    this.toMerge.contains(nextPos) ||
+                    this.ignore.contains(nextPos) ||
+                    !canMoveAdjacentBlock(pullDirection, currentState, nextState) ||
+                    !this.controller.canMoveBlock(nextState, this.level, nextPos,
                             this.pushDirection, false, pullDirection)) {
                 break;
             }
-            weight += tempState.pl$getWeight();
+            weight += nextState.pl$getWeight();
             if (weight + this.movingWeight > this.maxMovableWeight) {
                 return true;
             }
             ++distance;
 
             // UnMerge checks
-            if (tempState.pl$usesConfigurablePistonMerging() &&
-                    tempState.pl$canUnMerge(level, blockPos, lastState, this.pushDirection)
+            if (nextState.pl$usesConfigurablePistonMerging() &&
+                    nextState.pl$canUnMerge(level, nextPos, currentState, this.pushDirection)
                     && !this.toPush.contains(lastBlockPos) &&
-                    (!tempState.pl$getBlockEntityMergeRules().checkUnMerge() ||
-                    level.getBlockEntity(blockPos).pl$canUnMerge(tempState, lastState, this.pushDirection))) {
-                if (this.toUnMerge.contains(blockPos)) {
+                    (!nextState.pl$getBlockEntityMergeRules().checkUnMerge() ||
+                    level.getBlockEntity(nextPos).pl$canUnMerge(nextState, currentState, this.pushDirection))) {
+                if (this.toUnMerge.contains(nextPos)) {
                     // If multiple sticky blocks are moving the same block, don't unmerge
-                    this.ignore.add(blockPos);
+                    this.ignore.add(nextPos);
                 } else {
-                    this.toUnMerge.add(blockPos);
+                    this.toUnMerge.add(nextPos);
                 }
             }
-            lastState = state;
-            lastBlockPos = blockPos;
-            blockPos = pos.relative(pullDirection, distance);
-            state = this.level.getBlockState(blockPos);
+            currentState = nextState;
+            lastBlockPos = nextPos;
+            nextPos = pos.relative(pullDirection, distance);
+            nextState = this.level.getBlockState(nextPos);
         }
         this.movingWeight += weight;
         for(int k = distance - 1; k >= 0; --k) {
@@ -142,13 +142,13 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
                 return false;
             }
 
-            lastState = state;
+            currentState = state;
             state = this.level.getBlockState(currentPos);
 
             // Merge checks
             if (state.getBlock() instanceof MergeBlock) { // MultiMerge
-                if (lastState.pl$usesConfigurablePistonMerging() &&
-                        lastState.pl$canMergeFromSide(level, lastBlockPos, pullDirection)) {
+                if (currentState.pl$usesConfigurablePistonMerging() &&
+                        currentState.pl$canMergeFromSide(level, lastBlockPos, pullDirection)) {
                     if (level.getBlockEntity(currentPos) instanceof MergeBlockEntity mergeBlockEntity &&
                             mergeBlockEntity.canMergeFromSide(this.pushDirection) &&
                             mergeBlockEntity.canMerge(state, this.pushDirection)) {
@@ -160,11 +160,11 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
                 }
             } else {
                 if (state.pl$usesConfigurablePistonMerging()) {
-                    if (state.pl$canMerge(level, currentPos, lastState, this.pushDirection)) {
-                        if ((!lastState.pl$usesConfigurablePistonMerging() ||
-                                lastState.pl$canMergeFromSide(level, lastBlockPos, pullDirection)) &&
+                    if (state.pl$canMerge(level, currentPos, currentState, this.pushDirection)) {
+                        if ((!currentState.pl$usesConfigurablePistonMerging() ||
+                                currentState.pl$canMergeFromSide(level, lastBlockPos, pullDirection)) &&
                                 (!state.pl$getBlockEntityMergeRules().checkMerge() ||
-                                level.getBlockEntity(currentPos).pl$canMerge(state, lastState, this.pushDirection))) {
+                                level.getBlockEntity(currentPos).pl$canMerge(state, currentState, this.pushDirection))) {
                             this.toMerge.add(lastBlockPos);
                             this.toPush.remove(lastBlockPos);
                             this.ignore.add(currentPos);
@@ -172,9 +172,9 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
                         }
                     }
                     if (!this.toPush.contains(lastBlockPos) &&
-                            state.pl$canUnMerge(level, currentPos, lastState, this.pushDirection) &&
+                            state.pl$canUnMerge(level, currentPos, currentState, this.pushDirection) &&
                             (!state.pl$getBlockEntityMergeRules().checkUnMerge() ||
-                            level.getBlockEntity(currentPos).pl$canUnMerge(state, lastState, this.pushDirection))) {
+                            level.getBlockEntity(currentPos).pl$canUnMerge(state, currentState, this.pushDirection))) {
                         if (this.toUnMerge.contains(currentPos)) {
                             // If multiple sticky blocks are moving the same block, don't unmerge
                             this.ignore.add(currentPos);
