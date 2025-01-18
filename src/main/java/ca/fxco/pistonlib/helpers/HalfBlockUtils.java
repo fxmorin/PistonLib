@@ -16,16 +16,17 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import static ca.fxco.pistonlib.PistonLib.DIRECTIONS;
+
 @UtilityClass
 public class HalfBlockUtils {
 
     public static final Map<Direction, StickyType>[] SIDES_LIST = Util.make(() -> {
-        Direction[] dirs = Direction.values();
         @SuppressWarnings("unchecked")
-        Map<Direction, StickyType>[] maps = new HashMap[dirs.length];
+        Map<Direction, StickyType>[] maps = new HashMap[DIRECTIONS.length];
 
-        for (int i = 0; i < dirs.length; i++) {
-            Direction dir = dirs[i];
+        for (int i = 0; i < DIRECTIONS.length; i++) {
+            Direction dir = DIRECTIONS[i];
 
             maps[i] = Util.make(new HashMap<>(), map -> {
                 map.put(Utils.applyFacing(Direction.NORTH, dir), StickyType.STICKY);

@@ -16,6 +16,8 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 
+import static ca.fxco.pistonlib.PistonLib.DIRECTIONS;
+
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -44,7 +46,7 @@ public class ClientboundPistonEventPacket extends PLPacket {
     public void read(FriendlyByteBuf buf) {
         this.pistonBlock = (BasicPistonBaseBlock) buf.readById(BuiltInRegistries.BLOCK);
         this.pos = buf.readBlockPos();
-        this.dir = Direction.values()[buf.readByte()];
+        this.dir = DIRECTIONS[buf.readByte()];
         this.extend = buf.readBoolean();
     }
 

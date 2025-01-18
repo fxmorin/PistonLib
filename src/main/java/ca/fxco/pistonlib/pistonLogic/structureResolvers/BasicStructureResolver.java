@@ -19,6 +19,8 @@ import net.minecraft.world.level.block.piston.PistonStructureResolver;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.PushReaction;
 
+import static ca.fxco.pistonlib.PistonLib.DIRECTIONS;
+
 public class BasicStructureResolver extends PistonStructureResolver {
 
     protected final PistonController controller;
@@ -177,8 +179,8 @@ public class BasicStructureResolver extends PistonStructureResolver {
             }
             Map<Direction, StickyType> sides = state.pl$stickySides();
             // We need to make sure all sides are attempted when using the `indirectStickyApi`
-            if (PistonLibConfig.indirectStickyApi && sides.size() != Direction.values().length) {
-                for (Direction dir : Direction.values()) {
+            if (PistonLibConfig.indirectStickyApi && sides.size() != DIRECTIONS.length) {
+                for (Direction dir : DIRECTIONS) {
                     StickyType type = sides.getOrDefault(dir, StickyType.DEFAULT);
                     if (attemptCreateBranchForStickySide(state, pos, type, dir)) {
                         return true;
@@ -195,7 +197,7 @@ public class BasicStructureResolver extends PistonStructureResolver {
             if (!PistonLibConfig.indirectStickyApi && !state.pl$hasStickyGroup()) {
                 return false; // Can't do this early exit when `indirectStickyApi` is used.
             }
-            for (Direction dir : Direction.values()) {
+            for (Direction dir : DIRECTIONS) {
                 if (dir.getAxis() != this.pushDirection.getAxis()) {
                     BlockPos adjPos = pos.relative(dir);
                     BlockState adjState = this.level.getBlockState(adjPos);
