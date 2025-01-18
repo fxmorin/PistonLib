@@ -152,9 +152,11 @@ public class BasicStructureResolver extends PistonStructureResolver {
                 return type != StickyType.NO_STICK; // If NO_STICKY, even indirect sticky can't stick to this side!
             }
         }
-        StickyGroup stickyGroup1 = state.pl$getStickyGroup();
-        if (stickyGroup1 != null) {
-            return StickRules.test(stickyGroup1, adjState.pl$getStickyGroup());
+        if (!state.pl$usesConfigurablePistonStickiness()) {
+            StickyGroup stickyGroup1 = state.pl$getStickyGroup();
+            if (stickyGroup1 != null) {
+                return StickRules.test(stickyGroup1, adjState.pl$getStickyGroup());
+            }
         }
         return attemptIndirect && canIndirectBlockStick(dir, state, adjState);
     }
@@ -229,8 +231,8 @@ public class BasicStructureResolver extends PistonStructureResolver {
             StickyType stickyType = state.pl$sideStickiness(dir);
             if (stickyType == StickyType.NO_STICK) {
                 return false;
-            } else if (stickyType == StickyType.CONDITIONAL && !stickyType.canStick(state, adjState, dir)) {
-                return false;
+            } else if (stickyType == StickyType.CONDITIONAL && stickyType.canStick(state, adjState, dir)) {
+                return true;
             }
         }
         return canAdjacentBlockStick(dir, state, adjState);
