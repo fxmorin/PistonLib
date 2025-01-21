@@ -68,7 +68,8 @@ public class BasicTestSuite {
             config = @Config(
                     name = "illegalBreakingFix",
                     changes = @Change(value = "true", change = GameTestChanges.FLIP_ALL)
-            )
+            ),
+            inverted = "headlessPistonFix"
     )
     @GameTest(timeoutTicks = 4)
     public void headlessPistonIllegalBreak(GameTestHelper helper) {}
