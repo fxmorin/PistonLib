@@ -96,7 +96,7 @@ public class BasicMovingBlock extends MovingPistonBlock {
     public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
         Level level = builder.getLevel();
         Vec3 origin = builder.getParameter(LootContextParams.ORIGIN);
-        BasicMovingBlockEntity mbe = this.getMovingBlockEntity(level, new BlockPos(origin));
+        BasicMovingBlockEntity mbe = this.getMovingBlockEntity(level, BlockPos.containing(origin));
 
         return mbe == null ? Collections.emptyList() : mbe.getMovedState().getDrops(builder);
     }

@@ -32,7 +32,7 @@ public class MBEMovingBlock extends BasicMovingBlock {
     public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
         Level level = builder.getLevel();
         Vec3 origin = builder.getParameter(LootContextParams.ORIGIN);
-        MBEMovingBlockEntity mbe = this.getMovingBlockEntity(level, new BlockPos(origin));
+        MBEMovingBlockEntity mbe = this.getMovingBlockEntity(level, BlockPos.containing(origin));
 
         if (mbe == null) {
             return Collections.emptyList();

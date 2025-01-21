@@ -7,10 +7,7 @@ import ca.fxco.pistonlib.network.PLServerNetwork;
 import ca.fxco.pistonlib.network.packets.ClientboundPistonEventPacket;
 import ca.fxco.pistonlib.pistonLogic.structureRunners.DecoupledStructureRunner;
 import ca.fxco.api.pistonlib.pistonLogic.structure.StructureRunner;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.GlobalPos;
-import net.minecraft.core.Holder;
+import net.minecraft.core.*;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.profiling.ProfilerFiller;
@@ -31,10 +28,11 @@ import java.util.function.Supplier;
 @Mixin(ServerLevel.class)
 public abstract class ServerLevel_interactionMixin extends Level {
 
-    private ServerLevel_interactionMixin(WritableLevelData data, ResourceKey<Level> key, Holder<DimensionType> dimension,
-                                         Supplier<ProfilerFiller> profiler, boolean isClientSide, boolean isDebug, long seed,
+    private ServerLevel_interactionMixin(WritableLevelData data, ResourceKey<Level> key, RegistryAccess registryAccess,
+                                         Holder<DimensionType> dimension, Supplier<ProfilerFiller> profiler,
+                                         boolean isClientSide, boolean isDebug, long seed,
                                          int maxChainedNeighborUpdates) {
-        super(data, key, dimension, profiler, isClientSide, isDebug, seed, maxChainedNeighborUpdates);
+        super(data, key, registryAccess, dimension, profiler, isClientSide, isDebug, seed, maxChainedNeighborUpdates);
     }
 
     @Unique

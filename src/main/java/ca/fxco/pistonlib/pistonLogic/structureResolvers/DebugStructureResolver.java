@@ -40,8 +40,9 @@ public class DebugStructureResolver extends BasicStructureResolver {
             }
             addResultFail(ResolverResult.FAIL_IMMOVABLE, this.startPos);
             return false;
-        } else { // Start block is movable, now check if it's possible to move the rest, while generating the structure
-            if (this.cantMove(this.startPos, !this.extending ? this.pushDirection.getOpposite() : this.pushDirection)) {
+        } else { // Start block isn't movable, now check if it's possible to move the rest, while generating the structure
+            if (this.attemptMoveLine(this.startPos,
+                    !this.extending ? this.pushDirection.getOpposite() : this.pushDirection)) {
                 addResultFail(ResolverResult.FAIL_IMMOVABLE, this.startPos); // TODO: Move this into the cantMove method for more precision
                 return false;
             }
@@ -50,7 +51,7 @@ public class DebugStructureResolver extends BasicStructureResolver {
         // This loops through the blocks to push and creates the branches
         for (int i = 0; i < this.toPush.size(); ++i) {
             BlockPos blockPos = this.toPush.get(i);
-            if (!attemptMove(this.level.getBlockState(blockPos), blockPos)) {
+            if (attemptCreateBranchesAtBlock(this.level.getBlockState(blockPos), blockPos)) {
                 addResultFail(ResolverResult.FAIL_MOVELINE, blockPos); // TODO: Move this into the attemptMove method for more precision
                 return false;
             }

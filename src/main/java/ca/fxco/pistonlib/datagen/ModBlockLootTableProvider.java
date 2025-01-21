@@ -1,22 +1,16 @@
 package ca.fxco.pistonlib.datagen;
 
-import java.util.Map;
-import java.util.function.BiConsumer;
-
-import ca.fxco.pistonlib.base.ModPistonFamilies;
-import org.slf4j.Logger;
-
 import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.pistonlib.base.ModBlocks;
+import ca.fxco.pistonlib.base.ModPistonFamilies;
 import ca.fxco.pistonlib.base.ModRegistries;
-
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootTableProvider;
-
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.storage.loot.LootTable.Builder;
+import org.slf4j.Logger;
+
+import java.util.Map;
 
 public class ModBlockLootTableProvider extends FabricBlockLootTableProvider {
 
@@ -76,13 +70,5 @@ public class ModBlockLootTableProvider extends FabricBlockLootTableProvider {
         dropSelf(ModBlocks.SLIPPERY_STONE_BLOCK);
 
         LOGGER.info("Finished generating block loot tables!");
-    }
-
-    // FabricLootTableProvider#accept needs to be overriden because
-    // we're using Mojmaps. BlockLootSubProvider#generate is called
-    // accept in Yarn and thus would provide that implementation.
-    @Override
-    public void accept(BiConsumer<ResourceLocation, Builder> t) {
-        this.generate(t);
     }
 }

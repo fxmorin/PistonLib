@@ -299,7 +299,7 @@ public class AutoCraftingBlockEntity extends BaseContainerBlockEntity implements
         if (recipe == null) {
             return ItemStack.EMPTY;
         }
-        return recipe.assemble(this.items);
+        return recipe.assemble(this.items, this.level.registryAccess());
     }
 
     @Override

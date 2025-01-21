@@ -25,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.loader.impl.entrypoint.EntrypointUtils;
 
 import net.minecraft.resources.ResourceLocation;
 
@@ -125,7 +124,7 @@ public class PistonLib implements ModInitializer, PistonLibInitializer, PistonLi
     }
 
     private void initialize(Consumer<PistonLibInitializer> invoker) {
-        EntrypointUtils.invoke(MOD_ID, PistonLibInitializer.class, invoker);
+        FabricLoader.getInstance().invokeEntrypoints(MOD_ID, PistonLibInitializer.class, invoker);
     }
 
     @Override

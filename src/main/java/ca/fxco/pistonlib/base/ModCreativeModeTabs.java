@@ -13,7 +13,7 @@ public class ModCreativeModeTabs {
 
     public static final CreativeModeTab GENERAL = FabricItemGroup.builder(id("general"))
         .icon(() -> new ItemStack(ModItems.BASIC_STICKY_PISTON))
-        .displayItems((featureFlags, output, hasPermissions) -> {
+        .displayItems((displayParameters, output) -> {
             output.accept(ModItems.HALF_SLIME_BLOCK);
             output.accept(ModItems.HALF_HONEY_BLOCK);
             output.accept(ModItems.HALF_REDSTONE_BLOCK);
@@ -49,7 +49,7 @@ public class ModCreativeModeTabs {
 
     public static final CreativeModeTab PISTONS = FabricItemGroup.builder(id("pistons"))
         .icon(() -> new ItemStack(ModItems.STRONG_STICKY_PISTON))
-        .displayItems((featureFlags, output, hasPermissions) -> {
+        .displayItems((displayParameters, output) -> {
             for (PistonFamily family : ModRegistries.PISTON_FAMILY) {
                 for (Block base : family.getBases().values()) {
                     output.accept(base);

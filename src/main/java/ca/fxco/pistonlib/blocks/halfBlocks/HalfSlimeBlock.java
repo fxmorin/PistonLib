@@ -43,7 +43,7 @@ public class HalfSlimeBlock extends Block {
         if (entity.isSuppressingBounce() || HalfBlockUtils.isOnFacingSide(entity.position(), pos, state)) {
             super.fallOn(level, state, pos, entity, fallDistance);
         } else {
-            entity.causeFallDamage(fallDistance, 0.0F, DamageSource.FALL);
+            entity.causeFallDamage(fallDistance, 0.0F, level.damageSources().fall());
         }
     }
 
