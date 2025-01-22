@@ -7,6 +7,8 @@ import ca.fxco.pistonlib.helpers.NbtUtils;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.*;
@@ -153,6 +155,18 @@ public class AutoCraftingBlockEntity extends BaseContainerBlockEntity implements
     @Override
     protected Component getDefaultName() {
         return Component.translatable("container.pistonlib.auto_crafting_block");
+    }
+
+    @Override
+    protected NonNullList<ItemStack> getItems() {
+        return (NonNullList<ItemStack>) items.getItems();
+    }
+
+    @Override
+    protected void setItems(NonNullList<ItemStack> nonNullList) {
+        for (int i = 0; i < nonNullList.size(); i++) {
+            items.getItems().set(i, nonNullList.get(i));
+        }
     }
 
     @Override
@@ -305,13 +319,13 @@ public class AutoCraftingBlockEntity extends BaseContainerBlockEntity implements
     }
 
     @Override
-    public void load(CompoundTag compoundTag) {
-        super.load(compoundTag);
+    public void loadAdditional(CompoundTag compoundTag, HolderLookup.Provider lookup) {
+        super.loadAdditional(compoundTag, lookup);
         if (compoundTag.contains("items")) {
-            NbtUtils.loadAllItems(compoundTag.getCompound("items"), this.items);
+            NbtUtils.loadAllItems(compoundTag.getCompound("items"), this.items, lookup);
         }
         if (compoundTag.contains("result")) {
-            this.resultItemStack = ItemStack.of(compoundTag.getCompound("result"));
+            this.resultItemStack = ItemStack.parseOptional(lookup, compoundTag.getCompound("result"));
         } else {
             this.resultItemStack = ItemStack.EMPTY;
         }
@@ -319,15 +333,15 @@ public class AutoCraftingBlockEntity extends BaseContainerBlockEntity implements
     }
 
     @Override
-    protected void saveAdditional(CompoundTag compoundTag) {
-        super.saveAdditional(compoundTag);
+    protected void saveAdditional(CompoundTag compoundTag, HolderLookup.Provider lookup) {
+        super.saveAdditional(compoundTag, lookup);
         if (!this.items.isEmpty()) {
             CompoundTag itemTag = new CompoundTag();
-            NbtUtils.saveAllItems(itemTag, this.items);
+            NbtUtils.saveAllItems(itemTag, this.items, lookup);
             compoundTag.put("items", itemTag);
         }
         if (!this.resultItemStack.isEmpty()) {
-            compoundTag.put("result", this.resultItemStack.save(new CompoundTag()));
+            compoundTag.put("result", this.resultItemStack.save(lookup, new CompoundTag()));
         }
         if (this.hasPaid) {
             compoundTag.putBoolean("paid", true);

@@ -2,14 +2,13 @@ package ca.fxco.pistonlib.network.packets;
 
 import ca.fxco.api.pistonlib.pistonLogic.PistonMoveBehavior;
 import ca.fxco.pistonlib.PistonLib;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import ca.fxco.pistonlib.network.PLServerNetwork;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
@@ -17,25 +16,23 @@ import net.minecraft.world.level.block.state.BlockState;
  * </br>
  * To get the query response, use the event {@link QueryMoveBehaviorCallback#EVENT}
  */
-@AllArgsConstructor
-@NoArgsConstructor
-public class ClientboundQueryMoveBehaviorPacket extends PLPacket {
+public record ClientboundQueryMoveBehaviorPacket(BlockState state, PistonMoveBehavior behavior) implements PLPacket {
 
-    public static ResourceLocation ID = PistonLib.id("query_move_behavior");
+    public static final CustomPacketPayload.Type<ClientboundQueryMoveBehaviorPacket> TYPE =
+            new Type<>(PistonLib.id("query_move_behavior"));
 
-    private BlockState state;
-    private PistonMoveBehavior behavior;
+    public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundQueryMoveBehaviorPacket> STREAM_CODEC =
+            StreamCodec.composite(
+                    PLServerNetwork.BLOCKSTATE_STREAM_CODEC,
+                    ClientboundQueryMoveBehaviorPacket::state,
+                    PistonMoveBehavior.STREAM_CODEC,
+                    ClientboundQueryMoveBehaviorPacket::behavior,
+                    ClientboundQueryMoveBehaviorPacket::new
+            );
 
     @Override
-    public void write(FriendlyByteBuf buf) {
-        buf.writeId(Block.BLOCK_STATE_REGISTRY, this.state);
-        buf.writeEnum(behavior);
-    }
-
-    @Override
-    public void read(FriendlyByteBuf buf) {
-        this.state = buf.readById(Block.BLOCK_STATE_REGISTRY);
-        this.behavior = buf.readEnum(PistonMoveBehavior.class);
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 
     @Override

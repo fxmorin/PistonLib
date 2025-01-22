@@ -19,6 +19,7 @@ import ca.fxco.pistonlib.pistonLogic.structureRunners.MergingStructureRunner;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -270,7 +271,7 @@ public class VanillaPistonController implements PistonController {
     }
 
     @Override
-    public void playEvents(Level level, GameEvent event, BlockPos pos) {
+    public void playEvents(Level level, Holder<GameEvent> event, BlockPos pos) {
         level.playSound(
                 null,
                 pos,

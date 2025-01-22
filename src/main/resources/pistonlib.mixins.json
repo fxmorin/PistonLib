@@ -33,7 +33,7 @@
     "movableBlockEntities.LevelChunkMixin",
     "movableBlockEntities.LevelMixin",
     "movingPiston.BlockCollisions_movingPistonMixin",
-    "movingPiston.Factory_movingPistonMixin",
+    "movingPiston.TerrainParticle_movingPistonMixin",
     "movingPiston.FallingBlockEntity_movingPistonMixin",
     "movingPiston.Shulker_movingPistonMixin",
     "quasi.DispenserBlock_quasiMixin",

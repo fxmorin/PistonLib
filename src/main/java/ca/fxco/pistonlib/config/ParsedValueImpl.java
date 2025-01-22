@@ -132,7 +132,7 @@ public class ParsedValueImpl<T> implements ParsedValue<T> {
             PistonLib.getServer().ifPresent(server ->
                     PLServerNetwork.sendToAllExternalClients(
                             server,
-                            new ClientboundModifyConfigPacket(List.of(this))
+                            ClientboundModifyConfigPacket.fromCollection(List.of(this))
                     ));
         }
     }

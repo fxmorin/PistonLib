@@ -7,17 +7,20 @@ import ca.fxco.pistonlib.base.ModPistonFamilies;
 import ca.fxco.pistonlib.base.ModRegistries;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootTableProvider;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceKey;
 import org.slf4j.Logger;
 
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 public class ModBlockLootTableProvider extends FabricBlockLootTableProvider {
 
     public static final Logger LOGGER = PistonLib.LOGGER;
 
-    protected ModBlockLootTableProvider(FabricDataOutput dataOutput) {
-        super(dataOutput);
+    protected ModBlockLootTableProvider(FabricDataOutput dataOutput,
+                                        CompletableFuture<HolderLookup.Provider> registryLookup) {
+        super(dataOutput, registryLookup);
     }
 
     @Override

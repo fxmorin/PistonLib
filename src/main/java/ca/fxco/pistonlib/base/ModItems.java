@@ -1,6 +1,5 @@
 package ca.fxco.pistonlib.base;
 
-import ca.fxco.api.pistonlib.toggle.ToggleableProperties;
 import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.items.PistonDebugWandItem;
 import ca.fxco.pistonlib.items.PistonWandItem;
@@ -87,6 +86,6 @@ public class ModItems {
         return Registry.register(BuiltInRegistries.ITEM, id, item);
     }
 
-    public static void boostrap() { }
+    public static void bootstrap() { }
 
 }

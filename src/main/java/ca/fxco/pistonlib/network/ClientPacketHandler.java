@@ -9,13 +9,13 @@ import net.minecraft.client.Minecraft;
 public class ClientPacketHandler {
 
     public static void handle(ClientboundPistonEventPacket packet, PacketSender packetSender) {
-        PistonController controller = packet.getPistonBlock().pl$getPistonController();
+        PistonController controller = packet.pistonBlock().pl$getPistonController();
         new DecoupledStructureRunner(controller.newStructureRunner(
                 Minecraft.getInstance().level,
-                packet.getPos(),
-                packet.getDir(),
+                packet.pos(),
+                packet.dir(),
                 1,
-                packet.isExtend(),
+                packet.extend(),
                 controller::newStructureResolver
         )).run();
     }

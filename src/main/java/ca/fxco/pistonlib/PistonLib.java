@@ -79,7 +79,7 @@ public class PistonLib implements ModInitializer, PistonLibInitializer, PistonLi
             // TODO: Should send only the non-default options. However this will result in version mismatch issues.
             PLServerNetwork.sendToClient(
                     handler.player,
-                    new ClientboundModifyConfigPacket(PistonLib.getConfigManager().getParsedValues())
+                    ClientboundModifyConfigPacket.fromCollection(PistonLib.getConfigManager().getParsedValues())
             );
         });
     }
@@ -113,11 +113,12 @@ public class PistonLib implements ModInitializer, PistonLibInitializer, PistonLi
     public void bootstrap() {
         ModBlocks.bootstrap();
         ModBlockEntities.bootstrap();
-        ModItems.boostrap();
-        ModMenus.boostrap();
+        ModItems.bootstrap();
+        ModDataComponents.bootstrap();
+        ModMenus.bootstrap();
         if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
             ModCreativeModeTabs.bootstrap();
-            ModScreens.boostrap();
+            ModScreens.bootstrap();
         }
         ModArgumentTypes.bootstrap();
         ModCommands.bootstrap();

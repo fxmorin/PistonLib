@@ -2,9 +2,8 @@ package ca.fxco.pistonlib.helpers;
 
 import lombok.experimental.UtilityClass;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.ShortTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
@@ -26,11 +25,11 @@ public class NbtUtils {
      * @param compoundTag The {@link CompoundTag} to save the items to
      * @param container The {@link Container} to save the items from
      */
-    public static void saveAllItems(CompoundTag compoundTag, Container container) {
+    public static void saveAllItems(CompoundTag compoundTag, Container container, HolderLookup.Provider lookup) {
         for (int i = 0; i < container.getContainerSize(); i++) {
             ItemStack stack = container.getItem(i);
             if (!stack.isEmpty()) {
-                compoundTag.put("" + i, container.getItem(i).save(new CompoundTag()));
+                compoundTag.put("" + i, container.getItem(i).save(lookup, new CompoundTag()));
             }
         }
     }
@@ -41,10 +40,10 @@ public class NbtUtils {
      * @param compoundTag The {@link CompoundTag} containing the items to load
      * @param container The {@link Container} to load the items into
      */
-    public static void loadAllItems(CompoundTag compoundTag, Container container) {
+    public static void loadAllItems(CompoundTag compoundTag, Container container, HolderLookup.Provider lookup) {
         for (int i = 0; i < container.getContainerSize(); i++) {
             if (compoundTag.contains("" + i, Tag.TAG_COMPOUND)) {
-                container.setItem(i, ItemStack.of(compoundTag.getCompound("" + i)));
+                container.setItem(i, ItemStack.parseOptional(lookup, compoundTag.getCompound("" + i)));
             } else {
                 container.setItem(i, ItemStack.EMPTY);
             }

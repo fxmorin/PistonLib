@@ -17,6 +17,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
@@ -104,8 +105,8 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
     }
 
     @Override
-    public CompoundTag getUpdateTag() {
-        return this.saveWithoutMetadata();
+    public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
+        return this.saveWithoutMetadata(provider);
     }
 
     @Override
@@ -498,7 +499,7 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
     }
 
     @Override
-    public void load(CompoundTag nbt) {
+    public void loadAdditional(CompoundTag nbt, HolderLookup.Provider lookup) {
         this.setFamily(PistonFamilies.get(new ResourceLocation(nbt.getString("family"))));
         this.movedState = NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), nbt.getCompound("blockState"));
         this.direction = Direction.from3DDataValue(nbt.getInt("facing"));
@@ -519,7 +520,7 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
     }
 
     @Override
-    public void saveAdditional(CompoundTag nbt) {
+    public void saveAdditional(CompoundTag nbt, HolderLookup.Provider lookup) {
         nbt.putString("family", PistonFamilies.getId(this.family).toString());
         nbt.put("blockState", NbtUtils.writeBlockState(this.movedState));
         nbt.putInt("facing", this.direction.get3DDataValue());

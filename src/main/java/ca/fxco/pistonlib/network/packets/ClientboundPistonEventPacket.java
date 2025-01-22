@@ -4,50 +4,53 @@ import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.helpers.PistonEventData;
 import ca.fxco.pistonlib.network.ClientPacketHandler;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
-@Getter
-@AllArgsConstructor
-@NoArgsConstructor
-public class ClientboundPistonEventPacket extends PLPacket {
+public record ClientboundPistonEventPacket(
+        BasicPistonBaseBlock pistonBlock,
+        BlockPos pos,
+        Direction dir,
+        boolean extend
+) implements PLPacket {
 
-    public static ResourceLocation ID = PistonLib.id("piston_event");
+    public static final CustomPacketPayload.Type<ClientboundPistonEventPacket> TYPE =
+            new Type<>(PistonLib.id("piston_event"));
 
-    private BasicPistonBaseBlock pistonBlock;
-    private BlockPos pos;
-    private Direction dir;
-    private boolean extend;
+    private static final StreamCodec<RegistryFriendlyByteBuf, BasicPistonBaseBlock> BLOCK_STREAM_CODEC =
+            ByteBufCodecs.registry(Registries.BLOCK).map(
+                    block -> (BasicPistonBaseBlock) block, b -> b);
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundPistonEventPacket> STREAM_CODEC =
+            StreamCodec.composite(
+                    BLOCK_STREAM_CODEC,
+                    ClientboundPistonEventPacket::pistonBlock,
+                    BlockPos.STREAM_CODEC,
+                    ClientboundPistonEventPacket::pos,
+                    Direction.STREAM_CODEC,
+                    ClientboundPistonEventPacket::dir,
+                    ByteBufCodecs.BOOL,
+                    ClientboundPistonEventPacket::extend,
+                    ClientboundPistonEventPacket::new
+            );
 
     public ClientboundPistonEventPacket(PistonEventData pistonEventData) {
         this(pistonEventData.pistonBlock(), pistonEventData.pos(), pistonEventData.dir(), pistonEventData.extend());
     }
 
     @Override
-    public void write(FriendlyByteBuf buf) {
-        buf.writeId(BuiltInRegistries.BLOCK, this.pistonBlock);
-        buf.writeBlockPos(this.pos);
-        buf.writeByte(this.dir.ordinal());
-        buf.writeBoolean(this.extend);
-    }
-
-    @Override
-    public void read(FriendlyByteBuf buf) {
-        this.pistonBlock = (BasicPistonBaseBlock) buf.readById(BuiltInRegistries.BLOCK);
-        this.pos = buf.readBlockPos();
-        this.dir = Direction.values()[buf.readByte()];
-        this.extend = buf.readBoolean();
-    }
-
-    @Override
     public void handleClient(PacketSender packetSender) {
         ClientPacketHandler.handle(this, packetSender);
+    }
+
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return null;
     }
 }

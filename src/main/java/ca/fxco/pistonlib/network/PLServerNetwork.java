@@ -1,63 +1,62 @@
 package ca.fxco.pistonlib.network;
 
-import ca.fxco.pistonlib.helpers.Utils;
 import ca.fxco.pistonlib.network.packets.*;
 import com.mojang.authlib.GameProfile;
+import io.netty.buffer.ByteBuf;
 import net.fabricmc.api.EnvType;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 public class PLServerNetwork {
 
-    private static final HashMap<Class<? extends PLPacket>, ResourceLocation> PACKET_TYPES = new HashMap<>();
+    public static final StreamCodec<ByteBuf, BlockState> BLOCKSTATE_STREAM_CODEC =
+            ByteBufCodecs.fromCodec(BlockState.CODEC);
 
     public static void initialize() {
-        //server to client
-        registerServerBound(ServerboundQueryMoveBehaviorPacket.ID, ServerboundQueryMoveBehaviorPacket.class);
-
         //client to server
-        registerClientBound(ClientboundPistonEventPacket.ID, ClientboundPistonEventPacket.class);
-        registerClientBound(ClientboundModifyConfigPacket.ID, ClientboundModifyConfigPacket.class);
-        registerClientBound(ClientboundQueryMoveBehaviorPacket.ID, ClientboundQueryMoveBehaviorPacket.class);
+        registerServerBound(ServerboundQueryMoveBehaviorPacket.TYPE, ServerboundQueryMoveBehaviorPacket.STREAM_CODEC);
+
+        //server to client
+        registerClientBound(ClientboundPistonEventPacket.TYPE, ClientboundPistonEventPacket.STREAM_CODEC);
+        registerClientBound(ClientboundModifyConfigPacket.TYPE, ClientboundModifyConfigPacket.STREAM_CODEC);
+        registerClientBound(ClientboundQueryMoveBehaviorPacket.TYPE, ClientboundQueryMoveBehaviorPacket.STREAM_CODEC);
     }
 
     //
     // Registering Packets
     //
 
-    private static <T extends PLPacket> void registerServerBound(ResourceLocation id, Class<T> type) {
-        registerServerBound(id, type, () -> Utils.createInstance(type));
-    }
-
-    private static <T extends PLPacket> void registerServerBound(ResourceLocation id, Class<T> type,
-                                                                 Supplier<T> packetGen) {
-        PACKET_TYPES.put(type, id);
-        ServerPlayNetworking.registerGlobalReceiver(id, (server, player, listener, buf, packetSender) -> {
-            T packet = packetGen.get();
-            packet.read(buf);
-            server.execute(() -> packet.handleServer(server, player, packetSender));
+    private static <T extends PLPacket> void registerServerBound(CustomPacketPayload.Type<T> type,
+                                             StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec) {
+        PayloadTypeRegistry.playC2S().register(type, streamCodec);
+        ServerPlayNetworking.registerGlobalReceiver(type, (payload, context) -> {
+            MinecraftServer server = context.server();
+            server.execute(() -> payload.handleServer(server, context.player(), context.responseSender()));
         });
     }
 
-    public static <T extends PLPacket> void registerClientBound(ResourceLocation id, Class<T> type) {
-        PACKET_TYPES.put(type, id);
+    public static <T extends PLPacket> void registerClientBound(CustomPacketPayload.Type<T> type,
+                                            StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec) {
+        PayloadTypeRegistry.playS2C().register(type, streamCodec);
         if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
-            PLClientNetwork.registerClientBound(id, type);
+            PLClientNetwork.registerClientBound(type);
         }
     }
 
@@ -65,19 +64,16 @@ public class PLServerNetwork {
     // Sending Packets
     //
 
-    public static void sendToClient(ServerPlayer player, PLPacket packet) {
-        ResourceLocation id = getPacketId(packet);
-        ServerPlayNetworking.send(player, id, packet.writeAsBuffer());
+    public static void sendToClient(ServerPlayer player, PLPacket payload) {
+        ServerPlayNetworking.send(player, payload);
     }
 
-    public static void sendToClients(List<ServerPlayer> players, PLPacket packet) {
+    public static void sendToClients(List<ServerPlayer> players, PLPacket payload) {
         if (players.isEmpty()) {
             return;
         }
-        ResourceLocation id = getPacketId(packet);
-        FriendlyByteBuf buf = packet.writeAsBuffer();
         for (ServerPlayer player : players) {
-            ServerPlayNetworking.send(player, id, buf);
+            ServerPlayNetworking.send(player, payload);
         }
     }
 
@@ -103,65 +99,39 @@ public class PLServerNetwork {
     }
 
     public static void sendToClientsInRange(MinecraftServer server, GlobalPos fromPos,
-                                            PLPacket packet, double distance) {
-        ResourceLocation id = getPacketId(packet);
-        FriendlyByteBuf buf = null;
+                                            PLPacket payload, double distance) {
         BlockPos pos = fromPos.pos();
         ResourceKey<Level> dimensionKey = fromPos.dimension();
         for (ServerPlayer serverPlayer : server.getPlayerList().getPlayers()) {
             if (serverPlayer.level().dimension() == dimensionKey &&
                     pos.closerToCenterThan(serverPlayer.position(), distance)) {
-                if (buf == null) { // Don't create packet if it doesn't get sent to anyone
-                    buf = packet.writeAsBuffer();
-                }
-                ServerPlayNetworking.send(serverPlayer, id, buf);
+                ServerPlayNetworking.send(serverPlayer, payload);
             }
         }
     }
 
-    public static void sendToClientsInRange(MinecraftServer server, GlobalPos fromPos, PLPacket packet,
+    public static void sendToClientsInRange(MinecraftServer server, GlobalPos fromPos, PLPacket payload,
                                             double distance, @Nullable ServerPlayer exclude) {
-        ResourceLocation id = getPacketId(packet);
-        FriendlyByteBuf buf = null;
         BlockPos pos = fromPos.pos();
         ResourceKey<Level> dimensionKey = fromPos.dimension();
         for (ServerPlayer serverPlayer : server.getPlayerList().getPlayers()) {
             if (serverPlayer != exclude && serverPlayer.level().dimension() == dimensionKey &&
                     pos.closerToCenterThan(serverPlayer.position(), distance)) {
-                if (buf == null) { // Don't create packet if it doesn't get sent to anyone
-                    buf = packet.writeAsBuffer();
-                }
-                ServerPlayNetworking.send(serverPlayer, id, buf);
+                ServerPlayNetworking.send(serverPlayer, payload);
             }
         }
     }
 
-    public static void sendToClientsInRange(MinecraftServer server, GlobalPos fromPos, PLPacket packet,
+    public static void sendToClientsInRange(MinecraftServer server, GlobalPos fromPos, PLPacket payload,
                                             double distance, Predicate<ServerPlayer> predicate) {
-        ResourceLocation id = getPacketId(packet);
-        FriendlyByteBuf buf = null;
         BlockPos pos = fromPos.pos();
         ResourceKey<Level> dimensionKey = fromPos.dimension();
         for (ServerPlayer serverPlayer : server.getPlayerList().getPlayers()) {
             if (serverPlayer.level().dimension() == dimensionKey &&
                     pos.closerToCenterThan(serverPlayer.position(), distance) && predicate.test(serverPlayer)) {
-                if (buf == null) { // Don't create packet if it doesn't get sent to anyone
-                    buf = packet.writeAsBuffer();
-                }
-                ServerPlayNetworking.send(serverPlayer, id, buf);
+                ServerPlayNetworking.send(serverPlayer, payload);
             }
         }
     }
 
-    //
-    // Validation
-    //
-
-    public static ResourceLocation getPacketId(PLPacket packet) {
-        ResourceLocation id = PACKET_TYPES.get(packet.getClass());
-        if (id != null) {
-            return id;
-        }
-        throw new IllegalArgumentException("Invalid packet type! - " + packet.getClass());
-    }
 }

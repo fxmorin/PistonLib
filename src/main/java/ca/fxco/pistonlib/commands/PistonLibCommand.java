@@ -169,7 +169,7 @@ public class PistonLibCommand implements Command {
         boolean isPush = eventType == PistonEventType.PUSH;
         if (globalPos == null || facing == null) {
             ServerPlayer player = commandSourceStack.getPlayerOrException();
-            HitResult hitResult = player.pick(Minecraft.getInstance().gameMode.getPickRange(), 1.0F, false);
+            HitResult hitResult = player.pick(Minecraft.getInstance().player.blockInteractionRange(), 1.0F, false);
             if (hitResult.getType() == HitResult.Type.BLOCK && hitResult instanceof BlockHitResult blockHitResult) {
                 Direction face = blockHitResult.getDirection();
                 blockPos = blockHitResult.getBlockPos();
