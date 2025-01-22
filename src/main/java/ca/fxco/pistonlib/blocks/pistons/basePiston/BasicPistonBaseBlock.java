@@ -2,6 +2,7 @@ package ca.fxco.pistonlib.blocks.pistons.basePiston;
 
 import ca.fxco.api.pistonlib.block.PLPistonController;
 import ca.fxco.api.pistonlib.pistonLogic.controller.PistonController;
+import com.mojang.serialization.MapCodec;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import net.minecraft.core.BlockPos;
@@ -52,6 +53,11 @@ public class BasicPistonBaseBlock extends DirectionalBlock implements PLPistonCo
                 .setValue(FACING, Direction.NORTH)
                 .setValue(EXTENDED, false)
         );
+    }
+
+    @Override
+    protected MapCodec<? extends DirectionalBlock> codec() {
+        return null; // codec isn't used now. currently it's just a preparation for data driven blocks
     }
 
     @Override
@@ -128,4 +134,5 @@ public class BasicPistonBaseBlock extends DirectionalBlock implements PLPistonCo
     public PistonController pl$getPistonController() {
         return this.controller;
     }
+
 }

@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
 
+import com.mojang.serialization.MapCodec;
 import lombok.Getter;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
@@ -107,7 +108,7 @@ public class BasicPistonHeadBlock extends DirectionalBlock {
     }
 
     @Override
-    public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
         if (!level.isClientSide() && player.getAbilities().instabuild) {
             BlockPos behindPos = pos.relative(state.getValue(FACING).getOpposite());
 
@@ -116,7 +117,7 @@ public class BasicPistonHeadBlock extends DirectionalBlock {
             }
         }
 
-        super.playerWillDestroy(level, pos, state, player);
+        return super.playerWillDestroy(level, pos, state, player);
     }
 
     @Override
@@ -160,7 +161,7 @@ public class BasicPistonHeadBlock extends DirectionalBlock {
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state) {
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
         return new ItemStack(family.getBase(state.getValue(TYPE)));
     }
 
@@ -209,5 +210,10 @@ public class BasicPistonHeadBlock extends DirectionalBlock {
         SHORT_HEAD_SHAPES = getHeadShapes(true);
         HEAD_SHAPES = getHeadShapes(false);
 
+    }
+
+    @Override
+    protected MapCodec<? extends DirectionalBlock> codec() {
+        return null;
     }
 }

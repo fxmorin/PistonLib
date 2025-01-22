@@ -6,6 +6,7 @@ import java.util.function.BiPredicate;
 import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.base.ModTags;
 
+import com.mojang.serialization.MapCodec;
 import lombok.Getter;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
@@ -175,12 +176,13 @@ public class BasicPistonArmBlock extends DirectionalBlock {
     }
 
     @Override
-    public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
         if (!level.isClientSide() && player.getAbilities().instabuild) {
             Direction facing = state.getValue(FACING);
             this.isAttachedOrBreak(level, state, pos.relative(facing.getOpposite()), pos.relative(facing));
         }
-        super.playerWillDestroy(level, pos, state, player);
+
+        return super.playerWillDestroy(level, pos, state, player);
     }
 
     @Override
@@ -218,7 +220,7 @@ public class BasicPistonArmBlock extends DirectionalBlock {
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state) {
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
         Direction dir = state.getValue(FACING);
         BlockPos nextBlockPos = pos.relative(dir);
         BlockState nextState = level.getBlockState(nextBlockPos);
@@ -248,5 +250,10 @@ public class BasicPistonArmBlock extends DirectionalBlock {
     @Override
     public boolean isPathfindable(BlockState state, BlockGetter level, BlockPos pos, PathComputationType type) {
         return false;
+    }
+
+    @Override
+    protected MapCodec<? extends DirectionalBlock> codec() {
+        return null;
     }
 }

@@ -3,6 +3,7 @@ package ca.fxco.pistonlib.blocks;
 import java.util.Map;
 
 import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyType;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -16,10 +17,17 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
 public class PoweredStickyBlock extends DirectionalBlock {
 
+    public static final MapCodec<PoweredStickyBlock> CODEC = simpleCodec(PoweredStickyBlock::new);
+
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 
     public PoweredStickyBlock(Properties properties) {
         super(properties);
+    }
+
+    @Override
+    protected MapCodec<? extends DirectionalBlock> codec() {
+        return CODEC;
     }
 
     public void updatePowered(BlockState state, Level level, BlockPos pos, boolean force) {
