@@ -32,7 +32,7 @@ public class ModRecipeProvider extends FabricRecipeProvider {
 	}
 
 	@Override
-	public void buildRecipes(Consumer<FinishedRecipe> exporter) {
+	public void buildRecipes(RecipeOutput exporter) {
 		LOGGER.info("Generating recipes...");
 
 		for (Map.Entry<ResourceKey<PistonFamily>, PistonFamily> entry : ModRegistries.PISTON_FAMILY.entrySet()) {
@@ -65,11 +65,11 @@ public class ModRecipeProvider extends FabricRecipeProvider {
 		LOGGER.info("Finished generating recipes!");
 	}
 
-	public void offerSlipperyBlockRecipe(Consumer<FinishedRecipe> exporter, Block slipperyBlock, Block baseBlock) {
+	public void offerSlipperyBlockRecipe(RecipeOutput exporter, Block slipperyBlock, Block baseBlock) {
 		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, slipperyBlock, 1).requires(baseBlock).requires(Items.POTION).unlockedBy(getHasName(baseBlock), has(baseBlock)).save(exporter);
 	}
 
-	public void offerStickyPistonRecipe(Consumer<FinishedRecipe> exporter, Block stickyPiston, Block regularPiston) {
+	public void offerStickyPistonRecipe(RecipeOutput exporter, Block stickyPiston, Block regularPiston) {
 		ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, stickyPiston).define('P', regularPiston).define('S', Items.SLIME_BALL).pattern("S").pattern("P").unlockedBy("has_slime_ball", has(Items.SLIME_BALL)).save(exporter);
 	}
 }

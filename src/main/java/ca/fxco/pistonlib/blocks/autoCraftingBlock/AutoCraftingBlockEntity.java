@@ -17,6 +17,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -280,11 +281,12 @@ public class AutoCraftingBlockEntity extends BaseContainerBlockEntity implements
         if (lastSuccessfulRecipe != lastRecipe && lastRecipe != null && lastRecipe.matches(this.items, this.level)) {
             return lastRecipe;
         }
-        List<CraftingRecipe> recipeList = this.level.getRecipeManager().getAllRecipesFor(RecipeType.CRAFTING);
-        for (CraftingRecipe recipe : recipeList) {
-            if (recipe.matches(this.items, this.level)) {
-                lastRecipe = recipe;
-                return recipe;
+        List<RecipeHolder<CraftingRecipe>> recipeList =
+                this.level.getRecipeManager().getAllRecipesFor(RecipeType.CRAFTING);
+        for (RecipeHolder<CraftingRecipe> recipe : recipeList) {
+            if (recipe.value().matches(this.items, this.level)) {
+                lastRecipe = recipe.value();
+                return recipe.value();
             }
         }
         return null;
