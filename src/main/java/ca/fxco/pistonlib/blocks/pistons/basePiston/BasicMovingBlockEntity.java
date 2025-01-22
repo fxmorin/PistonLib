@@ -500,7 +500,7 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
 
     @Override
     public void loadAdditional(CompoundTag nbt, HolderLookup.Provider lookup) {
-        this.setFamily(PistonFamilies.get(new ResourceLocation(nbt.getString("family"))));
+        this.setFamily(PistonFamilies.get(ResourceLocation.parse(nbt.getString("family"))));
         this.movedState = NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), nbt.getCompound("blockState"));
         this.direction = Direction.from3DDataValue(nbt.getInt("facing"));
         this.progress = nbt.getFloat("progress");

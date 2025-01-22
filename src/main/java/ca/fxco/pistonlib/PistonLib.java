@@ -41,7 +41,7 @@ public class PistonLib implements ModInitializer, PistonLibInitializer, PistonLi
     private static Optional<MinecraftServer> server = Optional.empty();
 
     public static ResourceLocation id(String path) {
-        return new ResourceLocation(MOD_ID, path);
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
     }
 
     @Override

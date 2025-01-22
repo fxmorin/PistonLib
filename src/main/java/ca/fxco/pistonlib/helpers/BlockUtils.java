@@ -53,7 +53,7 @@ public class BlockUtils {
             string = string.substring(1, string.length() - 1);
         }
         try {
-            return BuiltInRegistries.BLOCK.get(new ResourceLocation(string));
+            return BuiltInRegistries.BLOCK.get(ResourceLocation.parse(string));
         } catch (ResourceLocationException e) {
             e.printStackTrace();
         }

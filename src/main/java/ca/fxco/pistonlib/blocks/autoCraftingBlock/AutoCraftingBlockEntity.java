@@ -289,16 +289,16 @@ public class AutoCraftingBlockEntity extends BaseContainerBlockEntity implements
         if (this.level == null || this.items.isEmpty()) {
             return null;
         }
-        if (lastSuccessfulRecipe != null && lastSuccessfulRecipe.matches(this.items, this.level)) {
+        if (lastSuccessfulRecipe != null && lastSuccessfulRecipe.matches(this.items.asCraftInput(), this.level)) {
             return lastSuccessfulRecipe;
         }
-        if (lastSuccessfulRecipe != lastRecipe && lastRecipe != null && lastRecipe.matches(this.items, this.level)) {
+        if (lastSuccessfulRecipe != lastRecipe && lastRecipe != null && lastRecipe.matches(this.items.asCraftInput(), this.level)) {
             return lastRecipe;
         }
         List<RecipeHolder<CraftingRecipe>> recipeList =
                 this.level.getRecipeManager().getAllRecipesFor(RecipeType.CRAFTING);
         for (RecipeHolder<CraftingRecipe> recipe : recipeList) {
-            if (recipe.value().matches(this.items, this.level)) {
+            if (recipe.value().matches(this.items.asCraftInput(), this.level)) {
                 lastRecipe = recipe.value();
                 return recipe.value();
             }
@@ -315,7 +315,7 @@ public class AutoCraftingBlockEntity extends BaseContainerBlockEntity implements
         if (recipe == null) {
             return ItemStack.EMPTY;
         }
-        return recipe.assemble(this.items, this.level.registryAccess());
+        return recipe.assemble(this.items.asCraftInput(), this.level.registryAccess());
     }
 
     @Override
