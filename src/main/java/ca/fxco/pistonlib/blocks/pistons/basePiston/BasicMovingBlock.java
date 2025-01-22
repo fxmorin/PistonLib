@@ -6,7 +6,9 @@ import java.util.List;
 import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.PistonLibConfig;
 import lombok.Getter;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.storage.loot.LootParams;
 import org.jetbrains.annotations.Nullable;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
@@ -29,9 +31,7 @@ import net.minecraft.world.level.block.piston.MovingPistonBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.PistonType;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.pathfinder.PathComputationType;
-import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -93,7 +93,7 @@ public class BasicMovingBlock extends MovingPistonBlock {
     }
 
     @Override
-    public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
+    public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
         Level level = builder.getLevel();
         Vec3 origin = builder.getParameter(LootContextParams.ORIGIN);
         BasicMovingBlockEntity mbe = this.getMovingBlockEntity(level, BlockPos.containing(origin));
@@ -143,7 +143,7 @@ public class BasicMovingBlock extends MovingPistonBlock {
     }
 
     public static Properties createDefaultSettings() {
-        return FabricBlockSettings.of(Material.PISTON)
+        return FabricBlockSettings.copyOf(Blocks.PISTON)
                 .strength(-1.0f)
                 .dynamicBounds()
                 .dropsNothing()

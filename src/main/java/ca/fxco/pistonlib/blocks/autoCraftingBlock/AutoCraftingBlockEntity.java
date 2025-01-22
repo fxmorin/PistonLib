@@ -49,7 +49,7 @@ public class AutoCraftingBlockEntity extends BaseContainerBlockEntity implements
 
     public AutoCraftingBlockEntity(BlockEntityType<?> blockEntityType, BlockPos blockPos, BlockState blockState) {
         super(blockEntityType, blockPos, blockState);
-        this.items = new CraftingContainer(new AbstractContainerMenu(MenuType.CRAFTING, -1) {
+        this.items = new TransientCraftingContainer(new AbstractContainerMenu(MenuType.CRAFTING, -1) {
             @Override public ItemStack quickMoveStack(Player player, int i) {return ItemStack.EMPTY;}
             @Override public void slotsChanged(Container container) {}
             @Override public boolean stillValid(Player player) {return true;}

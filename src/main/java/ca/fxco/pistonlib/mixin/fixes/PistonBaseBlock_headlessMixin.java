@@ -7,6 +7,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.SignalGetter;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.piston.PistonBaseBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -26,7 +27,7 @@ import static net.minecraft.world.level.block.state.properties.BlockStatePropert
  */
 
 @Mixin(PistonBaseBlock.class)
-public class PistonBaseBlock_headlessMixin {
+public abstract class PistonBaseBlock_headlessMixin {
 
     @Shadow
     @Final
@@ -37,16 +38,14 @@ public class PistonBaseBlock_headlessMixin {
     private boolean isSticky;
 
     @Shadow
-    @Final
-    private boolean getNeighborSignal(Level level, BlockPos pos, Direction facing) { return false; }
-
+    protected abstract boolean getNeighborSignal(SignalGetter signalGetter, BlockPos blockPos, Direction direction);
 
     @Inject(
             method = "checkIfExtend",
             at = @At(
                     value = "INVOKE_ASSIGN",
                     target = "Lnet/minecraft/world/level/block/piston/PistonBaseBlock;getNeighborSignal(" +
-                            "Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;" +
+                            "Lnet/minecraft/world/level/SignalGetter;Lnet/minecraft/core/BlockPos;" +
                             "Lnet/minecraft/core/Direction;)Z",
                     shift = At.Shift.AFTER
             ),

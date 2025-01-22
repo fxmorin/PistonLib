@@ -5,7 +5,7 @@ import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import lombok.experimental.UtilityClass;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.server.level.ChunkHolder;
+import net.minecraft.server.level.FullChunkStatus;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.*;
@@ -55,7 +55,7 @@ public class BlockReplaceUtils {
 
             if ((i & 2) != 0 && (!level.isClientSide || (i & 4) == 0) &&
                     (level.isClientSide || levelChunk.getFullStatus() != null &&
-                            levelChunk.getFullStatus().isOrAfter(ChunkHolder.FullChunkStatus.TICKING))) {
+                            levelChunk.getFullStatus().isOrAfter(FullChunkStatus.BLOCK_TICKING))) {
                 level.sendBlockUpdated(blockPos, blockState2, blockState, i);
             }
 

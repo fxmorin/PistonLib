@@ -42,7 +42,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.PistonType;
-import net.minecraft.world.level.material.Material;
 
 import static ca.fxco.pistonlib.base.ModPistonFamilies.*;
 import static ca.fxco.pistonlib.PistonLib.id;
@@ -57,8 +56,8 @@ public class ModBlocks {
     public static final Block HALF_REDSTONE_LAMP_BLOCK = register("half_redstone_lamp", HalfRedstoneLampBlock::new, Blocks.REDSTONE_LAMP);
 
     // Create Custom Blocks
-    public static final Block DRAG_BLOCK = register("drag_block", new PullOnlyBlock(FabricBlockSettings.of(Material.METAL).strength(22.0f).hardness(18.0f)));
-    public static final Block STICKYLESS_BLOCK = register("stickyless_block", new StickylessBlock(FabricBlockSettings.of(Material.AMETHYST).strength(64.0f).hardness(64.0f)));
+    public static final Block DRAG_BLOCK = register("drag_block", new PullOnlyBlock(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).strength(22.0f).hardness(18.0f)));
+    public static final Block STICKYLESS_BLOCK = register("stickyless_block", new StickylessBlock(FabricBlockSettings.copyOf(Blocks.AMETHYST_BLOCK).strength(64.0f).hardness(64.0f)));
     public static final Block STICKY_TOP_BLOCK = register("sticky_top_block", new StickySidesBlock(FabricBlockSettings.copyOf(Blocks.STONE), Map.of(Direction.UP, StickyType.STICKY)));
     public static final Block SLIMY_REDSTONE_BLOCK = register("slimy_redstone_block", new SlimyPoweredBlock(FabricBlockSettings.copyOf(Blocks.REDSTONE_BLOCK).noOcclusion()));
     public static final Block ALL_SIDED_OBSERVER = register("all_sided_observer", AllSidedObserverBlock::new, Blocks.OBSERVER);
@@ -70,7 +69,7 @@ public class ModBlocks {
     public static final Block WEAK_REDSTONE_BLOCK = register("weak_redstone_block", WeakPoweredBlock::new, Blocks.REDSTONE_BLOCK);
     public static final Block QUASI_BLOCK = register("quasi_block", QuasiBlock::new, Blocks.REDSTONE_BLOCK);
     public static final Block ERASE_BLOCK = register("erase_block", EraseBlock::new, Blocks.REDSTONE_BLOCK);
-    public static final Block HEAVY_BLOCK = register("heavy_block", new WeightBlock(FabricBlockSettings.of(Material.METAL), 2));
+    public static final Block HEAVY_BLOCK = register("heavy_block", new WeightBlock(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK), 2));
 
     // Slippery Blocks
     // These blocks if they are not touching a solid surface

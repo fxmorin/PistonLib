@@ -285,7 +285,7 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
     }
 
     protected boolean matchesStickyCriterea(AABB movementArea, Entity entity) {
-        return entity.getPistonPushReaction() == PushReaction.NORMAL && entity.isOnGround() &&
+        return entity.getPistonPushReaction() == PushReaction.NORMAL && entity.onGround() &&
             entity.getX() >= movementArea.minX &&
             entity.getX() <= movementArea.maxX &&
             entity.getZ() >= movementArea.minZ &&

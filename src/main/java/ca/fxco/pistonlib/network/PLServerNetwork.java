@@ -4,7 +4,6 @@ import ca.fxco.pistonlib.helpers.Utils;
 import ca.fxco.pistonlib.network.packets.*;
 import com.mojang.authlib.GameProfile;
 import net.fabricmc.api.EnvType;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;
@@ -110,7 +109,7 @@ public class PLServerNetwork {
         BlockPos pos = fromPos.pos();
         ResourceKey<Level> dimensionKey = fromPos.dimension();
         for (ServerPlayer serverPlayer : server.getPlayerList().getPlayers()) {
-            if (serverPlayer.level.dimension() == dimensionKey &&
+            if (serverPlayer.level().dimension() == dimensionKey &&
                     pos.closerToCenterThan(serverPlayer.position(), distance)) {
                 if (buf == null) { // Don't create packet if it doesn't get sent to anyone
                     buf = packet.writeAsBuffer();
@@ -127,7 +126,7 @@ public class PLServerNetwork {
         BlockPos pos = fromPos.pos();
         ResourceKey<Level> dimensionKey = fromPos.dimension();
         for (ServerPlayer serverPlayer : server.getPlayerList().getPlayers()) {
-            if (serverPlayer != exclude && serverPlayer.level.dimension() == dimensionKey &&
+            if (serverPlayer != exclude && serverPlayer.level().dimension() == dimensionKey &&
                     pos.closerToCenterThan(serverPlayer.position(), distance)) {
                 if (buf == null) { // Don't create packet if it doesn't get sent to anyone
                     buf = packet.writeAsBuffer();
@@ -144,7 +143,7 @@ public class PLServerNetwork {
         BlockPos pos = fromPos.pos();
         ResourceKey<Level> dimensionKey = fromPos.dimension();
         for (ServerPlayer serverPlayer : server.getPlayerList().getPlayers()) {
-            if (serverPlayer.level.dimension() == dimensionKey &&
+            if (serverPlayer.level().dimension() == dimensionKey &&
                     pos.closerToCenterThan(serverPlayer.position(), distance) && predicate.test(serverPlayer)) {
                 if (buf == null) { // Don't create packet if it doesn't get sent to anyone
                     buf = packet.writeAsBuffer();

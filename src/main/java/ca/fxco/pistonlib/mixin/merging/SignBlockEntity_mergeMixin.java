@@ -8,25 +8,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
-import org.spongepowered.asm.mixin.Final;
+import net.minecraft.world.level.block.entity.SignText;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(SignBlockEntity.class)
 public abstract class SignBlockEntity_mergeMixin implements PLBlockEntity {
-
-    @Shadow
-    private boolean hasGlowingText() { return false; }
-
-    @Shadow
-    private DyeColor getColor() { return null; }
-
-    @Shadow
-    @Final
-    private static int LINES;
-
-    @Shadow
-    private Component getMessage(int i, boolean bl) { return null; }
 
     @Override
     public boolean pl$shouldStoreSelf(MergeBlockEntity mergeBlockEntity) {
@@ -36,17 +22,21 @@ public abstract class SignBlockEntity_mergeMixin implements PLBlockEntity {
     @Override
     public void pl$onAdvancedFinalMerge(BlockEntity blockEntity) {
         if (blockEntity instanceof SignBlockEntity signBlockEntity) {
-            if (this.hasGlowingText() && !signBlockEntity.hasGlowingText()) {
-                signBlockEntity.setHasGlowingText(true);
-            }
-            if (this.getColor() != signBlockEntity.getColor() && signBlockEntity.getColor() != DyeColor.BLACK) {
-                signBlockEntity.setColor(Utils.properDyeMixing(this.getColor(), signBlockEntity.getColor()));
-            }
-            for (int i = 0; i < LINES; i++) {
-                Component comp = signBlockEntity.getMessage(i, false);
-                if (comp == CommonComponents.EMPTY || comp.getString().isEmpty()) {
-                    signBlockEntity.setMessage(i, this.getMessage(i, false));
+            SignText text = signBlockEntity.getFrontText();
+            for (int j = 0; j < 2; j++) {
+                if (text.hasGlowingText() && !text.hasGlowingText()) {
+                    text.setHasGlowingText(true);
                 }
+                if (text.getColor() != text.getColor() && text.getColor() != DyeColor.BLACK) {
+                    text.setColor(Utils.properDyeMixing(text.getColor(), text.getColor()));
+                }
+                for (int i = 0; i < SignText.LINES; i++) {
+                    Component comp = text.getMessage(i, false);
+                    if (comp == CommonComponents.EMPTY || comp.getString().isEmpty()) {
+                        text.setMessage(i, text.getMessage(i, false));
+                    }
+                }
+                text = signBlockEntity.getBackText();
             }
         }
     }

@@ -27,7 +27,7 @@ public class Entity_pushIntoMixin {
             )
     )
     private Vec3 checkPushInto(Entity instance, Vec3 vec3, MoverType moverType) {
-        if (moverType == MoverType.PISTON && !instance.getLevel().isClientSide) {
+        if (moverType == MoverType.PISTON && !instance.level().isClientSide) {
             // This looks kinda scary, although it only checks max 25 blocks.
             // Honestly it's not very expensive compared to a lot of the other movement logic which runs every tick
             AABB aabb = instance.getBoundingBox();
@@ -39,8 +39,8 @@ public class Entity_pushIntoMixin {
                 BlockPos blockPos2 = BlockPos.containing(aabb.maxX - 1.0E-7, aabb.maxY - 1.0E-7, aabb.maxZ - 1.0E-7);
                 for (BlockPos pos : BlockPos.betweenClosed(blockPos, blockPos2)) {
                     if (BlockPosUtils.isNotWithin(pos, min, max)) {
-                        BlockState state = instance.getLevel().getBlockState(pos);
-                        state.pl$onPushEntityInto(instance.getLevel(), pos, instance);
+                        BlockState state = instance.level().getBlockState(pos);
+                        state.pl$onPushEntityInto(instance.level(), pos, instance);
                     }
                 }
             }
