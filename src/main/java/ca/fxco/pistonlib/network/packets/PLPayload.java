@@ -6,7 +6,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 
 // PistonLib Packet
-public interface PLPacket extends CustomPacketPayload {
+public interface PLPayload extends CustomPacketPayload {
 
     /**
      * Called on the render thread!

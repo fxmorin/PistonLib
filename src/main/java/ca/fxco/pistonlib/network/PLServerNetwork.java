@@ -31,20 +31,20 @@ public class PLServerNetwork {
 
     public static void initialize() {
         //client to server
-        registerServerBound(ServerboundQueryMoveBehaviorPacket.TYPE, ServerboundQueryMoveBehaviorPacket.STREAM_CODEC);
+        registerServerBound(QueryMoveBehaviorC2SPayload.TYPE, QueryMoveBehaviorC2SPayload.STREAM_CODEC);
 
         //server to client
-        registerClientBound(ClientboundPistonEventPacket.TYPE, ClientboundPistonEventPacket.STREAM_CODEC);
-        registerClientBound(ClientboundModifyConfigPacket.TYPE, ClientboundModifyConfigPacket.STREAM_CODEC);
-        registerClientBound(ClientboundQueryMoveBehaviorPacket.TYPE, ClientboundQueryMoveBehaviorPacket.STREAM_CODEC);
+        registerClientBound(PistonEventS2CPayload.TYPE, PistonEventS2CPayload.STREAM_CODEC);
+        registerClientBound(ModifyConfigS2CPayload.TYPE, ModifyConfigS2CPayload.STREAM_CODEC);
+        registerClientBound(QueryMoveBehaviorS2CPayload.TYPE, QueryMoveBehaviorS2CPayload.STREAM_CODEC);
     }
 
     //
     // Registering Packets
     //
 
-    private static <T extends PLPacket> void registerServerBound(CustomPacketPayload.Type<T> type,
-                                             StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec) {
+    private static <T extends PLPayload> void registerServerBound(CustomPacketPayload.Type<T> type,
+                                                                  StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec) {
         PayloadTypeRegistry.playC2S().register(type, streamCodec);
         ServerPlayNetworking.registerGlobalReceiver(type, (payload, context) -> {
             MinecraftServer server = context.server();
@@ -52,8 +52,8 @@ public class PLServerNetwork {
         });
     }
 
-    public static <T extends PLPacket> void registerClientBound(CustomPacketPayload.Type<T> type,
-                                            StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec) {
+    public static <T extends PLPayload> void registerClientBound(CustomPacketPayload.Type<T> type,
+                                                                 StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec) {
         PayloadTypeRegistry.playS2C().register(type, streamCodec);
         if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
             PLClientNetwork.registerClientBound(type);
@@ -64,11 +64,11 @@ public class PLServerNetwork {
     // Sending Packets
     //
 
-    public static void sendToClient(ServerPlayer player, PLPacket payload) {
+    public static void sendToClient(ServerPlayer player, PLPayload payload) {
         ServerPlayNetworking.send(player, payload);
     }
 
-    public static void sendToClients(List<ServerPlayer> players, PLPacket payload) {
+    public static void sendToClients(List<ServerPlayer> players, PLPayload payload) {
         if (players.isEmpty()) {
             return;
         }
@@ -77,29 +77,29 @@ public class PLServerNetwork {
         }
     }
 
-    public static void sendToAllClients(MinecraftServer server, PLPacket packet) {
-        sendToClients(server.getPlayerList().getPlayers(), packet);
+    public static void sendToAllClients(MinecraftServer server, PLPayload payload) {
+        sendToClients(server.getPlayerList().getPlayers(), payload);
     }
 
     // Sends packets to all clients except the player hosting the world
-    public static void sendToAllExternalClients(MinecraftServer server, PLPacket packet) {
+    public static void sendToAllExternalClients(MinecraftServer server, PLPayload payload) {
         if (server.isDedicatedServer()) { // Server is independent
-            sendToAllClients(server, packet);
+            sendToAllClients(server, payload);
         } else { // Filter out the host, and send to all others
             GameProfile gameProfile = server.getSingleplayerProfile();
             if (gameProfile == null) {
-                sendToAllClients(server, packet);
+                sendToAllClients(server, payload);
                 return;
             }
             String profileName = gameProfile.getName();
             List<ServerPlayer> players = new ArrayList<>(server.getPlayerList().getPlayers());
             players.removeIf(p -> profileName.equalsIgnoreCase(p.getGameProfile().getName()));
-            sendToClients(players, packet);
+            sendToClients(players, payload);
         }
     }
 
     public static void sendToClientsInRange(MinecraftServer server, GlobalPos fromPos,
-                                            PLPacket payload, double distance) {
+                                            PLPayload payload, double distance) {
         BlockPos pos = fromPos.pos();
         ResourceKey<Level> dimensionKey = fromPos.dimension();
         for (ServerPlayer serverPlayer : server.getPlayerList().getPlayers()) {
@@ -110,7 +110,7 @@ public class PLServerNetwork {
         }
     }
 
-    public static void sendToClientsInRange(MinecraftServer server, GlobalPos fromPos, PLPacket payload,
+    public static void sendToClientsInRange(MinecraftServer server, GlobalPos fromPos, PLPayload payload,
                                             double distance, @Nullable ServerPlayer exclude) {
         BlockPos pos = fromPos.pos();
         ResourceKey<Level> dimensionKey = fromPos.dimension();
@@ -122,7 +122,7 @@ public class PLServerNetwork {
         }
     }
 
-    public static void sendToClientsInRange(MinecraftServer server, GlobalPos fromPos, PLPacket payload,
+    public static void sendToClientsInRange(MinecraftServer server, GlobalPos fromPos, PLPayload payload,
                                             double distance, Predicate<ServerPlayer> predicate) {
         BlockPos pos = fromPos.pos();
         ResourceKey<Level> dimensionKey = fromPos.dimension();

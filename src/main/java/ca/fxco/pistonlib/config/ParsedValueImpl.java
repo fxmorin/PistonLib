@@ -3,7 +3,7 @@ package ca.fxco.pistonlib.config;
 import ca.fxco.api.pistonlib.config.*;
 import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.pistonlib.network.PLServerNetwork;
-import ca.fxco.pistonlib.network.packets.ClientboundModifyConfigPacket;
+import ca.fxco.pistonlib.network.packets.ModifyConfigS2CPayload;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.ImmutableIntArray;
@@ -138,7 +138,7 @@ public class ParsedValueImpl<T> implements ParsedValue<T> {
             PistonLib.getServer().ifPresent(server ->
                     PLServerNetwork.sendToAllExternalClients(
                             server,
-                            ClientboundModifyConfigPacket.fromCollection(List.of(this))
+                            ModifyConfigS2CPayload.fromCollection(List.of(this))
                     ));
         }
     }

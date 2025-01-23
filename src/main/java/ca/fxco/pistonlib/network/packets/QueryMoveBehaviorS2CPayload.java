@@ -12,22 +12,22 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * This is sent to the client after the client sends a {@link ServerboundQueryMoveBehaviorPacket}.
+ * This is sent to the client after the client sends a {@link QueryMoveBehaviorC2SPayload}.
  * </br>
  * To get the query response, use the event {@link QueryMoveBehaviorCallback#EVENT}
  */
-public record ClientboundQueryMoveBehaviorPacket(BlockState state, PistonMoveBehavior behavior) implements PLPacket {
+public record QueryMoveBehaviorS2CPayload(BlockState state, PistonMoveBehavior behavior) implements PLPayload {
 
-    public static final CustomPacketPayload.Type<ClientboundQueryMoveBehaviorPacket> TYPE =
+    public static final CustomPacketPayload.Type<QueryMoveBehaviorS2CPayload> TYPE =
             new Type<>(PistonLib.id("query_move_behavior"));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundQueryMoveBehaviorPacket> STREAM_CODEC =
+    public static final StreamCodec<RegistryFriendlyByteBuf, QueryMoveBehaviorS2CPayload> STREAM_CODEC =
             StreamCodec.composite(
                     PLServerNetwork.BLOCKSTATE_STREAM_CODEC,
-                    ClientboundQueryMoveBehaviorPacket::state,
+                    QueryMoveBehaviorS2CPayload::state,
                     PistonMoveBehavior.STREAM_CODEC,
-                    ClientboundQueryMoveBehaviorPacket::behavior,
-                    ClientboundQueryMoveBehaviorPacket::new
+                    QueryMoveBehaviorS2CPayload::behavior,
+                    QueryMoveBehaviorS2CPayload::new
             );
 
     @Override

@@ -6,8 +6,6 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
-import java.util.function.Supplier;
-
 @Environment(EnvType.CLIENT)
 public class PLClientNetwork {
 
@@ -15,7 +13,7 @@ public class PLClientNetwork {
     // Registering Packets
     //
 
-    public static <T extends PLPacket> void registerClientBound(CustomPacketPayload.Type<T> type) {
+    public static <T extends PLPayload> void registerClientBound(CustomPacketPayload.Type<T> type) {
         ClientPlayNetworking.registerGlobalReceiver(type, (payload, context) ->
                 context.client().execute(() -> payload.handleClient(context.responseSender())));
     }

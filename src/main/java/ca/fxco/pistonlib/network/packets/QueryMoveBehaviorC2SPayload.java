@@ -14,18 +14,18 @@ import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * Request Query behavior information from the server.
- * The server sends you the result of your query through {@link ClientboundQueryMoveBehaviorPacket}
+ * The server sends you the result of your query through {@link QueryMoveBehaviorS2CPayload}
  */
-public record ServerboundQueryMoveBehaviorPacket(BlockState state) implements PLPacket {
+public record QueryMoveBehaviorC2SPayload(BlockState state) implements PLPayload {
 
-    public static final CustomPacketPayload.Type<ServerboundQueryMoveBehaviorPacket> TYPE =
+    public static final CustomPacketPayload.Type<QueryMoveBehaviorC2SPayload> TYPE =
             new Type<>(PistonLib.id("query_move_behavior_c2s"));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundQueryMoveBehaviorPacket> STREAM_CODEC =
+    public static final StreamCodec<RegistryFriendlyByteBuf, QueryMoveBehaviorC2SPayload> STREAM_CODEC =
             StreamCodec.composite(
                     PLServerNetwork.BLOCKSTATE_STREAM_CODEC,
-                    ServerboundQueryMoveBehaviorPacket::state,
-                    ServerboundQueryMoveBehaviorPacket::new
+                    QueryMoveBehaviorC2SPayload::state,
+                    QueryMoveBehaviorC2SPayload::new
             );
 
     @Override
@@ -36,6 +36,6 @@ public record ServerboundQueryMoveBehaviorPacket(BlockState state) implements PL
     @Override
     public void handleServer(MinecraftServer server, ServerPlayer fromPlayer, PacketSender packetSender) {
         PistonMoveBehavior behavior = PistonLibBehaviorManager.getOverride(state);
-        PLServerNetwork.sendToClient(fromPlayer, new ClientboundQueryMoveBehaviorPacket(state, behavior));
+        PLServerNetwork.sendToClient(fromPlayer, new QueryMoveBehaviorS2CPayload(state, behavior));
     }
 }

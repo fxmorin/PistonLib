@@ -13,34 +13,34 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
-public record ClientboundPistonEventPacket(
+public record PistonEventS2CPayload(
         BasicPistonBaseBlock pistonBlock,
         BlockPos pos,
         Direction dir,
         boolean extend
-) implements PLPacket {
+) implements PLPayload {
 
-    public static final CustomPacketPayload.Type<ClientboundPistonEventPacket> TYPE =
+    public static final CustomPacketPayload.Type<PistonEventS2CPayload> TYPE =
             new Type<>(PistonLib.id("piston_event"));
 
     private static final StreamCodec<RegistryFriendlyByteBuf, BasicPistonBaseBlock> BLOCK_STREAM_CODEC =
             ByteBufCodecs.registry(Registries.BLOCK).map(
                     block -> (BasicPistonBaseBlock) block, b -> b);
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundPistonEventPacket> STREAM_CODEC =
+    public static final StreamCodec<RegistryFriendlyByteBuf, PistonEventS2CPayload> STREAM_CODEC =
             StreamCodec.composite(
                     BLOCK_STREAM_CODEC,
-                    ClientboundPistonEventPacket::pistonBlock,
+                    PistonEventS2CPayload::pistonBlock,
                     BlockPos.STREAM_CODEC,
-                    ClientboundPistonEventPacket::pos,
+                    PistonEventS2CPayload::pos,
                     Direction.STREAM_CODEC,
-                    ClientboundPistonEventPacket::dir,
+                    PistonEventS2CPayload::dir,
                     ByteBufCodecs.BOOL,
-                    ClientboundPistonEventPacket::extend,
-                    ClientboundPistonEventPacket::new
+                    PistonEventS2CPayload::extend,
+                    PistonEventS2CPayload::new
             );
 
-    public ClientboundPistonEventPacket(PistonEventData pistonEventData) {
+    public PistonEventS2CPayload(PistonEventData pistonEventData) {
         this(pistonEventData.pistonBlock(), pistonEventData.pos(), pistonEventData.dir(), pistonEventData.extend());
     }
 

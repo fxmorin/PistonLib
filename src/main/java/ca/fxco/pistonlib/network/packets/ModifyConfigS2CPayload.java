@@ -13,11 +13,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public record ClientboundModifyConfigPacket(Map<ParsedValue<?>, String> configValues) implements PLPacket {
+public record ModifyConfigS2CPayload(Map<ParsedValue<?>, String> configValues) implements PLPayload {
 
-    public static final Type<ClientboundModifyConfigPacket> TYPE = new Type<>(PistonLib.id("modify_config"));
+    public static final Type<ModifyConfigS2CPayload> TYPE = new Type<>(PistonLib.id("modify_config"));
 
-    public static final StreamCodec<FriendlyByteBuf, ClientboundModifyConfigPacket> STREAM_CODEC =
+    public static final StreamCodec<FriendlyByteBuf, ModifyConfigS2CPayload> STREAM_CODEC =
             StreamCodec.composite(
                     ByteBufCodecs.map(
                             HashMap::new,
@@ -25,18 +25,18 @@ public record ClientboundModifyConfigPacket(Map<ParsedValue<?>, String> configVa
                             ByteBufCodecs.STRING_UTF8,
                             256
                     ),
-                    ClientboundModifyConfigPacket::configValues,
-                    ClientboundModifyConfigPacket::new
+                    ModifyConfigS2CPayload::configValues,
+                    ModifyConfigS2CPayload::new
             );
 
-    public static ClientboundModifyConfigPacket fromCollection(Collection<ParsedValue<?>> configValues) {
+    public static ModifyConfigS2CPayload fromCollection(Collection<ParsedValue<?>> configValues) {
         HashMap<ParsedValue<?>, String> values = new HashMap<>();
         for (ParsedValue<?> value : configValues) {
             // TODO: Filter out server-only values. We currently don't store the environment side in the parsed value!
             values.put(value, String.valueOf(value.getValue()));
         }
 
-        return new ClientboundModifyConfigPacket(values);
+        return new ModifyConfigS2CPayload(values);
     }
 
     @Override
