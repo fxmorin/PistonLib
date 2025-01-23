@@ -87,7 +87,7 @@ public interface BlockPistonMerging {
      * @param pos              block position of the block
      * @param mergingIntoState block state to merge into
      * @param dir              direction it being pushed
-     * @param currentlyMerging is currently mering
+     * @param currentlyMerging sides which is currently merging
      * @return {@code true} if it can multi merge with blocks from other directions, otherwise {@code false}
      * @since 1.0.4
      */

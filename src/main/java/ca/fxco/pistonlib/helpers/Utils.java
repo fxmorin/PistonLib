@@ -11,7 +11,9 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
+import java.util.Collection;
 
+import static ca.fxco.pistonlib.PistonLib.DIRECTIONS;
 import static net.minecraft.core.Direction.*;
 
 @UtilityClass
@@ -53,7 +55,7 @@ public class Utils {
     }
 
     public static boolean hasNeighborSignalExceptFromFacing(SignalGetter level, BlockPos pos, Direction except) {
-        for (Direction dir : Direction.values()) {
+        for (Direction dir : DIRECTIONS) {
             if (dir != except && level.hasSignal(pos.relative(dir), dir)) {
                 return true;
             }
@@ -104,6 +106,17 @@ public class Utils {
             case BLACK -> col2.equals(DyeColor.WHITE) ? DyeColor.GRAY : col1;
             default -> col1;
         };
+    }
+
+    public static <T> boolean containsAny(Collection<T> collection, Collection<T> anyOf) {
+        boolean failed = false;
+        for (T val : anyOf) {
+            if (collection.contains(val)) {
+                failed = true;
+                break;
+            }
+        }
+        return !failed;
     }
 
     @SuppressWarnings("unchecked")

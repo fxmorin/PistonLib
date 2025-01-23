@@ -28,7 +28,7 @@ public class SlipperyPistonBaseBlock extends BasicPistonBaseBlock {
     @Override
     public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         if (!oldState.is(state.getBlock()) && !level.isClientSide() && level.getBlockEntity(pos) == null) {
-            this.pl$getPistonController().checkIfExtend(level, pos, state);
+            this.pl$getPistonController().checkIfExtend(level, pos, state, true);
             level.scheduleTick(pos, this, SLIPPERY_DELAY);
         }
     }

@@ -51,6 +51,6 @@ public record ClientboundPistonEventPacket(
 
     @Override
     public Type<? extends CustomPacketPayload> type() {
-        return null;
+        return TYPE;
     }
 }

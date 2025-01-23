@@ -59,7 +59,7 @@ public class ConfigurableMovingBlock extends BasicMovingBlock {
                             bmbe.finalTick();
                         }
                         //stuckNeighbors(level, pos.relative(facing), );
-                        pistonController.checkIfExtend(level, pos, movingBlockEntity.movedState);
+                        pistonController.checkIfExtend(level, pos, movingBlockEntity.movedState, false);
                         int progressInt = Float.floatToIntBits(1 - progress);
                         level.blockEvent(frontPos, this, 99, progressInt);
                         for (BlockPos pos9 : positions) {

@@ -20,6 +20,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
+import net.minecraft.core.Direction;
 import net.minecraft.server.MinecraftServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +34,7 @@ public class PistonLib implements ModInitializer, PistonLibInitializer, PistonLi
     public static final String MOD_ID = "pistonlib";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     public static final boolean DATAGEN_ACTIVE = System.getProperty("fabric-api.datagen") != null;
+    public static final Direction[] DIRECTIONS = Direction.values();
 
     @Getter
     private static final ConfigManager configManager = new ConfigManagerImpl(MOD_ID, PistonLibConfig.class);

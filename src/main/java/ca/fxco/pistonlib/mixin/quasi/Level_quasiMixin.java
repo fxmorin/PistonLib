@@ -12,6 +12,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import java.util.HashSet;
 import java.util.Set;
 
+import static ca.fxco.pistonlib.PistonLib.DIRECTIONS;
+
 @Mixin(Level.class)
 public class Level_quasiMixin implements PLLevel {
 
@@ -58,7 +60,7 @@ public class Level_quasiMixin implements PLLevel {
     public int pl$getStrongestQuasiNeighborSignal(BlockPos pos, int dist) {
         pos = pos.above(dist);
         int strongest = Redstone.SIGNAL_NONE;
-        for (Direction dir : Direction.values()) {
+        for (Direction dir : DIRECTIONS) {
             int strength = this.pl$getQuasiSignal(pos.relative(dir), dir, dist);
             if (strength >= Redstone.SIGNAL_MAX) {
                 return Redstone.SIGNAL_MAX;
@@ -76,7 +78,7 @@ public class Level_quasiMixin implements PLLevel {
     public int pl$getStrongestQuasiNeighborSignal(BlockPos pos, Direction dir, int dist) {
         pos = pos.relative(dir, dist);
         int strongest = Redstone.SIGNAL_NONE;
-        for (Direction neighborDir : Direction.values()) {
+        for (Direction neighborDir : DIRECTIONS) {
             int strength = this.pl$getQuasiSignal(pos.relative(neighborDir), neighborDir, dist);
             if (strength >= Redstone.SIGNAL_MAX) {
                 return Redstone.SIGNAL_MAX;
@@ -157,7 +159,7 @@ public class Level_quasiMixin implements PLLevel {
     private boolean hasQuasiNeighborSignalOptimized(BlockPos blockPos, Direction dir, int dist) {
         blockPos = blockPos.relative(dir, dist);
         Direction dirOpp = dir.getOpposite();
-        for (Direction direction : Direction.values()) {
+        for (Direction direction : DIRECTIONS) {
             if (direction == dir) {
                 if ((dist > 0 || dist == -2) && this.pl$hasQuasiSignal(blockPos.relative(direction), direction, dist)) {
                     return true;
@@ -223,10 +225,10 @@ public class Level_quasiMixin implements PLLevel {
     @Override
     public boolean pl$hasQuasiNeighborSignalBubble(BlockPos pos) {
         Set<BlockPos> blockPosList = new HashSet<>();
-        for(Direction extendedDir : Direction.values()) {
+        for (Direction extendedDir : DIRECTIONS) {
             BlockPos p = pos.relative(extendedDir);
             Direction extendedDirOpp = extendedDir.getOpposite();
-            for(Direction dir : Direction.values()) {
+            for (Direction dir : DIRECTIONS) {
                 if (dir == extendedDirOpp) {
                     continue; // Don't update self
                 }

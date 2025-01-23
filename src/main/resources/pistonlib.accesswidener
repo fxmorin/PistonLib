@@ -35,3 +35,4 @@ accessible method net/minecraft/world/item/component/BundleContents <init> (Ljav
 accessible field net/minecraft/world/item/crafting/RecipeManager recipes Lnet/minecraft/world/item/crafting/RecipeMap;
 mutable field net/minecraft/world/inventory/TransientCraftingContainer items Lnet/minecraft/core/NonNullList;
 accessible field net/minecraft/world/inventory/TransientCraftingContainer items Lnet/minecraft/core/NonNullList;
+accessible class net/minecraft/world/inventory/MenuType

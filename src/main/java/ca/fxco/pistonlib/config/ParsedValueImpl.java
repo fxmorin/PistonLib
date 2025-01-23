@@ -13,6 +13,8 @@ import com.google.common.primitives.Primitives;
 import lombok.Getter;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.FriendlyByteBuf;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.ClassUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
@@ -160,6 +162,76 @@ public class ParsedValueImpl<T> implements ParsedValue<T> {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public T[] getAllTestingValues() {
+        Class<?> clazz = ClassUtils.primitiveToWrapper(field.getType());
+        ConfigValue configValue = field.getAnnotation(ConfigValue.class);
+        TestValues testValues = null;
+        if (configValue != null) {
+            TestValues[] values = configValue.testValues();
+            if (values.length > 1) {
+                throw new IllegalStateException("Multiple test values found for: " + field.getName() +
+                        " only 1 can be specified");
+            }
+            if (values.length == 1) {
+                testValues = values[0];
+            }
+        }
+        if (testValues != null) {
+            if (clazz == Boolean.class) {
+                return (T[]) ArrayUtils.toObject(testValues.booleanValues());
+            } else if (clazz == Character.class) {
+                return (T[]) ArrayUtils.toObject(testValues.charValues());
+            } else if (clazz == Byte.class) {
+                return (T[]) ArrayUtils.toObject(testValues.byteValues());
+            } else if (clazz == Short.class) {
+                return (T[]) ArrayUtils.toObject(testValues.shortValues());
+            } else if (clazz == Integer.class) {
+                return (T[]) ArrayUtils.toObject(testValues.intValues());
+            } else if (clazz == Long.class) {
+                return (T[]) ArrayUtils.toObject(testValues.longValues());
+            } else if (clazz == Float.class) {
+                return (T[]) ArrayUtils.toObject(testValues.floatValues());
+            } else if (clazz == Double.class) {
+                return (T[]) ArrayUtils.toObject(testValues.doubleValues());
+            } else if (clazz == String.class) {
+                return (T[]) testValues.stringValues();
+            }
+            String[] strings = testValues.stringValues();
+            if (strings.length > 0) {
+                T currentValueG = getValue();
+                T[] parsedValues = (T[]) new Object[strings.length];
+                for (int i = 0; i < strings.length; i++) {
+                    String inputValue = strings[i];
+                    boolean useDefault = true;
+                    T currentValue = currentValueG;
+                    for (Parser<T> parser : this.parsers) {
+                        T newValue = parser.parse(this, null, currentValue, inputValue);
+                        if (newValue != null) {
+                            currentValue = newValue;
+                            useDefault = false;
+                        }
+                    }
+                    if (useDefault) {
+                        T newValue = parseValueFromString(inputValue);
+                        if (newValue != null) {
+                            currentValue = newValue;
+                        }
+                    }
+                    parsedValues[i] = currentValue;
+                }
+                return parsedValues;
+            }
+            return (T[]) new Object[]{defaultValue};
+        }
+        if (clazz == Boolean.class) {
+            return (T[]) new Boolean[] {true, false};
+        }
+        PistonLib.LOGGER.warn("Config option [{}] of type [{}] doesn't have any testing values!", this.name, clazz);
+        return (T[]) new Object[]{defaultValue};
+    }
+
     @Override
     public void setValueFromConfig(Object value) {
         T newValue = loadValueFromConfig(value);
@@ -180,12 +252,13 @@ public class ParsedValueImpl<T> implements ParsedValue<T> {
     }
 
     @Override
-    public void parseValue(CommandSourceStack source, String inputValue) {
+    public void parseValue(@Nullable CommandSourceStack source, String inputValue) {
         boolean useDefault = true;
+        T currentValue = getValue();
         for (Parser<T> parser : this.parsers) {
-            T newValue = parser.parse(source, inputValue, this);
+            T newValue = parser.parse(this, source, currentValue, inputValue);
             if (newValue != null) {
-                setValue(newValue);
+                currentValue = newValue;
                 useDefault = false;
             }
         }
@@ -194,6 +267,8 @@ public class ParsedValueImpl<T> implements ParsedValue<T> {
             if (newValue != null) {
                 setValue(newValue);
             }
+        } else {
+            setValue(currentValue);
         }
     }
 

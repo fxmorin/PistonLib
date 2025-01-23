@@ -2,6 +2,7 @@ package ca.fxco.api.pistonlib.config;
 
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.FriendlyByteBuf;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
@@ -170,6 +171,14 @@ public interface ParsedValue<T> {
     T getValue();
 
     /**
+     * Gets all the values that should be tested within the gametests.
+     *
+     * @return An array of values to test
+     * @since 1.0.4
+     */
+    T[] getAllTestingValues();
+
+    /**
      * Shouldn't be used unless loading from the config
      *
      * @param value value to set
@@ -192,7 +201,7 @@ public interface ParsedValue<T> {
      * @param inputValue string from command to parse
      * @since 1.0.4
      */
-    void parseValue(CommandSourceStack source, String inputValue);
+    void parseValue(@Nullable CommandSourceStack source, String inputValue);
 
     /**
      * Checks if the config value name or its description matches the search term

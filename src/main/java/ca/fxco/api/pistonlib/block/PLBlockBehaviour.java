@@ -212,11 +212,6 @@ public interface PLBlockBehaviour extends BlockPistonBehavior, BlockPistonMergin
         return true;
     }
 
-    @Override
-    default boolean pl$propagatesIndirectSticky(BlockState state) {
-        return true;
-    }
-
     // BlockQuasiPower
 
     @Deprecated

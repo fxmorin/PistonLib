@@ -54,9 +54,4 @@ public abstract class ChestBlock_stuckMixin extends Block {
         }
         return false;
     }
-
-    @Override
-    public boolean pl$propagatesIndirectSticky(BlockState state) {
-        return false;
-    }
 }
