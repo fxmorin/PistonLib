@@ -1,12 +1,11 @@
 package ca.fxco.pistonlib.blocks.autoCraftingBlock;
 
 import ca.fxco.pistonlib.PistonLib;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -24,11 +23,9 @@ public class AutoCraftingScreen extends AbstractContainerScreen<AutoCraftingMenu
 
     @Override
     protected void renderBg(GuiGraphics guiGraphics, float f, int i, int j) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         int k = this.leftPos;
         int l = (this.height - this.imageHeight) / 2;
-        guiGraphics.blit(CRAFTING_TABLE_LOCATION, k, l, 0, 0, this.imageWidth, this.imageHeight);
+        guiGraphics.blit(RenderType::guiTextured, CRAFTING_TABLE_LOCATION, k, l, 0, 0, this.imageWidth, this.imageHeight, 256, 256);
     }
 
     @Override

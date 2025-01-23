@@ -11,6 +11,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.*;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -159,14 +160,12 @@ public class AutoCraftingBlockEntity extends BaseContainerBlockEntity implements
 
     @Override
     protected NonNullList<ItemStack> getItems() {
-        return (NonNullList<ItemStack>) items.getItems();
+        return ((TransientCraftingContainer) items).items;
     }
 
     @Override
     protected void setItems(NonNullList<ItemStack> nonNullList) {
-        for (int i = 0; i < nonNullList.size(); i++) {
-            items.getItems().set(i, nonNullList.get(i));
-        }
+        ((TransientCraftingContainer) items).items = nonNullList;
     }
 
     @Override
@@ -295,12 +294,14 @@ public class AutoCraftingBlockEntity extends BaseContainerBlockEntity implements
         if (lastSuccessfulRecipe != lastRecipe && lastRecipe != null && lastRecipe.matches(this.items.asCraftInput(), this.level)) {
             return lastRecipe;
         }
-        List<RecipeHolder<CraftingRecipe>> recipeList =
-                this.level.getRecipeManager().getAllRecipesFor(RecipeType.CRAFTING);
-        for (RecipeHolder<CraftingRecipe> recipe : recipeList) {
-            if (recipe.value().matches(this.items.asCraftInput(), this.level)) {
-                lastRecipe = recipe.value();
-                return recipe.value();
+        if (level instanceof ServerLevel serverLevel) {
+            List<RecipeHolder<CraftingRecipe>> recipeList =
+                    List.copyOf(serverLevel.recipeAccess().recipes.byType(RecipeType.CRAFTING));
+            for (RecipeHolder<CraftingRecipe> recipe : recipeList) {
+                if (recipe.value().matches(this.items.asCraftInput(), this.level)) {
+                    lastRecipe = recipe.value();
+                    return recipe.value();
+                }
             }
         }
         return null;

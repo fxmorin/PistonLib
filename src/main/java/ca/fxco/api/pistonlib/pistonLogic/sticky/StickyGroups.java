@@ -36,7 +36,7 @@ public class StickyGroups {
      * @since 1.0.4
      */
     public static StickyGroup get(ResourceLocation id) {
-        return ModRegistries.STICKY_GROUP.get(id);
+        return ModRegistries.STICKY_GROUP.getValue(id);
     }
 
     /**

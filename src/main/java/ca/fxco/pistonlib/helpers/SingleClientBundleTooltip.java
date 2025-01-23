@@ -9,7 +9,7 @@ public class SingleClientBundleTooltip extends ClientBundleTooltip {
     }
 
     @Override
-    public int gridSizeX() {
+    public int getContentXOffset(int k) {
         return 1;
     }
 

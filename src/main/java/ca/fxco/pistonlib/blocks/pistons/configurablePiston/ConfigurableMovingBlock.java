@@ -15,10 +15,12 @@ import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.redstone.Orientation;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -39,7 +41,7 @@ public class ConfigurableMovingBlock extends BasicMovingBlock {
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, Orientation orientation, boolean movedByPiston) {
         if (this.getFamily().isExtendOnRetracting() && level.getBlockEntity(pos) instanceof BasicMovingBlockEntity movingBlockEntity) { //TODO: Merge into single statement
             if (movingBlockEntity.isSourcePiston && movingBlockEntity.movedState.getBlock() instanceof ConfigurablePistonBaseBlock cpbb) {
                 if (!movingBlockEntity.isExtending()) {
@@ -116,10 +118,11 @@ public class ConfigurableMovingBlock extends BasicMovingBlock {
     }
 
     @Override
-    public BlockState updateShape(BlockState state, Direction dir, BlockState neighborState, LevelAccessor level,
-                                  BlockPos pos, BlockPos neighborPos) {
+    public BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess scheduledTickAccess,
+                                  BlockPos pos, Direction dir, BlockPos neighborPos,
+                                  BlockState neighborState, RandomSource random) {
         if (this.getFamily().isSlippery() && !level.isClientSide()) {
-            level.scheduleTick(pos, this, SLIPPERY_DELAY);
+            scheduledTickAccess.scheduleTick(pos, this, SLIPPERY_DELAY);
         }
         return state;
     }

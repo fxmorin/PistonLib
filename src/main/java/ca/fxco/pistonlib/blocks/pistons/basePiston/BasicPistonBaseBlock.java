@@ -3,7 +3,6 @@ package ca.fxco.pistonlib.blocks.pistons.basePiston;
 import ca.fxco.api.pistonlib.block.PLPistonController;
 import ca.fxco.api.pistonlib.pistonLogic.controller.PistonController;
 import com.mojang.serialization.MapCodec;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -22,9 +21,11 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.pathfinder.PathComputationType;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.Nullable;
 
 public class BasicPistonBaseBlock extends DirectionalBlock implements PLPistonController {
 
@@ -37,10 +38,6 @@ public class BasicPistonBaseBlock extends DirectionalBlock implements PLPistonCo
     private static final VoxelShape EXTENDED_DOWN_SHAPE = Block.box(0.0, 4.0, 0.0, 16.0, 16.0, 16.0);
 
     private final PistonController controller;
-
-    public BasicPistonBaseBlock(PistonController controller) {
-        this(controller, FabricBlockSettings.copyOf(Blocks.PISTON));
-    }
 
     public BasicPistonBaseBlock(PistonController controller, Properties properties) {
         super(properties);
@@ -82,7 +79,7 @@ public class BasicPistonBaseBlock extends DirectionalBlock implements PLPistonCo
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, @Nullable Orientation orientation, boolean movedByPiston) {
         this.controller.checkIfExtend(level, pos, state);
     }
 

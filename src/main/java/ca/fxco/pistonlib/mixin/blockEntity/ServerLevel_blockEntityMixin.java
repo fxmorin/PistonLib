@@ -30,10 +30,10 @@ public abstract class ServerLevel_blockEntityMixin extends Level {
 
     // constructor only needed to make the compiler happy
     private ServerLevel_blockEntityMixin(WritableLevelData data, ResourceKey<Level> key, RegistryAccess registryAccess,
-                                         Holder<DimensionType> dimension, Supplier<ProfilerFiller> profiler,
+                                         Holder<DimensionType> dimension,
                                          boolean isClientSide, boolean isDebug, long seed,
                                          int maxChainedNeighborUpdates) {
-        super(data, key, registryAccess, dimension, profiler, isClientSide, isDebug, seed, maxChainedNeighborUpdates);
+        super(data, key, registryAccess, dimension, isClientSide, isDebug, seed, maxChainedNeighborUpdates);
     }
 
     @Unique

@@ -19,7 +19,7 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -29,7 +29,7 @@ import static ca.fxco.pistonlib.helpers.HalfBlockUtils.getSlabShape;
 
 public class HalfHoneyBlock extends HoneyBlock {
 
-    public static final DirectionProperty FACING = BlockStateProperties.FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.FACING;
     protected static final VoxelShape[] COLLISION_SHAPES = Util.make(() -> {
         Direction[] dirs = Direction.values();
         VoxelShape[] shapes = new VoxelShape[dirs.length];
@@ -49,7 +49,7 @@ public class HalfHoneyBlock extends HoneyBlock {
     }
 
     @Override
-    public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
+    public VoxelShape getOcclusionShape(BlockState state) {
         return getSlabShape(state.getValue(FACING));
     }
 

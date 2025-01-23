@@ -61,7 +61,7 @@ public class PistonWandItem extends Item {
             }
         }
 
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return level.isClientSide ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
     }
 
     @Override
@@ -111,20 +111,20 @@ public class PistonWandItem extends Item {
     private static void add(ItemStack itemStack, ItemStack addingItem) {
         ItemStack itemStack4 = addingItem.copy();
         itemStack4.setCount(1);
-        itemStack.set(ModDataComponents.DEBUG_WAND_ITEM, itemStack4);
+        itemStack.set(ModDataComponents.WAND_ITEM, itemStack4);
     }
 
     private static Optional<ItemStack> removeItem(ItemStack itemStack) {
-        ItemStack stack = itemStack.getOrDefault(ModDataComponents.DEBUG_WAND_ITEM, ItemStack.EMPTY);
+        ItemStack stack = itemStack.getOrDefault(ModDataComponents.WAND_ITEM, ItemStack.EMPTY);
         if (stack.isEmpty()) {
             return Optional.empty();
         }
-        itemStack.set(ModDataComponents.DEBUG_WAND_ITEM, null);
+        itemStack.set(ModDataComponents.WAND_ITEM, null);
         return Optional.of(stack);
     }
 
     static ItemStack getWandItem(ItemStack itemStack) {
-        ItemStack stack = itemStack.getOrDefault(ModDataComponents.DEBUG_WAND_ITEM, ItemStack.EMPTY);
+        ItemStack stack = itemStack.getOrDefault(ModDataComponents.WAND_ITEM, ItemStack.EMPTY);
         if (stack.isEmpty()) {
             return ItemStack.EMPTY;
         }
@@ -138,7 +138,7 @@ public class PistonWandItem extends Item {
     public Optional<TooltipComponent> getTooltipImage(ItemStack itemStack) {
         NonNullList<ItemStack> nonNullList = NonNullList.create();
         nonNullList.add(getWandItem(itemStack));
-        return Optional.of(new SingleItemTooltip(new BundleContents(nonNullList, Fraction.ONE)));
+        return Optional.of(new SingleItemTooltip(new BundleContents(nonNullList, Fraction.ZERO, -1)));
     }
 
     private void playRemoveItemSound(Entity entity) {

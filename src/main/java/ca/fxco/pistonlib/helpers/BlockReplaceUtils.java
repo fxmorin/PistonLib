@@ -6,8 +6,12 @@ import lombok.experimental.UtilityClass;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.FullChunkStatus;
+import net.minecraft.util.RandomSource;
+import net.minecraft.util.profiling.Profiler;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -40,12 +44,13 @@ public class BlockReplaceUtils {
         }
         BlockState blockState3 = level.getBlockState(blockPos);
         if ((i & 128) == 0 && blockState3 != blockState2 &&
-                (blockState3.getLightBlock(level, blockPos) != blockState2.getLightBlock(level, blockPos) ||
+                (blockState3.getLightBlock() != blockState2.getLightBlock() ||
                         blockState3.getLightEmission() != blockState2.getLightEmission() ||
                         blockState3.useShapeForLightOcclusion() || blockState2.useShapeForLightOcclusion())) {
-            level.getProfiler().push("queueCheckLight");
+
+            Profiler.get().push("queueCheckLight");
             level.getChunkSource().getLightEngine().checkBlock(blockPos);
-            level.getProfiler().pop();
+            Profiler.get().pop();
         }
 
         if (blockState3 == blockState) {
@@ -94,7 +99,7 @@ public class BlockReplaceUtils {
         for (Direction direction : UPDATE_SHAPE_ORDER) {
             mutableBlockPos.setWithOffset(blockPos, direction);
             if (canUpdate.apply(level.getBlockState(mutableBlockPos))) { // Do conditional check
-                level.neighborShapeChanged(direction.getOpposite(), state, mutableBlockPos, blockPos, i, j);
+                level.neighborShapeChanged(direction.getOpposite(), mutableBlockPos, blockPos, state, i, j);
             }
         }
     }
@@ -106,20 +111,22 @@ public class BlockReplaceUtils {
      * as long as the blocks are moved together.
      */
     public static BlockState updateFromNeighbourShapesWithMovingPistons(BlockState blockState,
-                                                                        LevelAccessor levelAccessor,
-                                                                        BlockPos blockPos) {
+                                                                        LevelReader levelReader,
+                                                                        ScheduledTickAccess tickAccess,
+                                                                        BlockPos blockPos, RandomSource random) {
         BlockState finalState = blockState;
         BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
         for (Direction direction : UPDATE_SHAPE_ORDER) {
             mutableBlockPos.setWithOffset(blockPos, direction);
-            BlockState neighborState = levelAccessor.getBlockState(mutableBlockPos);
+            BlockState neighborState = levelReader.getBlockState(mutableBlockPos);
             if (neighborState.is(ModTags.MOVING_PISTONS)) {
-                BlockEntity blockEntity = levelAccessor.getBlockEntity(mutableBlockPos);
+                BlockEntity blockEntity = levelReader.getBlockEntity(mutableBlockPos);
                 if (blockEntity instanceof BasicMovingBlockEntity bmbe && bmbe.progress >= 1.0F) {
                     neighborState = bmbe.getMovedState();
                 }
             }
-            finalState = finalState.updateShape(direction, neighborState, levelAccessor, blockPos, mutableBlockPos);
+            finalState = finalState.updateShape(levelReader, tickAccess,
+                    blockPos, direction, mutableBlockPos, neighborState, random);
         }
 
         return finalState;

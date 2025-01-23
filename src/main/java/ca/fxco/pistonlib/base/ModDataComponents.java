@@ -9,9 +9,9 @@ import static ca.fxco.pistonlib.PistonLib.id;
 
 public class ModDataComponents {
 
-    public static final DataComponentType<ItemStack> DEBUG_WAND_ITEM = Registry.register(
+    public static final DataComponentType<ItemStack> WAND_ITEM = Registry.register(
             BuiltInRegistries.DATA_COMPONENT_TYPE,
-            id("debug_wand_item"),
+            id("wand_item"),
             DataComponentType.<ItemStack>builder().persistent(ItemStack.CODEC)
                     .networkSynchronized(ItemStack.STREAM_CODEC).build()
     );

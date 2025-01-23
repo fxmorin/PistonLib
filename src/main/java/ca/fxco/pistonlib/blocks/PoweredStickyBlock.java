@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.redstone.Orientation;
 
 public class PoweredStickyBlock extends DirectionalBlock {
 
@@ -40,7 +41,7 @@ public class PoweredStickyBlock extends DirectionalBlock {
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, Orientation neighborPos, boolean movedByPiston) {
         if (!level.isClientSide()) {
             updatePowered(state, level, pos, false);
         }

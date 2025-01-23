@@ -28,11 +28,11 @@ import java.util.function.Supplier;
 @Mixin(ServerLevel.class)
 public abstract class ServerLevel_interactionMixin extends Level {
 
-    private ServerLevel_interactionMixin(WritableLevelData data, ResourceKey<Level> key, RegistryAccess registryAccess,
-                                         Holder<DimensionType> dimension, Supplier<ProfilerFiller> profiler,
+    private ServerLevel_interactionMixin(WritableLevelData data, ResourceKey<Level> key,
+                                         RegistryAccess registryAccess, Holder<DimensionType> dimension,
                                          boolean isClientSide, boolean isDebug, long seed,
                                          int maxChainedNeighborUpdates) {
-        super(data, key, registryAccess, dimension, profiler, isClientSide, isDebug, seed, maxChainedNeighborUpdates);
+        super(data, key, registryAccess, dimension, isClientSide, isDebug, seed, maxChainedNeighborUpdates);
     }
 
     @Unique

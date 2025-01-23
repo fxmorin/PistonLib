@@ -13,6 +13,7 @@ import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -26,8 +27,8 @@ public class SlipperyPistonHeadBlock extends BasicPistonHeadBlock {
 
     public static final IntegerProperty SLIPPERY_DISTANCE = ModProperties.SLIPPERY_DISTANCE;
 
-    public SlipperyPistonHeadBlock(PistonFamily family) {
-        super(family);
+    public SlipperyPistonHeadBlock(PistonFamily family, Properties properties) {
+        super(family, properties);
 
         this.registerDefaultState(this.stateDefinition.any()
             .setValue(FACING, Direction.NORTH)
@@ -43,10 +44,12 @@ public class SlipperyPistonHeadBlock extends BasicPistonHeadBlock {
     }
 
     @Override
-    public BlockState updateShape(BlockState state, Direction dir, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+    public BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess scheduledTickAccess,
+                                  BlockPos pos, Direction dir, BlockPos neighborPos,
+                                  BlockState neighborState, RandomSource random) {
         if (!level.isClientSide())
-            level.scheduleTick(pos, this, SLIPPERY_DELAY);
-        return super.updateShape(state, dir, neighborState, level, pos, neighborPos);
+            scheduledTickAccess.scheduleTick(pos, this, SLIPPERY_DELAY);
+        return super.updateShape(state, level, scheduledTickAccess, pos, dir, neighborPos, neighborState, random);
     }
 
     @Override

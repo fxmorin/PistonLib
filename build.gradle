@@ -11,22 +11,17 @@ group = project.maven_group
 loom {
     accessWidenerPath = file("src/main/resources/pistonlib.accesswidener")
     runs {
-        datagenClient {
-            client()
-            name "Data Generation"
-            vmArg "-Dfabric-api.datagen"
-            vmArg "-Dfabric-api.datagen.output-dir=${file("src/generated/resources")}"
-            vmArg "-Dfabric-api.datagen.strict-validation"
-
-            ideConfigGenerated = true
-            runDir "build/datagen"
-            source sourceSets.main
-        }
     }
 }
 
-if (!project.file("src/generated").exists()) {
-    runClient.dependsOn runDatagenClient
+fabricApi {
+    configureDataGeneration() {
+        client = true
+    }
+}
+
+if (!project.file("src/main/generated").exists()) {
+    runClient.dependsOn runDatagen
 }
 
 repositories {

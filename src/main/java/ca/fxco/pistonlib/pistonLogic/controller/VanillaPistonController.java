@@ -296,10 +296,10 @@ public class VanillaPistonController implements PistonController {
         } else if (state.isAir()) {
             return true; // air is never in the way
         } else if (moveDir == Direction.DOWN) {
-            if (pos.getY() == level.getMinBuildHeight()) {
+            if (pos.getY() == level.getMinY()) {
                 return false;
             }
-        } else if (moveDir == Direction.UP && pos.getY() == level.getMaxBuildHeight() - 1) {
+        } else if (moveDir == Direction.UP && pos.getY() == level.getMaxY() - 1) {
             return false;
         }
 

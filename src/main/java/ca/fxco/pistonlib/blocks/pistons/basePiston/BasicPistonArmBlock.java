@@ -8,16 +8,13 @@ import ca.fxco.pistonlib.base.ModTags;
 
 import com.mojang.serialization.MapCodec;
 import lombok.Getter;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DirectionalBlock;
@@ -29,8 +26,10 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.PistonType;
 import net.minecraft.world.level.pathfinder.PathComputationType;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.Nullable;
 
 public class BasicPistonArmBlock extends DirectionalBlock {
 
@@ -74,10 +73,6 @@ public class BasicPistonArmBlock extends DirectionalBlock {
 
     @Getter
     private final PistonFamily family;
-
-    public BasicPistonArmBlock(PistonFamily family) {
-        this(family, FabricBlockSettings.copyOf(Blocks.PISTON_HEAD));
-    }
 
     public BasicPistonArmBlock(PistonFamily family, Properties properties) {
         super(properties);
@@ -197,11 +192,12 @@ public class BasicPistonArmBlock extends DirectionalBlock {
     }
 
     @Override
-    public BlockState updateShape(BlockState state, Direction dir, BlockState neighborState,
-                                                LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+    public BlockState updateShape(BlockState state, LevelReader level,
+                                  ScheduledTickAccess scheduledTickAccess, BlockPos pos, Direction dir,
+                                  BlockPos neighborPos, BlockState neighborState, RandomSource random) {
         return dir.getOpposite() == state.getValue(FACING) && !state.canSurvive(level, pos) ?
                 Blocks.AIR.defaultBlockState() :
-                super.updateShape(state, dir, neighborState, level, pos, neighborPos);
+                super.updateShape(state, level, scheduledTickAccess, pos, dir, neighborPos, neighborState, random);
     }
 
     @Override
@@ -212,15 +208,16 @@ public class BasicPistonArmBlock extends DirectionalBlock {
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock,
+                                @Nullable Orientation orientation, boolean movedByPiston) {
         if (state.canSurvive(level, pos)) {
             BlockPos backPos = pos.relative(state.getValue(FACING).getOpposite());
-            level.neighborChanged(level.getBlockState(backPos), backPos, neighborBlock, neighborPos, false);
+            level.neighborChanged(level.getBlockState(backPos), backPos, neighborBlock, orientation, false);
         }
     }
 
     @Override
-    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean bl) {
         Direction dir = state.getValue(FACING);
         BlockPos nextBlockPos = pos.relative(dir);
         BlockState nextState = level.getBlockState(nextBlockPos);

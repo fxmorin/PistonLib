@@ -12,8 +12,6 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.storage.loot.LootParams;
 import org.jetbrains.annotations.Nullable;
 
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -118,7 +116,7 @@ public class BasicMovingBlock extends MovingPistonBlock {
     }
 
     @Override
-    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean bl) {
         return ItemStack.EMPTY;
     }
 
@@ -143,14 +141,14 @@ public class BasicMovingBlock extends MovingPistonBlock {
     }
 
     public static Properties createDefaultSettings() {
-        return FabricBlockSettings.copyOf(Blocks.PISTON)
+        return Properties.ofFullCopy(Blocks.PISTON)
                 .strength(-1.0f)
-                .dynamicBounds()
-                .dropsNothing()
-                .nonOpaque()
-                .solidBlock(BasicMovingBlock::never)
-                .suffocates(BasicMovingBlock::never)
-                .blockVision(BasicMovingBlock::never);
+                .dynamicShape()
+                .noLootTable()
+                .noCollission()
+                .isRedstoneConductor(BasicMovingBlock::never)
+                .isSuffocating(BasicMovingBlock::never)
+                .isViewBlocking(BasicMovingBlock::never);
     }
 
     private static boolean never(BlockState state, BlockGetter level, BlockPos pos) {

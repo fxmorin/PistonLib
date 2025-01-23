@@ -149,7 +149,7 @@ public class MergeBlockEntity extends BlockEntity {
                 } else {
                     level.setBlock(blockPos, blockState2, Block.UPDATE_MOVE_BY_PISTON | Block.UPDATE_ALL);
                 }
-                level.neighborChanged(blockPos, blockState2.getBlock(), blockPos);
+                level.neighborChanged(blockPos, blockState2.getBlock(), null);
             }
         }
     }
@@ -284,7 +284,7 @@ public class MergeBlockEntity extends BlockEntity {
     public void loadAdditional(CompoundTag compoundTag, HolderLookup.Provider lookup) {
         super.loadAdditional(compoundTag, lookup);
         HolderGetter<Block> holderGetter = this.level != null ?
-                this.level.holderLookup(Registries.BLOCK) : BuiltInRegistries.BLOCK.asLookup();
+                this.level.holderLookup(Registries.BLOCK) : BuiltInRegistries.BLOCK;
         this.initialState = NbtUtils.readBlockState(holderGetter, compoundTag.getCompound("state"));
         if (compoundTag.contains("be", Tag.TAG_COMPOUND)) {
             EntityBlock movedBlock = (EntityBlock)this.initialState.getBlock();

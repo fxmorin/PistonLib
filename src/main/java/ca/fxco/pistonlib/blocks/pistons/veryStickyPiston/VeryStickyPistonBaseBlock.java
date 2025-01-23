@@ -15,8 +15,8 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 public class VeryStickyPistonBaseBlock extends BasicPistonBaseBlock {
 
-    public VeryStickyPistonBaseBlock(PistonController controller) {
-        super(controller);
+    public VeryStickyPistonBaseBlock(PistonController controller, Properties properties) {
+        super(controller, properties);
     }
 
     // I want to create a diagonal block entity instead of just teleporting blocks

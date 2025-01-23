@@ -4,9 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -38,12 +36,14 @@ public class AllSidedObserverBlock extends Block {
     }
 
     @Override
-    public BlockState updateShape(BlockState state, Direction dir, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+    public BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess scheduledTickAccess,
+                                  BlockPos pos, Direction dir, BlockPos neighborPos,
+                                  BlockState neighborState, RandomSource random) {
         if (!state.getValue(POWERED) && shouldNeighborTrigger(neighborState)) {
-            this.startSignal(level, pos);
+            this.startSignal(level, scheduledTickAccess, pos);
         }
 
-        return super.updateShape(state, dir, neighborState, level, pos, neighborPos);
+        return super.updateShape(state, level, scheduledTickAccess, pos, dir, neighborPos, neighborState, random);
     }
 
     private boolean shouldNeighborTrigger(BlockState neighborState) {
@@ -57,9 +57,9 @@ public class AllSidedObserverBlock extends Block {
         return true;
     }
 
-    private void startSignal(LevelAccessor level, BlockPos pos) {
-        if (!level.isClientSide() && !level.getBlockTicks().hasScheduledTick(pos, this)) {
-            level.scheduleTick(pos, this, 2);
+    private void startSignal(LevelReader level, ScheduledTickAccess scheduledTickAccess, BlockPos pos) {
+        if (!level.isClientSide() && !scheduledTickAccess.getBlockTicks().hasScheduledTick(pos, this)) {
+            scheduledTickAccess.scheduleTick(pos, this, 2);
         }
     }
 
@@ -67,8 +67,8 @@ public class AllSidedObserverBlock extends Block {
         for (Direction dir : Direction.values()) {
             BlockPos side = pos.relative(dir);
 
-            world.neighborChanged(side, this, pos);
-            world.updateNeighborsAtExceptFromFacing(side, this, dir);
+            world.neighborChanged(side, this, null);
+            world.updateNeighborsAtExceptFromFacing(side, this, dir, null);
         }
     }
 
