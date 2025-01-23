@@ -57,9 +57,6 @@ dependencies {
     // Lombok
     compileOnly(annotationProcessor("org.projectlombok:lombok:${project.lombok_version}"))
 
-    // MixinExtras
-    implementation(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-fabric:${project.mixinextras_Version}"))
-
     implementation project(path: ":", configuration: "namedElements")
 
     // GameTestLib
