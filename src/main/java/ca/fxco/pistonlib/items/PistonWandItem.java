@@ -138,7 +138,7 @@ public class PistonWandItem extends Item {
     public Optional<TooltipComponent> getTooltipImage(ItemStack itemStack) {
         NonNullList<ItemStack> nonNullList = NonNullList.create();
         nonNullList.add(getWandItem(itemStack));
-        return Optional.of(new SingleItemTooltip(new BundleContents(nonNullList, Fraction.ZERO, -1)));
+        return Optional.of(new SingleItemTooltip(new BundleContents(nonNullList, Fraction.ONE, -1)));
     }
 
     private void playRemoveItemSound(Entity entity) {
