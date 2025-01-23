@@ -98,8 +98,9 @@ public interface PistonController {
      * @param level of the block state
      * @param pos block position of the block state
      * @param state block state to check
+     * @param onPlace was block just placed
      */
-    void checkIfExtend(Level level, BlockPos pos, BlockState state);
+    void checkIfExtend(Level level, BlockPos pos, BlockState state, boolean onPlace);
 
     /**
      * What should it do on retract, nothing, retract and pull blocks or just retract without pulling

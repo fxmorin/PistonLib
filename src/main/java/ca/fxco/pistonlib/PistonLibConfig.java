@@ -2,6 +2,7 @@ package ca.fxco.pistonlib;
 
 import ca.fxco.api.pistonlib.config.ConfigValue;
 import ca.fxco.api.pistonlib.config.Category;
+import ca.fxco.api.pistonlib.config.TestValues;
 
 public class PistonLibConfig {
 
@@ -177,7 +178,8 @@ public class PistonLibConfig {
             desc = "Fixes tnt duping using pistons",
             more = "This does also fix some other edge cases with modded blocks that behave the same when powered",
             keyword = {"waterlog"},
-            category = Category.FIX
+            category = Category.FIX,
+            testValues = @TestValues(stringValues = {"NONE", "VANILLA", "ALL"})
     )
     public static WaterloggedState pistonsPushWaterloggedBlocks = WaterloggedState.VANILLA;
 

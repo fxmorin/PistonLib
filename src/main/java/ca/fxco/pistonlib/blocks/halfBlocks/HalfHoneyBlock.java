@@ -24,6 +24,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import static ca.fxco.pistonlib.PistonLib.DIRECTIONS;
 import static ca.fxco.pistonlib.helpers.HalfBlockUtils.SIDES_LIST;
 import static ca.fxco.pistonlib.helpers.HalfBlockUtils.getSlabShape;
 
@@ -31,10 +32,9 @@ public class HalfHoneyBlock extends HoneyBlock {
 
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
     protected static final VoxelShape[] COLLISION_SHAPES = Util.make(() -> {
-        Direction[] dirs = Direction.values();
-        VoxelShape[] shapes = new VoxelShape[dirs.length];
-        for (int i = 0; i < dirs.length; i++) {
-            shapes[i] = Shapes.or(SHAPE, getSlabShape(dirs[i]));
+        VoxelShape[] shapes = new VoxelShape[DIRECTIONS.length];
+        for (int i = 0; i < DIRECTIONS.length; i++) {
+            shapes[i] = Shapes.or(SHAPE, getSlabShape(DIRECTIONS[i]));
         }
         return shapes;
     });

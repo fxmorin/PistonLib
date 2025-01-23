@@ -17,13 +17,15 @@ public interface Parser<T> {
      * This method is called when parsing the option from a string source, other than the config file.
      * Returning {@code null} causes the default parser for this class type to be used.
      *
-     * @param source is only set when the config option is being parsed from a command
-     * @param inputValue the string value being parsed
      * @param currentValue the current parsed value of that config option
+     * @param source       is only set when the config option is being parsed from a command
+     * @param lastValue    the last value, doesn't have to be the same as the value in currentValue
+     * @param inputValue   the string value being parsed
      * @return The parsed value to use, or {@code null} to use the default parser for this class type.
      * @since 1.0.4
      */
-    T parse(@Nullable CommandSourceStack source, String inputValue, ParsedValue<T> currentValue);
+    T parse(ParsedValue<T> currentValue, @Nullable CommandSourceStack source,
+            @Nullable T lastValue, String inputValue);
 
     /**
      * Called when setting the value of an option.

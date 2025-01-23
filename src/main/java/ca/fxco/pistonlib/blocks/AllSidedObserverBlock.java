@@ -14,6 +14,8 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.redstone.Redstone;
 
+import static ca.fxco.pistonlib.PistonLib.DIRECTIONS;
+
 public class AllSidedObserverBlock extends Block {
 
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
@@ -64,7 +66,7 @@ public class AllSidedObserverBlock extends Block {
     }
 
     protected void updateNeighbors(Level world, BlockPos pos) {
-        for (Direction dir : Direction.values()) {
+        for (Direction dir : DIRECTIONS) {
             BlockPos side = pos.relative(dir);
 
             world.neighborChanged(side, this, pos);

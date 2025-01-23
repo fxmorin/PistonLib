@@ -31,6 +31,8 @@ import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import static ca.fxco.pistonlib.PistonLib.DIRECTIONS;
+
 public class BasicPistonArmBlock extends DirectionalBlock {
 
     // This is the BASIC ARM BLOCK that you should be extending to create your own arm blocks
@@ -68,7 +70,7 @@ public class BasicPistonArmBlock extends DirectionalBlock {
     }
 
     public static VoxelShape[] getArmShapes(boolean shortArm) {
-        return Arrays.stream(Direction.values()).map((dir) -> getArmShape(dir, shortArm)).toArray(VoxelShape[]::new);
+        return Arrays.stream(DIRECTIONS).map((dir) -> getArmShape(dir, shortArm)).toArray(VoxelShape[]::new);
     }
 
     @Getter

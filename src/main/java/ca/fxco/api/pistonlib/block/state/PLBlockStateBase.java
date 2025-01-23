@@ -204,11 +204,6 @@ public interface PLBlockStateBase extends BlockStatePistonBehavior,
         return this.pl$getBlock().pl$matchesStickyConditions(this.pl$asState(), neighborState, dir);
     }
 
-    @Override
-    default boolean pl$propagatesIndirectSticky() {
-        return this.pl$getBlock().pl$propagatesIndirectSticky(this.pl$asState());
-    }
-
     // BlockStateQuasiPower
 
     @Override

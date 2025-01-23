@@ -31,6 +31,8 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import static ca.fxco.pistonlib.PistonLib.DIRECTIONS;
+
 @Getter
 public class BasicPistonHeadBlock extends DirectionalBlock {
 
@@ -60,7 +62,7 @@ public class BasicPistonHeadBlock extends DirectionalBlock {
     private final PistonFamily family;
 
     public static VoxelShape[] getHeadShapes(boolean shortHead) {
-        return Arrays.stream(Direction.values()).map((dir) -> getHeadShape(dir, shortHead)).toArray(VoxelShape[]::new);
+        return Arrays.stream(DIRECTIONS).map((dir) -> getHeadShape(dir, shortHead)).toArray(VoxelShape[]::new);
     }
 
     //TODO: Make PistonHeadBlock.getHeadShape() public and call it in here instead of re-initializing all this garbage

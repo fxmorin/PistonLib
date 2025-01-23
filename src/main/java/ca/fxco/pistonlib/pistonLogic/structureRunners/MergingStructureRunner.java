@@ -160,13 +160,13 @@ public class MergingStructureRunner extends BasicStructureRunner {
                 BlockState mergeBlockState = ModBlocks.MERGE_BLOCK.defaultBlockState();
                 MergeBlockEntity mergeBlockEntity;
                 BlockEntity mergeIntoBlockEntity = level.getBlockEntity(mergeIntoPos);
-                if (mergeIntoBlockEntity.pl$doInitialMerging()) {
+                if (mergeIntoBlockEntity != null && mergeIntoBlockEntity.pl$doInitialMerging()) {
                     mergeBlockEntity = new MergeBlockEntity(mergeIntoPos, mergeBlockState, mergeIntoState, mergeIntoBlockEntity);
                     mergeIntoBlockEntity.pl$onMerge(mergeBlockEntity, moveDir); // Call onMerge for the base block entity
 
                     if (stateToMerge.pl$getBlockEntityMergeRules().checkMerge()) {
                         BlockEntity blockEntityToMerge = level.getBlockEntity(posToMerge);
-                        if (blockEntityToMerge.pl$shouldStoreSelf(mergeBlockEntity)) {
+                        if (blockEntityToMerge != null && blockEntityToMerge.pl$shouldStoreSelf(mergeBlockEntity)) {
                             blockEntityToMerge.pl$onMerge(mergeBlockEntity, moveDir);
                             mergeBlockEntity.doMerge(stateToMerge, blockEntityToMerge, moveDir, speed);
                         } else {

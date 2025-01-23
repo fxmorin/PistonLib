@@ -33,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+import static ca.fxco.pistonlib.PistonLib.DIRECTIONS;
 import static net.minecraft.world.level.block.piston.PistonMovingBlockEntity.*;
 
 @Getter
@@ -289,7 +290,7 @@ public class MergeBlockEntity extends BlockEntity {
             this.initialBlockEntity = movedBlock.newBlockEntity(BlockPos.ZERO, this.initialState);
             this.initialBlockEntity.load(compoundTag.getCompound("be"));
         }
-        for (Direction dir : Direction.values()) {
+        for (Direction dir : DIRECTIONS) {
             if (compoundTag.contains("dir" + dir.ordinal(), Tag.TAG_COMPOUND)) {
                 CompoundTag tag = compoundTag.getCompound("dir" + dir.ordinal());
                 mergingBlocks.put(dir, MergeData.loadNbt(holderGetter, tag));

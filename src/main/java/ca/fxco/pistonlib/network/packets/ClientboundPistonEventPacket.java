@@ -7,12 +7,16 @@ import ca.fxco.pistonlib.network.ClientPacketHandler;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+
+import static ca.fxco.pistonlib.PistonLib.DIRECTIONS;
 
 @Getter
 @AllArgsConstructor
@@ -42,10 +46,11 @@ public class ClientboundPistonEventPacket extends PLPacket {
     public void read(FriendlyByteBuf buf) {
         this.pistonBlock = (BasicPistonBaseBlock) buf.readById(BuiltInRegistries.BLOCK);
         this.pos = buf.readBlockPos();
-        this.dir = Direction.values()[buf.readByte()];
+        this.dir = DIRECTIONS[buf.readByte()];
         this.extend = buf.readBoolean();
     }
 
+    @Environment(EnvType.CLIENT)
     @Override
     public void handleClient(PacketSender packetSender) {
         ClientPacketHandler.handle(this, packetSender);
