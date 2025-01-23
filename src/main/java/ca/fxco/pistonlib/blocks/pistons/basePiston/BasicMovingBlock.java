@@ -42,10 +42,6 @@ public class BasicMovingBlock extends MovingPistonBlock {
 
     private final PistonFamily family;
 
-    public BasicMovingBlock(PistonFamily family) {
-        this(family, createDefaultSettings());
-    }
-
     public BasicMovingBlock(PistonFamily family, Properties properties) {
         super(properties.isValidSpawn((a,b,c,d) -> !PistonLibConfig.mobsSpawnOnMovingPistonsFix));
 

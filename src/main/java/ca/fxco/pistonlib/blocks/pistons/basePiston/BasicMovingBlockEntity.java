@@ -87,6 +87,11 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity {
         }
     }
 
+    @Override
+    public boolean isValidBlockState(BlockState blockState) {
+        return super.isValidBlockState(blockState) || blockState.getBlock() instanceof BasicMovingBlock;
+    }
+
     private void setFamily(PistonFamily family) {
         this.family = family;
         ((BlockEntityAccessor)this).setType(this.family.getMovingBlockEntityType());

@@ -20,10 +20,6 @@ import net.minecraft.world.phys.Vec3;
 
 public class MBEMovingBlock extends BasicMovingBlock {
 
-    public MBEMovingBlock(PistonFamily family) {
-        super(family);
-    }
-
     public MBEMovingBlock(PistonFamily family, Properties properties) {
         super(family, properties);
     }
