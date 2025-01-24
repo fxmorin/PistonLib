@@ -1,15 +1,15 @@
 package ca.fxco.pistonlib.helpers;
 
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientBundleTooltip;
-import net.minecraft.world.inventory.tooltip.BundleTooltip;
+import net.minecraft.world.item.component.BundleContents;
 
 public class SingleClientBundleTooltip extends ClientBundleTooltip {
-    public SingleClientBundleTooltip(BundleTooltip bundleTooltip) {
+    public SingleClientBundleTooltip(BundleContents bundleTooltip) {
         super(bundleTooltip);
     }
 
     @Override
-    public int gridSizeX() {
+    public int getContentXOffset(int k) {
         return 1;
     }
 

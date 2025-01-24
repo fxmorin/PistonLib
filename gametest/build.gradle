@@ -57,13 +57,10 @@ dependencies {
     // Lombok
     compileOnly(annotationProcessor("org.projectlombok:lombok:${project.lombok_version}"))
 
-    // MixinExtras
-    implementation(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-fabric:${project.mixinextras_Version}"))
-
     implementation project(path: ":", configuration: "namedElements")
 
     // GameTestLib
-    modImplementation("com.github.fxmorin:GameTestLib:d21abbd5b0")
+    modImplementation 'com.github.fxmorin:GameTestLib:5e12a7710a'
 }
 
 def targetJavaVersion = 17

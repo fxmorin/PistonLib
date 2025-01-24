@@ -5,7 +5,10 @@ import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.base.ModTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -26,8 +29,10 @@ import static net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING;
 @Mixin(BedBlock.class)
 public abstract class BedBlock_stuckMixin extends Block {
 
-    @Shadow public abstract BlockState updateShape(BlockState blockState, Direction direction, BlockState blockState2,
-                                                   LevelAccessor levelAccessor, BlockPos blockPos, BlockPos blockPos2);
+    @Shadow public abstract BlockState updateShape(BlockState blockState, LevelReader levelReader,
+                                                   ScheduledTickAccess tickAccess,
+                                                   BlockPos blockPos, Direction dir, BlockPos blockPos2,
+                                                   BlockState blockState2, RandomSource random);
 
     public BedBlock_stuckMixin(Properties properties) {
         super(properties);
@@ -44,13 +49,16 @@ public abstract class BedBlock_stuckMixin extends Block {
             at = @At("RETURN"),
             cancellable = true
     )
-    private void lookWithinMovingPistons(BlockState blockState, Direction dir, BlockState blockState2,
-                                         LevelAccessor levelAccessor, BlockPos blockPos, BlockPos blockPos2,
+    private void lookWithinMovingPistons(BlockState blockState, LevelReader levelReader,
+                                         ScheduledTickAccess tickAccess,
+                                         BlockPos blockPos, Direction dir, BlockPos blockPos2,
+                                         BlockState blockState2, RandomSource random,
                                          CallbackInfoReturnable<BlockState> cir) {
         if (cir.getReturnValue().isAir() && blockState2.is(ModTags.MOVING_PISTONS)) {
-            BlockEntity entity = levelAccessor.getBlockEntity(blockPos2);
+            BlockEntity entity = levelReader.getBlockEntity(blockPos2);
             if (entity instanceof PistonMovingBlockEntity mpbe && mpbe.progress >= 1.0F) {
-                cir.setReturnValue(updateShape(blockState, dir, mpbe.movedState, levelAccessor, blockPos, blockPos2));
+                cir.setReturnValue(updateShape(blockState, levelReader,
+                        tickAccess, blockPos, dir, blockPos2, mpbe.movedState, random));
             }
         }
     }

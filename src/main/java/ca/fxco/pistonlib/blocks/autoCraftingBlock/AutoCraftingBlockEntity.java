@@ -7,8 +7,11 @@ import ca.fxco.pistonlib.helpers.NbtUtils;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.*;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -17,6 +20,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -49,7 +53,7 @@ public class AutoCraftingBlockEntity extends BaseContainerBlockEntity implements
 
     public AutoCraftingBlockEntity(BlockEntityType<?> blockEntityType, BlockPos blockPos, BlockState blockState) {
         super(blockEntityType, blockPos, blockState);
-        this.items = new CraftingContainer(new AbstractContainerMenu(MenuType.CRAFTING, -1) {
+        this.items = new TransientCraftingContainer(new AbstractContainerMenu(MenuType.CRAFTING, -1) {
             @Override public ItemStack quickMoveStack(Player player, int i) {return ItemStack.EMPTY;}
             @Override public void slotsChanged(Container container) {}
             @Override public boolean stillValid(Player player) {return true;}
@@ -152,6 +156,16 @@ public class AutoCraftingBlockEntity extends BaseContainerBlockEntity implements
     @Override
     protected Component getDefaultName() {
         return Component.translatable("container.pistonlib.auto_crafting_block");
+    }
+
+    @Override
+    protected NonNullList<ItemStack> getItems() {
+        return ((TransientCraftingContainer) items).items;
+    }
+
+    @Override
+    protected void setItems(NonNullList<ItemStack> nonNullList) {
+        ((TransientCraftingContainer) items).items = nonNullList;
     }
 
     @Override
@@ -274,17 +288,20 @@ public class AutoCraftingBlockEntity extends BaseContainerBlockEntity implements
         if (this.level == null || this.items.isEmpty()) {
             return null;
         }
-        if (lastSuccessfulRecipe != null && lastSuccessfulRecipe.matches(this.items, this.level)) {
+        if (lastSuccessfulRecipe != null && lastSuccessfulRecipe.matches(this.items.asCraftInput(), this.level)) {
             return lastSuccessfulRecipe;
         }
-        if (lastSuccessfulRecipe != lastRecipe && lastRecipe != null && lastRecipe.matches(this.items, this.level)) {
+        if (lastSuccessfulRecipe != lastRecipe && lastRecipe != null && lastRecipe.matches(this.items.asCraftInput(), this.level)) {
             return lastRecipe;
         }
-        List<CraftingRecipe> recipeList = this.level.getRecipeManager().getAllRecipesFor(RecipeType.CRAFTING);
-        for (CraftingRecipe recipe : recipeList) {
-            if (recipe.matches(this.items, this.level)) {
-                lastRecipe = recipe;
-                return recipe;
+        if (level instanceof ServerLevel serverLevel) {
+            List<RecipeHolder<CraftingRecipe>> recipeList =
+                    List.copyOf(serverLevel.recipeAccess().recipes.byType(RecipeType.CRAFTING));
+            for (RecipeHolder<CraftingRecipe> recipe : recipeList) {
+                if (recipe.value().matches(this.items.asCraftInput(), this.level)) {
+                    lastRecipe = recipe.value();
+                    return recipe.value();
+                }
             }
         }
         return null;
@@ -299,17 +316,17 @@ public class AutoCraftingBlockEntity extends BaseContainerBlockEntity implements
         if (recipe == null) {
             return ItemStack.EMPTY;
         }
-        return recipe.assemble(this.items);
+        return recipe.assemble(this.items.asCraftInput(), this.level.registryAccess());
     }
 
     @Override
-    public void load(CompoundTag compoundTag) {
-        super.load(compoundTag);
+    public void loadAdditional(CompoundTag compoundTag, HolderLookup.Provider lookup) {
+        super.loadAdditional(compoundTag, lookup);
         if (compoundTag.contains("items")) {
-            NbtUtils.loadAllItems(compoundTag.getCompound("items"), this.items);
+            NbtUtils.loadAllItems(compoundTag.getCompound("items"), this.items, lookup);
         }
         if (compoundTag.contains("result")) {
-            this.resultItemStack = ItemStack.of(compoundTag.getCompound("result"));
+            this.resultItemStack = ItemStack.parseOptional(lookup, compoundTag.getCompound("result"));
         } else {
             this.resultItemStack = ItemStack.EMPTY;
         }
@@ -317,15 +334,15 @@ public class AutoCraftingBlockEntity extends BaseContainerBlockEntity implements
     }
 
     @Override
-    protected void saveAdditional(CompoundTag compoundTag) {
-        super.saveAdditional(compoundTag);
+    protected void saveAdditional(CompoundTag compoundTag, HolderLookup.Provider lookup) {
+        super.saveAdditional(compoundTag, lookup);
         if (!this.items.isEmpty()) {
             CompoundTag itemTag = new CompoundTag();
-            NbtUtils.saveAllItems(itemTag, this.items);
+            NbtUtils.saveAllItems(itemTag, this.items, lookup);
             compoundTag.put("items", itemTag);
         }
         if (!this.resultItemStack.isEmpty()) {
-            compoundTag.put("result", this.resultItemStack.save(new CompoundTag()));
+            compoundTag.put("result", this.resultItemStack.save(lookup, new CompoundTag()));
         }
         if (this.hasPaid) {
             compoundTag.putBoolean("paid", true);

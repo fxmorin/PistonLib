@@ -2,7 +2,7 @@ package ca.fxco.pistonlib.blocks.pistons.basePiston;
 
 import ca.fxco.api.pistonlib.block.PLPistonController;
 import ca.fxco.api.pistonlib.pistonLogic.controller.PistonController;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import com.mojang.serialization.MapCodec;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -12,7 +12,6 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
@@ -21,9 +20,11 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.pathfinder.PathComputationType;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.Nullable;
 
 public class BasicPistonBaseBlock extends DirectionalBlock implements PLPistonController {
 
@@ -37,10 +38,6 @@ public class BasicPistonBaseBlock extends DirectionalBlock implements PLPistonCo
 
     private final PistonController controller;
 
-    public BasicPistonBaseBlock(PistonController controller) {
-        this(controller, FabricBlockSettings.copyOf(Blocks.PISTON));
-    }
-
     public BasicPistonBaseBlock(PistonController controller, Properties properties) {
         super(properties);
 
@@ -52,6 +49,11 @@ public class BasicPistonBaseBlock extends DirectionalBlock implements PLPistonCo
                 .setValue(FACING, Direction.NORTH)
                 .setValue(EXTENDED, false)
         );
+    }
+
+    @Override
+    protected MapCodec<? extends DirectionalBlock> codec() {
+        return null; // codec isn't used now. currently it's just a preparation for data driven blocks
     }
 
     @Override
@@ -76,7 +78,7 @@ public class BasicPistonBaseBlock extends DirectionalBlock implements PLPistonCo
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, @Nullable Orientation orientation, boolean movedByPiston) {
         this.controller.checkIfExtend(level, pos, state, false);
     }
 
@@ -120,7 +122,7 @@ public class BasicPistonBaseBlock extends DirectionalBlock implements PLPistonCo
     }
 
     @Override
-    public boolean isPathfindable(BlockState state, BlockGetter level, BlockPos pos, PathComputationType type) {
+    public boolean isPathfindable(BlockState state, PathComputationType type) {
         return false;
     }
 

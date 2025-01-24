@@ -41,7 +41,7 @@ public class PistonDebugWandItem extends PistonWandItem {
             ItemStack wandItem = getWandItem(useOnContext.getItemInHand());
             if (wandItem == ItemStack.EMPTY) {
                 ((ServerPlayer) player).sendSystemMessage(Component.literal("Piston Debug Wand does not currently have a piston!"), true); // todo: translations
-                return InteractionResult.sidedSuccess(level.isClientSide);
+                return InteractionResult.SUCCESS_SERVER;
             }
             BlockPos blockPos = useOnContext.getClickedPos();
             Direction face = useOnContext.getClickedFace();
@@ -76,6 +76,6 @@ public class PistonDebugWandItem extends PistonWandItem {
             }
         }
 
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return level.isClientSide ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
     }
 }

@@ -1,7 +1,6 @@
 package ca.fxco.api.pistonlib.config;
 
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
@@ -142,25 +141,6 @@ public interface ParsedValue<T> {
      * @since 1.0.4
      */
     void setValue(T value, boolean load);
-
-    /**
-     * Used to read the value of the parsed value, from a buffer.
-     * (Usually the buffer is passed over the network)
-     *
-     * @param buffer the buffer to extract the value from
-     * @return The object read from the buffer
-     * @since 1.0.4
-     */
-    T readValueFromBuffer(FriendlyByteBuf buffer);
-
-    /**
-     * Used to write the value of the parsed value, to a buffer.
-     * (Usually the buffer is passed over the network)
-     *
-     * @param buffer the buffer to save the value into
-     * @since 1.0.4
-     */
-    void writeValueToBuffer(FriendlyByteBuf buffer);
 
     /**
      * Used to get the value of parsed value

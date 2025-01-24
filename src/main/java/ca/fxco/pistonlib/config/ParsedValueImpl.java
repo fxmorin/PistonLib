@@ -1,18 +1,18 @@
 package ca.fxco.pistonlib.config;
 
 import ca.fxco.api.pistonlib.config.*;
-import ca.fxco.api.pistonlib.config.ParsedValue;
-import ca.fxco.api.pistonlib.util.BufferUtils;
 import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.pistonlib.network.PLServerNetwork;
-import ca.fxco.pistonlib.network.packets.ClientboundModifyConfigPacket;
+import ca.fxco.pistonlib.network.packets.ModifyConfigS2CPayload;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.ImmutableIntArray;
 import com.google.common.primitives.Primitives;
+import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.jetbrains.annotations.Nullable;
@@ -23,6 +23,9 @@ import java.util.Locale;
 import java.util.Set;
 
 public class ParsedValueImpl<T> implements ParsedValue<T> {
+
+    public static final StreamCodec<ByteBuf, ParsedValue<?>> STREAM_CODEC = ByteBufCodecs.STRING_UTF8.map(name ->
+        PistonLib.getConfigManager().getParsedValue(name), ParsedValue::getName);
 
     private final Field field;
     @Getter
@@ -50,6 +53,7 @@ public class ParsedValueImpl<T> implements ParsedValue<T> {
     @Getter
     private T valueToSave;
 
+    @SuppressWarnings("unchecked")
     public ParsedValueImpl(Field field, String desc, String[] more, String[] keywords, Category[] categories,
                            String[] requires, String[] conflicts, boolean requiresRestart, int[] fixes,
                            Parser<?>[] parsers, Observer<?>[] observers, String[] suggestions,
@@ -134,22 +138,9 @@ public class ParsedValueImpl<T> implements ParsedValue<T> {
             PistonLib.getServer().ifPresent(server ->
                     PLServerNetwork.sendToAllExternalClients(
                             server,
-                            new ClientboundModifyConfigPacket(List.of(this))
+                            ModifyConfigS2CPayload.fromCollection(List.of(this))
                     ));
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public T readValueFromBuffer(FriendlyByteBuf buffer) {
-        // TODO: Convert to Codec's in 1.20.5+
-        return (T) BufferUtils.readFromBuffer(buffer, this.defaultValue.getClass());
-    }
-
-    @Override
-    public void writeValueToBuffer(FriendlyByteBuf buffer) {
-        // TODO: Convert to Codec's in 1.20.5+
-        BufferUtils.writeToBuffer(buffer, this.getValue());
     }
 
     @SuppressWarnings("unchecked")

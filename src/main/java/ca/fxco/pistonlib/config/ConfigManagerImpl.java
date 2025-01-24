@@ -3,15 +3,12 @@ package ca.fxco.pistonlib.config;
 import ca.fxco.api.pistonlib.config.*;
 import ca.fxco.api.pistonlib.config.ConfigManager;
 import ca.fxco.api.pistonlib.config.Observer;
-import ca.fxco.api.pistonlib.util.BufferUtils;
 import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.pistonlib.helpers.Utils;
 import com.moandjiezana.toml.Toml;
 import com.moandjiezana.toml.TomlWriter;
-import io.netty.buffer.ByteBuf;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.storage.LevelResource;
 import org.apache.commons.lang3.SerializationException;
 import org.jetbrains.annotations.Nullable;
@@ -153,80 +150,6 @@ public class ConfigManagerImpl implements ConfigManager, ConfigManagerEntrypoint
                     parsedValues.put(parsedValue.getName(), parsedValue);
                     break;
                 }
-            }
-        }
-    }
-
-    @SuppressWarnings("rawtypes")
-    @Override
-    public Map<ParsedValue, Object> readValuesFromBuffer(FriendlyByteBuf buffer) {
-        // List of values to change
-        String[] values = BufferUtils.readFromBuffer(buffer, String[].class);
-        // Size of each value, in-case the client doesn't have that value (outdated client)
-        // TODO: Could remove this by including the mod version within a register packet
-        short[] sizes = new short[values.length];
-        for (int i = 0; i < values.length; i++) {
-            sizes[i] = buffer.readShort();
-        }
-
-        Map<ParsedValue, Object> changesMap = new HashMap<>(values.length);
-        for (int i = 0; i < values.length; i++) {
-            ParsedValue<?> parsedValue = getParsedValue(values[i]);
-            if (parsedValue != null) {
-                changesMap.put(parsedValue, parsedValue.readValueFromBuffer(buffer));
-            } else {
-                buffer.skipBytes(sizes[i]);
-            }
-        }
-
-        if (DEBUG_NETWORK) {
-            System.out.println("[PistonLib] Reading values from buffer:");
-            for (var entry : changesMap.entrySet()) {
-                System.out.println(" - " + entry.getKey().getName() + ": " + entry.getValue());
-            }
-        }
-
-        return changesMap;
-    }
-
-    @Override
-    public void writeValuesToBuffer(FriendlyByteBuf buffer, ParsedValue<?>[] values) {
-        // Save list of values
-        String[] valueIds = new String[values.length];
-        for (int i = 0; i < values.length; i++) {
-            valueIds[i] = values[i].getName();
-        }
-        BufferUtils.writeToBuffer(buffer, valueIds);
-
-        // Skip the size table for now, we write this at the end
-        short[] sizes = new short[valueIds.length];
-        int sizeTableIndex = buffer.writerIndex();
-        int sizeTableSize = sizes.length * 2;
-        buffer.writerIndex(sizeTableIndex + sizeTableSize);
-
-        // Save each value individually
-        int lastIndex = buffer.writerIndex();
-        for (int i = 0; i < valueIds.length; i++) {
-            values[i].writeValueToBuffer(buffer);
-            int currentIndex = buffer.writerIndex();
-            sizes[i] = (short) (currentIndex - lastIndex);
-            lastIndex = currentIndex;
-        }
-
-        // Write sizes table
-        ByteBuf reservedBuffer = buffer.retainedSlice(sizeTableIndex, sizeTableSize);
-        reservedBuffer.writerIndex(0);
-        for (int i = 0; i < valueIds.length; i++) {
-            reservedBuffer.writeShort(sizes[i]);
-        }
-        reservedBuffer.release();
-
-        if (DEBUG_NETWORK) {
-            System.out.println("[PistonLib] Writing values to buffer:");
-            for (int i = 0; i < valueIds.length; i++) {
-                String id = valueIds[i];
-                Object value = values[i].getValue();
-                System.out.println(" - " + id + ": " + value);
             }
         }
     }

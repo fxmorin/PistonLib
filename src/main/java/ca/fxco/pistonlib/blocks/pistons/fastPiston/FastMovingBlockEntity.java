@@ -42,7 +42,7 @@ public class FastMovingBlockEntity extends BasicMovingBlockEntity {
                         Block.updateFromNeighbourShapes(this.movedState, this.level, this.worldPosition);
 
                 this.level.setBlock(this.worldPosition, state, Block.UPDATE_ALL);
-                this.level.neighborChanged(this.worldPosition, state.getBlock(), this.worldPosition);
+                this.level.neighborChanged(this.worldPosition, state.getBlock(), null);
             }
         }
     }

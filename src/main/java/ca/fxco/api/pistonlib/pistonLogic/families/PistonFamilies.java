@@ -34,7 +34,7 @@ public class PistonFamilies {
      * @since 1.0.4
      */
     public static PistonFamily get(ResourceLocation id) {
-        return ModRegistries.PISTON_FAMILY.get(id);
+        return ModRegistries.PISTON_FAMILY.getValue(id);
     }
 
     /**

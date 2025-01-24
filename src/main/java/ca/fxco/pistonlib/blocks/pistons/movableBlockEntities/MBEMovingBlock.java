@@ -14,25 +14,21 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 
 public class MBEMovingBlock extends BasicMovingBlock {
-
-    public MBEMovingBlock(PistonFamily family) {
-        super(family);
-    }
 
     public MBEMovingBlock(PistonFamily family, Properties properties) {
         super(family, properties);
     }
 
     @Override
-    public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
+    public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
         Level level = builder.getLevel();
         Vec3 origin = builder.getParameter(LootContextParams.ORIGIN);
-        MBEMovingBlockEntity mbe = this.getMovingBlockEntity(level, new BlockPos(origin));
+        MBEMovingBlockEntity mbe = this.getMovingBlockEntity(level, BlockPos.containing(origin));
 
         if (mbe == null) {
             return Collections.emptyList();

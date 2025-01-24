@@ -10,18 +10,17 @@ import net.minecraft.client.particle.TerrainParticle;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
-@Mixin(TerrainParticle.Provider.class)
-public class Factory_movingPistonMixin {
+@Mixin(TerrainParticle.class)
+public class TerrainParticle_movingPistonMixin {
 
     @Redirect(
-        method = "createParticle(Lnet/minecraft/core/particles/BlockParticleOption;" +
-                "Lnet/minecraft/client/multiplayer/ClientLevel;DDDDDD)Lnet/minecraft/client/particle/Particle;",
+        method = "createTerrainParticle",
         at = @At(
             value = "INVOKE",
             target = "Lnet/minecraft/world/level/block/state/BlockState;is(Lnet/minecraft/world/level/block/Block;)Z"
         )
     )
-    private boolean allMovingPistons(BlockState state, Block block) {
+    private static boolean allMovingPistons(BlockState state, Block block) {
         return state.is(ModTags.MOVING_PISTONS);
     }
 }

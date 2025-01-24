@@ -14,7 +14,7 @@ import ca.fxco.api.pistonlib.config.ConfigManagerEntrypoint;
 import ca.fxco.pistonlib.config.ConfigManagerImpl;
 import ca.fxco.pistonlib.helpers.PistonLibBehaviorManager;
 import ca.fxco.pistonlib.network.PLServerNetwork;
-import ca.fxco.pistonlib.network.packets.ClientboundModifyConfigPacket;
+import ca.fxco.pistonlib.network.packets.ModifyConfigS2CPayload;
 import lombok.Getter;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
@@ -26,7 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.loader.impl.entrypoint.EntrypointUtils;
 
 import net.minecraft.resources.ResourceLocation;
 
@@ -44,7 +43,7 @@ public class PistonLib implements ModInitializer, PistonLibInitializer, PistonLi
     private static Optional<MinecraftServer> server = Optional.empty();
 
     public static ResourceLocation id(String path) {
-        return new ResourceLocation(MOD_ID, path);
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
     }
 
     @Override
@@ -82,7 +81,7 @@ public class PistonLib implements ModInitializer, PistonLibInitializer, PistonLi
             // TODO: Should send only the non-default options. However this will result in version mismatch issues.
             PLServerNetwork.sendToClient(
                     handler.player,
-                    new ClientboundModifyConfigPacket(PistonLib.getConfigManager().getParsedValues())
+                    ModifyConfigS2CPayload.fromCollection(PistonLib.getConfigManager().getParsedValues())
             );
         });
     }
@@ -116,18 +115,19 @@ public class PistonLib implements ModInitializer, PistonLibInitializer, PistonLi
     public void bootstrap() {
         ModBlocks.bootstrap();
         ModBlockEntities.bootstrap();
-        ModItems.boostrap();
-        ModMenus.boostrap();
+        ModItems.bootstrap();
+        ModDataComponents.bootstrap();
+        ModMenus.bootstrap();
         if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
             ModCreativeModeTabs.bootstrap();
-            ModScreens.boostrap();
+            ModScreens.bootstrap();
         }
         ModArgumentTypes.bootstrap();
         ModCommands.bootstrap();
     }
 
     private void initialize(Consumer<PistonLibInitializer> invoker) {
-        EntrypointUtils.invoke(MOD_ID, PistonLibInitializer.class, invoker);
+        FabricLoader.getInstance().invokeEntrypoints(MOD_ID, PistonLibInitializer.class, invoker);
     }
 
     @Override

@@ -12,8 +12,8 @@ import net.minecraft.resources.ResourceLocation;
  */
 public class StickyGroups {
 
-    public static final StickyGroup SLIME = register(new ResourceLocation("slime"), new StickyGroup(StickRules.STRICT_SAME));
-    public static final StickyGroup HONEY = register(new ResourceLocation("honey"), new StickyGroup(StickRules.STRICT_SAME));
+    public static final StickyGroup SLIME = register(ResourceLocation.withDefaultNamespace("slime"), new StickyGroup(StickRules.STRICT_SAME));
+    public static final StickyGroup HONEY = register(ResourceLocation.withDefaultNamespace("honey"), new StickyGroup(StickRules.STRICT_SAME));
 
     /**
      * Registers the given sticky group to the given namespaced id.
@@ -36,7 +36,7 @@ public class StickyGroups {
      * @since 1.0.4
      */
     public static StickyGroup get(ResourceLocation id) {
-        return ModRegistries.STICKY_GROUP.get(id);
+        return ModRegistries.STICKY_GROUP.getValue(id);
     }
 
     /**
