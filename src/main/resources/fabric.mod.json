@@ -60,10 +60,10 @@
     "pistonlib.mixins.json"
   ],
   "depends": {
-    "minecraft": ">=1.19.3",
-    "fabricloader": ">=0.14.0",
-    "fabric": ">=0.76.0",
-    "java": ">=17"
+    "minecraft": ">=1.21.4",
+    "fabricloader": ">=0.16.0",
+    "fabric": ">=0.115.0",
+    "java": ">=21"
   },
   "custom": {
     "loom:injected_interfaces": {
