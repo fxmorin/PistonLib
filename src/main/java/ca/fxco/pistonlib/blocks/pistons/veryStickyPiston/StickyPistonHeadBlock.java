@@ -13,8 +13,8 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class StickyPistonHeadBlock extends BasicPistonHeadBlock {
 
-    public StickyPistonHeadBlock(PistonFamily family) {
-        super(family);
+    public StickyPistonHeadBlock(PistonFamily family, Properties properties) {
+        super(family, properties);
     }
 
     @Override

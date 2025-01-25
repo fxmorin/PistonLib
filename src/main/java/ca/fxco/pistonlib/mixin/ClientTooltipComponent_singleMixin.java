@@ -20,7 +20,7 @@ public interface ClientTooltipComponent_singleMixin {
     )
     private static void onCreate(TooltipComponent tooltipComponent, CallbackInfoReturnable<ClientTooltipComponent> cir) {
         if (tooltipComponent instanceof SingleItemTooltip sit) {
-            cir.setReturnValue(new SingleClientBundleTooltip(sit));
+            cir.setReturnValue(new SingleClientBundleTooltip(sit.contents()));
         }
     }
 }

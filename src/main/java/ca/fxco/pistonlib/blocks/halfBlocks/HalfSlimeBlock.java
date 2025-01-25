@@ -2,6 +2,7 @@ package ca.fxco.pistonlib.blocks.halfBlocks;
 
 import java.util.Map;
 
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import org.jetbrains.annotations.Nullable;
 
 import ca.fxco.api.pistonlib.pistonLogic.sticky.StickRules;
@@ -24,7 +25,6 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
@@ -32,7 +32,7 @@ import static ca.fxco.pistonlib.helpers.HalfBlockUtils.SIDES_LIST;
 
 public class HalfSlimeBlock extends Block {
 
-    public static final DirectionProperty FACING = BlockStateProperties.FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.FACING;
 
     public HalfSlimeBlock(Properties properties) {
         super(properties);
@@ -43,14 +43,14 @@ public class HalfSlimeBlock extends Block {
         if (entity.isSuppressingBounce() || HalfBlockUtils.isOnFacingSide(entity.position(), pos, state)) {
             super.fallOn(level, state, pos, entity, fallDistance);
         } else {
-            entity.causeFallDamage(fallDistance, 0.0F, DamageSource.FALL);
+            entity.causeFallDamage(fallDistance, 0.0F, level.damageSources().fall());
         }
     }
 
     @Override
-    public void updateEntityAfterFallOn(BlockGetter level, Entity entity) {
+    public void updateEntityMovementAfterFallOn(BlockGetter level, Entity entity) {
         if (entity.isSuppressingBounce() || HalfBlockUtils.isOnFacingSide(level, entity.position(), entity.getOnPos())) {
-            super.updateEntityAfterFallOn(level, entity);
+            super.updateEntityMovementAfterFallOn(level, entity);
         } else {
             this.bounce(entity);
         }
@@ -75,7 +75,7 @@ public class HalfSlimeBlock extends Block {
     }
 
     @Override
-    public VoxelShape getOcclusionShape(BlockState state, BlockGetter world, BlockPos pos) {
+    public VoxelShape getOcclusionShape(BlockState state) {
         return HalfBlockUtils.getSlabShape(state.getValue(FACING));
     }
 

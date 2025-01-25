@@ -3,10 +3,10 @@ package ca.fxco.pistonlib.blocks.autoCraftingBlock;
 import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.base.ModBlocks;
 import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.Containers;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -26,8 +26,15 @@ import org.jetbrains.annotations.Nullable;
 
 public class AutoCraftingBlock extends BaseEntityBlock {
 
+    public static final MapCodec<AutoCraftingBlock> CODEC = simpleCodec(AutoCraftingBlock::new);
+
     public AutoCraftingBlock(Properties properties) {
         super(properties);
+    }
+
+    @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return CODEC;
     }
 
     @Override
@@ -36,8 +43,8 @@ public class AutoCraftingBlock extends BaseEntityBlock {
     }
 
     @Override
-    public InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player,
-                                 InteractionHand interactionHand, BlockHitResult blockHitResult) {
+    protected InteractionResult useWithoutItem(BlockState blockState, Level level, BlockPos blockPos,
+                                               Player player, BlockHitResult blockHitResult) {
         if (level.isClientSide) {
             return InteractionResult.SUCCESS;
         } else {

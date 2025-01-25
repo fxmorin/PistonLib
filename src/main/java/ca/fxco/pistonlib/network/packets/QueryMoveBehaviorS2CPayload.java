@@ -2,40 +2,37 @@ package ca.fxco.pistonlib.network.packets;
 
 import ca.fxco.api.pistonlib.pistonLogic.PistonMoveBehavior;
 import ca.fxco.pistonlib.PistonLib;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import ca.fxco.pistonlib.network.PLServerNetwork;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * This is sent to the client after the client sends a {@link ServerboundQueryMoveBehaviorPacket}.
+ * This is sent to the client after the client sends a {@link QueryMoveBehaviorC2SPayload}.
  * </br>
  * To get the query response, use the event {@link QueryMoveBehaviorCallback#EVENT}
  */
-@AllArgsConstructor
-@NoArgsConstructor
-public class ClientboundQueryMoveBehaviorPacket extends PLPacket {
+public record QueryMoveBehaviorS2CPayload(BlockState state, PistonMoveBehavior behavior) implements PLPayload {
 
-    public static ResourceLocation ID = PistonLib.id("query_move_behavior");
+    public static final CustomPacketPayload.Type<QueryMoveBehaviorS2CPayload> TYPE =
+            new Type<>(PistonLib.id("query_move_behavior"));
 
-    private BlockState state;
-    private PistonMoveBehavior behavior;
+    public static final StreamCodec<RegistryFriendlyByteBuf, QueryMoveBehaviorS2CPayload> STREAM_CODEC =
+            StreamCodec.composite(
+                    PLServerNetwork.BLOCKSTATE_STREAM_CODEC,
+                    QueryMoveBehaviorS2CPayload::state,
+                    PistonMoveBehavior.STREAM_CODEC,
+                    QueryMoveBehaviorS2CPayload::behavior,
+                    QueryMoveBehaviorS2CPayload::new
+            );
 
     @Override
-    public void write(FriendlyByteBuf buf) {
-        buf.writeId(Block.BLOCK_STATE_REGISTRY, this.state);
-        buf.writeEnum(behavior);
-    }
-
-    @Override
-    public void read(FriendlyByteBuf buf) {
-        this.state = buf.readById(Block.BLOCK_STATE_REGISTRY);
-        this.behavior = buf.readEnum(PistonMoveBehavior.class);
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 
     @Override

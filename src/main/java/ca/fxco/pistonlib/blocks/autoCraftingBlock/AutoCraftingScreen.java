@@ -1,12 +1,11 @@
 package ca.fxco.pistonlib.blocks.autoCraftingBlock;
 
 import ca.fxco.pistonlib.PistonLib;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -23,13 +22,10 @@ public class AutoCraftingScreen extends AbstractContainerScreen<AutoCraftingMenu
     }
 
     @Override
-    protected void renderBg(PoseStack poseStack, float f, int i, int j) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, CRAFTING_TABLE_LOCATION);
+    protected void renderBg(GuiGraphics guiGraphics, float f, int i, int j) {
         int k = this.leftPos;
         int l = (this.height - this.imageHeight) / 2;
-        this.blit(poseStack, k, l, 0, 0, this.imageWidth, this.imageHeight);
+        guiGraphics.blit(RenderType::guiTextured, CRAFTING_TABLE_LOCATION, k, l, 0, 0, this.imageWidth, this.imageHeight, 256, 256);
     }
 
     @Override
@@ -39,8 +35,8 @@ public class AutoCraftingScreen extends AbstractContainerScreen<AutoCraftingMenu
 
     // Only display the title in this UI
     @Override
-    protected void renderLabels(PoseStack poseStack, int i, int j) {
-        this.font.draw(poseStack, this.title, (float)this.titleLabelX, (float)this.titleLabelY, 4210752);
+    protected void renderLabels(GuiGraphics guiGraphics, int i, int j) {
+        guiGraphics.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, 4210752);
         //this.font.draw(poseStack, this.playerInventoryTitle, (float)this.inventoryLabelX, (float)this.inventoryLabelY, 4210752);
     }
 }

@@ -84,25 +84,6 @@ public interface ConfigManager {
     void loadConfigFields(Field[] fields);
 
     /**
-     * Used to read the value of the parsed values, from a buffer.
-     * (Usually the buffer is passed over the network)
-     *
-     * @param buffer the buffer to read the values from
-     * @since 1.0.4
-     */
-    @SuppressWarnings("rawtypes")
-    Map<ParsedValue, Object> readValuesFromBuffer(FriendlyByteBuf buffer);
-
-    /**
-     * Used to write the value of the parsed values, to a buffer.
-     * (Usually the buffer is passed over the network)
-     *
-     * @param buffer the buffer to write the values into
-     * @since 1.0.4
-     */
-    void writeValuesToBuffer(FriendlyByteBuf buffer, ParsedValue<?>[] values);
-
-    /**
      * Resets the parsed value to its default state,
      * then writes all the values to the config file
      *
