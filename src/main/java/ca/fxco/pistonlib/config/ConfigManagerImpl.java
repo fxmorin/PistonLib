@@ -129,7 +129,7 @@ public class ConfigManagerImpl implements ConfigManager, ConfigManagerEntrypoint
                         }
                     }
                     Parser<?>[] parsers = Utils.createInstances(Parser.class, configValue.parser());
-                    ca.fxco.pistonlib.api.config.Observer<?>[] observers = Utils.createInstances(Observer.class, configValue.observer());
+                    ca.fxco.pistonlib.api.config.Observer<?>[] observers = Utils.createInstances(ca.fxco.pistonlib.api.config.Observer.class, configValue.observer());
                     ParsedValue<?> parsedValue = new ParsedValueImpl<>(
                             field,
                             configValue.desc(),

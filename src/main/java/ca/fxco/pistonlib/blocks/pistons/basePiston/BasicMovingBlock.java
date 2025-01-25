@@ -5,6 +5,7 @@ import java.util.List;
 
 import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
+import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamilyMember;
 import lombok.Getter;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
@@ -38,15 +39,22 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 @Getter
-public class BasicMovingBlock extends MovingPistonBlock {
+public class BasicMovingBlock extends MovingPistonBlock implements PistonFamilyMember {
 
-    private final PistonFamily family;
+    private PistonFamily family;
 
-    public BasicMovingBlock(PistonFamily family, Properties properties) {
+    public BasicMovingBlock(Properties properties) {
         super(properties.isValidSpawn((a,b,c,d) -> !PistonLibConfig.mobsSpawnOnMovingPistonsFix));
+    }
 
+    @Override
+    public PistonFamily getFamily() {
+        return this.family;
+    }
+
+    @Override
+    public void setFamily(PistonFamily family) {
         this.family = family;
-        this.family.setMoving(this);
     }
 
     @Override @Nullable

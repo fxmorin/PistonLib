@@ -3,6 +3,7 @@ package ca.fxco.pistonlib.blocks.pistons.basePiston;
 import java.util.Arrays;
 
 import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
+import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamilyMember;
 import com.mojang.serialization.MapCodec;
 import lombok.Getter;
 
@@ -33,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 import static ca.fxco.pistonlib.PistonLib.DIRECTIONS;
 
 @Getter
-public class BasicPistonHeadBlock extends DirectionalBlock {
+public class BasicPistonHeadBlock extends DirectionalBlock implements PistonFamilyMember {
 
     public static final EnumProperty<PistonType> TYPE;
     public static final BooleanProperty SHORT;
@@ -58,7 +59,7 @@ public class BasicPistonHeadBlock extends DirectionalBlock {
     private static final VoxelShape[] SHORT_HEAD_SHAPES;
     private static final VoxelShape[] HEAD_SHAPES;
 
-    private final PistonFamily family;
+    private PistonFamily family;
 
     public static VoxelShape[] getHeadShapes(boolean shortHead) {
         return Arrays.stream(DIRECTIONS).map((dir) -> getHeadShape(dir, shortHead)).toArray(VoxelShape[]::new);
@@ -76,15 +77,22 @@ public class BasicPistonHeadBlock extends DirectionalBlock {
         };
     }
 
-    public BasicPistonHeadBlock(PistonFamily family, Properties properties) {
+    public BasicPistonHeadBlock(Properties properties) {
         super(properties);
-
-        this.family = family;
-        this.family.setHead(this);
 
         this.registerDefaultState(this.stateDefinition.any()
             .setValue(FACING, Direction.NORTH)
             .setValue(SHORT, false));
+    }
+
+    @Override
+    public PistonFamily getFamily() {
+        return this.family;
+    }
+
+    @Override
+    public void setFamily(PistonFamily family) {
+        this.family = family;
     }
 
     @Override

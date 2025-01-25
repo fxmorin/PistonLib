@@ -1,16 +1,12 @@
 package ca.fxco.pistonlib.api.blockEntity;
 
-import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
-import ca.fxco.pistonlib.base.ModBlockEntities;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 
-import net.minecraft.Util;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 /**
@@ -28,36 +24,21 @@ public class PLBlockEntities {
      * @param <T>      the type of moving block entity
      * @param id       a namespaced id to uniquely identify the block
      *                 entity type
-     * @param factory1 the block entity factory for the block
+     * @param factory  the block entity factory for the block
      *                 entity registry
-     * @param factory2 the block entity factory for the piston
-     *                 families
      * @param families the piston families to register the moving
      *                 block entity type to
      * @return the block entity type that was registered
      */
     public static <T extends BasicMovingBlockEntity> BlockEntityType<T> register(
             ResourceLocation id,
-            FabricBlockEntityTypeBuilder.Factory<T> factory1,
-            ModBlockEntities.Factory<T> factory2,
-            PistonFamily... families
+            FabricBlockEntityTypeBuilder.Factory<T> factory
     ) {
         BlockEntityType<T> type = Registry.register(
                 BuiltInRegistries.BLOCK_ENTITY_TYPE,
                 id,
-                FabricBlockEntityTypeBuilder.create(
-                        factory1,
-                        Util.make(new Block[families.length], blocks -> {
-                            for (int i = 0; i < families.length; i++) {
-                                blocks[i] = families[i].getMoving();
-                            }
-                        })
-                ).build(null)
+                FabricBlockEntityTypeBuilder.create(factory).build(null)
         );
-
-        for (PistonFamily family : families) {
-            family.setMovingBlockEntity(type, factory2);
-        }
 
         return type;
     }

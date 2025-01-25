@@ -41,40 +41,23 @@ public class ModBlockEntities {
         // Pistons
         BASIC_MOVING_BLOCK_ENTITY = register(
                 "basic",
-                BasicMovingBlockEntity::new,
-                BasicMovingBlockEntity::new,
-                ModPistonFamilies.BASIC,
-                ModPistonFamilies.LONG,
-                ModPistonFamilies.VERY_STICKY,
-                ModPistonFamilies.SLIPPERY,
-                ModPistonFamilies.STALE,
-                ModPistonFamilies.VERY_QUASI,
-                ModPistonFamilies.FRONT_POWERED,
-                ModPistonFamilies.SUPER
+                BasicMovingBlockEntity::new
         );
         CONFIGURABLE_MOVING_BLOCK_ENTITY = register(
                 "configurable",
-                ConfigurableMovingBlockEntity::new,
-                ConfigurableMovingBlockEntity::new,
-                ModPistonFamilies.CONFIGURABLE
+                ConfigurableMovingBlockEntity::new
         );
         SPEED_MOVING_BLOCK_ENTITY = register(
                 "speed",
-                SpeedMovingBlockEntity::new,
-                SpeedMovingBlockEntity::new,
-                ModPistonFamilies.STRONG
+                SpeedMovingBlockEntity::new
         );
         FAST_MOVING_BLOCK_ENTITY = register(
                 "fast",
-                FastMovingBlockEntity::new,
-                FastMovingBlockEntity::new,
-                ModPistonFamilies.FAST
+                FastMovingBlockEntity::new
         );
         MBE_MOVING_BLOCK_ENTITY = register(
                 "mbe",
-                MBEMovingBlockEntity::new,
-                MBEMovingBlockEntity::new,
-                ModPistonFamilies.MBE
+                MBEMovingBlockEntity::new
         );
 
         // Other
@@ -92,11 +75,9 @@ public class ModBlockEntities {
 
     private static <T extends BasicMovingBlockEntity> BlockEntityType<T> register(
             String name,
-            FabricBlockEntityTypeBuilder.Factory<T> factory1,
-            Factory<T> factory2,
-            PistonFamily... families
+            FabricBlockEntityTypeBuilder.Factory<T> factory
     ) {
-        return PLBlockEntities.register(id(name+"_moving_block"), factory1, factory2, families);
+        return PLBlockEntities.register(id(name+"_moving_block"), factory);
     }
 
     public static void bootstrap() { }

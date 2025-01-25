@@ -51,9 +51,9 @@ public class PistonLib implements ModInitializer, PistonLibInitializer, PistonLi
         ModRegistries.bootstrap();
 
         initialize(p -> p.initialize(this));
+        initialize(PistonLibInitializer::bootstrap);
         initialize(PistonLibInitializer::registerPistonFamilies);
         initialize(PistonLibInitializer::registerStickyGroups);
-        initialize(PistonLibInitializer::bootstrap);
 
         ModPistonFamilies.validate();
         ModStickyGroups.validate();
@@ -107,8 +107,8 @@ public class PistonLib implements ModInitializer, PistonLibInitializer, PistonLi
 
     @Override
     public void registerStickyGroups() {
-        ModStickyGroups.bootstrap();
         StickyGroups.bootstrap();
+        ModStickyGroups.bootstrap();
     }
 
     @Override

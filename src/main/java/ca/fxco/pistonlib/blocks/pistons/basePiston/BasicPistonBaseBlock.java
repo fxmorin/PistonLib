@@ -2,6 +2,8 @@ package ca.fxco.pistonlib.blocks.pistons.basePiston;
 
 import ca.fxco.pistonlib.api.block.PLPistonController;
 import ca.fxco.pistonlib.api.pistonLogic.controller.PistonController;
+import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
+import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamilyMember;
 import com.mojang.serialization.MapCodec;
 
 import net.minecraft.core.BlockPos;
@@ -26,7 +28,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
-public class BasicPistonBaseBlock extends DirectionalBlock implements PLPistonController {
+public class BasicPistonBaseBlock extends DirectionalBlock implements PLPistonController, PistonFamilyMember {
 
     private static final BooleanProperty EXTENDED = BlockStateProperties.EXTENDED;
     private static final VoxelShape EXTENDED_EAST_SHAPE = Block.box(0.0, 0.0, 0.0, 12.0, 16.0, 16.0);
@@ -42,13 +44,22 @@ public class BasicPistonBaseBlock extends DirectionalBlock implements PLPistonCo
         super(properties);
 
         this.controller = controller;
-        this.controller.setBase(this);
 
         this.registerDefaultState(
             this.stateDefinition.any()
                 .setValue(FACING, Direction.NORTH)
                 .setValue(EXTENDED, false)
         );
+    }
+
+    @Override
+    public PistonFamily getFamily() {
+        return this.controller.getFamily();
+    }
+
+    @Override
+    public void setFamily(PistonFamily family) {
+        this.controller.setFamily(family);
     }
 
     @Override

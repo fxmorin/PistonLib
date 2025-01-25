@@ -28,9 +28,15 @@ import static ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock.SLIPPERY
 
 public class ConfigurablePistonHeadBlock extends BasicPistonHeadBlock {
 
-    public ConfigurablePistonHeadBlock(PistonFamily family, Properties properties) {
-        super(family, properties);
+    public ConfigurablePistonHeadBlock(Properties properties) {
+        super(properties);
+    }
 
+    @Override
+    public void setFamily(PistonFamily family) {
+        super.setFamily(family);
+
+        // this should be fine since setFamily is only called during bootstrapping
         if (this.getFamily().isSlippery()) {
             this.registerDefaultState(this.defaultBlockState().setValue(SLIPPERY_DISTANCE, 0));
         }

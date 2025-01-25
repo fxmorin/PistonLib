@@ -47,12 +47,17 @@ import static net.minecraft.world.level.block.state.properties.BlockStatePropert
 @RequiredArgsConstructor
 public class VanillaPistonController implements PistonController {
 
-    private final PistonFamily family;
     private final PistonType type;
+    private PistonFamily family;
 
     @Override
     public PistonFamily getFamily() {
         return family;
+    }
+
+    @Override
+    public void setFamily(PistonFamily family) {
+        this.family = family;
     }
 
     @Override

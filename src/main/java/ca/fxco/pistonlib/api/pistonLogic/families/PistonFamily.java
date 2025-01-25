@@ -4,11 +4,13 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 
+import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.pistonlib.api.pistonLogic.structure.StructureGroup;
 import ca.fxco.pistonlib.base.ModBlockEntities;
 import ca.fxco.pistonlib.base.ModPistonFamilies;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.Delegate;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,70 +38,30 @@ import net.minecraft.world.level.block.state.properties.PistonType;
  * @author FX
  * @since 1.0.4
  */
-@RequiredArgsConstructor
+@Builder
+@AllArgsConstructor
 public class PistonFamily {
 
     @Delegate(types = PistonBehavior.class, excludes = PistonBehavior.PistonBehaviorBuilder.class)
     private final PistonBehavior behavior;
 
-    protected Map<PistonType, Block> bases = new EnumMap<>(PistonType.class);
+    private final Map<PistonType, Block> bases = new EnumMap<>(PistonType.class);
     @Getter
-    protected @Nullable Block arm;
+    private final @Nullable Block arm;
     @Getter
-    protected Block head;
+    private final Block head;
     @Getter
-    protected Block moving;
+    private final Block moving;
     @Getter
-    protected BlockEntityType<? extends PistonMovingBlockEntity> movingBlockEntityType;
+    private final BlockEntityType<? extends PistonMovingBlockEntity> movingBlockEntityType;
     @Getter
-    protected ModBlockEntities.Factory<? extends PistonMovingBlockEntity> movingBlockEntityFactory;
+    private final ModBlockEntities.Factory<? extends PistonMovingBlockEntity> movingBlockEntityFactory;
+
+    private final boolean customTextures;
 
     @Override
     public String toString() {
         return "PistonFamily{" + PistonFamilies.getId(this) + "}";
-    }
-
-
-    // ========================= TODO: remove setters===========================
-
-    public void setBase(PistonType type, Block base) {
-        if (ModPistonFamilies.requireNotLocked()) {
-            this.bases.put(type, base);
-        }
-    }
-
-    public void setArm(Block arm) {
-        if (ModPistonFamilies.requireNotLocked()) {
-            this.arm = arm;
-        }
-    }
-
-    public void setHead(Block head) {
-        if (ModPistonFamilies.requireNotLocked()) {
-            this.head = head;
-        }
-    }
-
-    public void setMoving(Block moving) {
-        if (ModPistonFamilies.requireNotLocked()) {
-            this.moving = moving;
-        }
-    }
-
-    public void setMovingBlockEntity(
-        BlockEntityType<? extends PistonMovingBlockEntity> type,
-        ModBlockEntities.Factory<? extends PistonMovingBlockEntity> factory
-    ) {
-        if (ModPistonFamilies.requireNotLocked()) {
-            this.movingBlockEntityType = type;
-            this.movingBlockEntityFactory = factory;
-        }
-    }
-
-    // =========================================================================
-
-    public boolean hasCustomTextures() {
-        return false;
     }
 
     public Map<PistonType, Block> getBases() {
@@ -115,6 +77,10 @@ public class PistonFamily {
      */
     public Block getBase() {
         return this.bases.values().iterator().next();
+    }
+
+    public boolean hasCustomTextures() {
+        return customTextures && PistonLib.DATAGEN_ACTIVE;
     }
 
     public PistonMovingBlockEntity newMovingBlockEntity(BlockPos pos, BlockState state, BlockState movedState,
@@ -141,5 +107,26 @@ public class PistonFamily {
 
     public boolean hasCustomLength() {
         return this.behavior.getMinLength() != 0 || this.behavior.getMaxLength() != 1;
+    }
+
+    public static class PistonFamilyBuilder {
+
+        Map<PistonType, Block> bases = new EnumMap<>(PistonType.class);
+        BlockEntityType<? extends PistonMovingBlockEntity> movingBlockEntityType;
+        ModBlockEntities.Factory<? extends PistonMovingBlockEntity> movingBlockEntityFactory;
+
+        public PistonFamilyBuilder base(PistonType type, Block base) {
+            this.bases.put(type, base);
+            return this;
+        }
+
+        public <T extends PistonMovingBlockEntity> PistonFamilyBuilder movingBlockEntity(
+            BlockEntityType<T> type,
+            ModBlockEntities.Factory<T> factory
+        ) {
+            this.movingBlockEntityType = type;
+            this.movingBlockEntityFactory = factory;
+            return this;
+        }
     }
 }

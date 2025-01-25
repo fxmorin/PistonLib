@@ -31,9 +31,9 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public class PistonBaseBlock_tagsMixin implements PLPistonController {
 
     @Unique
-    private static final PistonController VANILLA_CONTROLLER_DEFAULT = pl$createVanillaController(PistonType.DEFAULT);
+    private static final PistonController VANILLA_CONTROLLER_DEFAULT = new VanillaPistonController(PistonType.DEFAULT);
     @Unique
-    private static final PistonController VANILLA_CONTROLLER_STICKY  = pl$createVanillaController(PistonType.STICKY);
+    private static final PistonController VANILLA_CONTROLLER_STICKY  = new VanillaPistonController(PistonType.STICKY);
 
     @Shadow
     @Final
@@ -117,10 +117,5 @@ public class PistonBaseBlock_tagsMixin implements PLPistonController {
                                                             Direction facing, boolean extend) {
         // the basic pistons should act exactly as vanilla pistons anyway
         return pl$getPistonController().newStructureResolver(level, pos, facing, extend ? 0 : 1, extend);
-    }
-
-    @Unique
-    private static PistonController pl$createVanillaController(final PistonType type) {
-        return new VanillaPistonController(ModPistonFamilies.VANILLA, type);
     }
 }

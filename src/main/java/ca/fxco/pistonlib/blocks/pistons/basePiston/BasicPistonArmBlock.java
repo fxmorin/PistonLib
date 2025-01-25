@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.function.BiPredicate;
 
 import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
+import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamilyMember;
 import ca.fxco.pistonlib.base.ModTags;
 import com.mojang.serialization.MapCodec;
 import lombok.Getter;
@@ -32,7 +33,7 @@ import org.jetbrains.annotations.Nullable;
 
 import static ca.fxco.pistonlib.PistonLib.DIRECTIONS;
 
-public class BasicPistonArmBlock extends DirectionalBlock {
+public class BasicPistonArmBlock extends DirectionalBlock implements PistonFamilyMember {
 
     // This is the BASIC ARM BLOCK that you should be extending to create your own arm blocks
 
@@ -72,18 +73,24 @@ public class BasicPistonArmBlock extends DirectionalBlock {
         return Arrays.stream(DIRECTIONS).map((dir) -> getArmShape(dir, shortArm)).toArray(VoxelShape[]::new);
     }
 
-    @Getter
-    private final PistonFamily family;
+    private PistonFamily family;
 
-    public BasicPistonArmBlock(PistonFamily family, Properties properties) {
+    public BasicPistonArmBlock(Properties properties) {
         super(properties);
-
-        this.family = family;
-        this.family.setArm(this);
 
         this.registerDefaultState(this.stateDefinition.any()
             .setValue(FACING, Direction.NORTH)
             .setValue(SHORT, false));
+    }
+
+    @Override
+    public PistonFamily getFamily() {
+        return this.family;
+    }
+
+    @Override
+    public void setFamily(PistonFamily family) {
+        this.family = family;
     }
 
     @Override

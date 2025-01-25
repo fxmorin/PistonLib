@@ -8,7 +8,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.PistonType;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -30,21 +29,18 @@ public interface PistonController {
     PistonFamily getFamily();
 
     /**
+     * Sets the piston family used by this controller.
+     *
+     * @param family The piston family for this controller.
+     */
+    void setFamily(PistonFamily family);
+
+    /**
      * Gets the piston type used by this controller.
      *
      * @return The piston type for this controller.
      */
     PistonType getType();
-
-    /**
-     * Sets the base block for the piston family.
-     * Should call {@link PistonFamily#setBase}
-     *
-     * @param block The block linked to this controller.
-     */
-    default void setBase(Block block) {
-        getFamily().setBase(getType(), block);
-    }
 
     /**
      * Creates a new structure resolver
