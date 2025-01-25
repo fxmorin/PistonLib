@@ -4,17 +4,15 @@ import java.util.Arrays;
 
 import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
 
+import com.mojang.serialization.MapCodec;
 import lombok.Getter;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DirectionalBlock;
@@ -27,9 +25,13 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.PistonType;
 import net.minecraft.world.level.pathfinder.PathComputationType;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.Nullable;
+
+import static ca.fxco.pistonlib.PistonLib.DIRECTIONS;
 
 @Getter
 public class BasicPistonHeadBlock extends DirectionalBlock {
@@ -60,7 +62,7 @@ public class BasicPistonHeadBlock extends DirectionalBlock {
     private final PistonFamily family;
 
     public static VoxelShape[] getHeadShapes(boolean shortHead) {
-        return Arrays.stream(Direction.values()).map((dir) -> getHeadShape(dir, shortHead)).toArray(VoxelShape[]::new);
+        return Arrays.stream(DIRECTIONS).map((dir) -> getHeadShape(dir, shortHead)).toArray(VoxelShape[]::new);
     }
 
     //TODO: Make PistonHeadBlock.getHeadShape() public and call it in here instead of re-initializing all this garbage
@@ -73,10 +75,6 @@ public class BasicPistonHeadBlock extends DirectionalBlock {
             case WEST -> Shapes.or(WEST_HEAD_SHAPE, shortHead ? SHORT_WEST_ARM_SHAPE : WEST_ARM_SHAPE);
             case EAST -> Shapes.or(EAST_HEAD_SHAPE, shortHead ? SHORT_EAST_ARM_SHAPE : EAST_ARM_SHAPE);
         };
-    }
-
-    public BasicPistonHeadBlock(PistonFamily family) {
-        this(family, FabricBlockSettings.copyOf(Blocks.PISTON_HEAD));
     }
 
     public BasicPistonHeadBlock(PistonFamily family, Properties properties) {
@@ -107,7 +105,7 @@ public class BasicPistonHeadBlock extends DirectionalBlock {
     }
 
     @Override
-    public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
         if (!level.isClientSide() && player.getAbilities().instabuild) {
             BlockPos behindPos = pos.relative(state.getValue(FACING).getOpposite());
 
@@ -116,7 +114,7 @@ public class BasicPistonHeadBlock extends DirectionalBlock {
             }
         }
 
-        super.playerWillDestroy(level, pos, state, player);
+        return super.playerWillDestroy(level, pos, state, player);
     }
 
     @Override
@@ -137,11 +135,13 @@ public class BasicPistonHeadBlock extends DirectionalBlock {
     }
 
     @Override
-    public BlockState updateShape(BlockState state, Direction dir, BlockState neighborState,
-                                                LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
-        return dir.getOpposite() == state.getValue(FACING) && !state.canSurvive(level, pos) ?
+    public BlockState updateShape(BlockState state, LevelReader levelReader,
+                                  ScheduledTickAccess scheduledTickAccess, BlockPos pos, Direction dir,
+                                  BlockPos neighborPos, BlockState neighborState, RandomSource randomSource) {
+        return dir.getOpposite() == state.getValue(FACING) && !state.canSurvive(levelReader, pos) ?
                 Blocks.AIR.defaultBlockState() :
-                super.updateShape(state, dir, neighborState, level, pos, neighborPos);
+                super.updateShape(state, levelReader, scheduledTickAccess,
+                        pos, dir, neighborPos, neighborState, randomSource);
     }
 
     @Override
@@ -152,15 +152,16 @@ public class BasicPistonHeadBlock extends DirectionalBlock {
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
+    public void neighborChanged(BlockState state, Level level, BlockPos pos,
+                                Block neighborBlock, Orientation orientation, boolean movedByPiston) {
         if (state.canSurvive(level, pos)) {
             BlockPos behindPos = pos.relative(state.getValue(FACING).getOpposite());
-            level.neighborChanged(level.getBlockState(behindPos), behindPos, neighborBlock, neighborPos, false);
+            level.neighborChanged(level.getBlockState(behindPos), behindPos, neighborBlock, orientation, false);
         }
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state) {
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean bl) {
         return new ItemStack(family.getBase(state.getValue(TYPE)));
     }
 
@@ -180,7 +181,7 @@ public class BasicPistonHeadBlock extends DirectionalBlock {
     }
 
     @Override
-    public boolean isPathfindable(BlockState state, BlockGetter world, BlockPos pos, PathComputationType type) {
+    public boolean isPathfindable(BlockState state, PathComputationType type) {
         return false;
     }
 
@@ -209,5 +210,10 @@ public class BasicPistonHeadBlock extends DirectionalBlock {
         SHORT_HEAD_SHAPES = getHeadShapes(true);
         HEAD_SHAPES = getHeadShapes(false);
 
+    }
+
+    @Override
+    protected MapCodec<? extends DirectionalBlock> codec() {
+        return null;
     }
 }

@@ -1,7 +1,10 @@
 package ca.fxco.api.pistonlib.pistonLogic;
 
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.level.material.PushReaction;
 
 import java.util.HashMap;
@@ -52,6 +55,9 @@ public enum PistonMoveBehavior {
     public static PistonMoveBehavior fromIndex(int index) {
         return (index < 0 || index >= ALL.length) ? null : ALL[index];
     }
+
+    public static final StreamCodec<ByteBuf, PistonMoveBehavior> STREAM_CODEC =
+            ByteBufCodecs.idMapper(PistonMoveBehavior::fromIndex, PistonMoveBehavior::getIndex);
 
     public static PistonMoveBehavior fromName(String name) {
         return name == null ? null : BY_NAME.get(name);

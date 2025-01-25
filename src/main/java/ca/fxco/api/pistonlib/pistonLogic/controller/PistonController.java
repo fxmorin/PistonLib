@@ -5,6 +5,7 @@ import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.pistonLogic.structureResolvers.BasicStructureResolver;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -98,8 +99,9 @@ public interface PistonController {
      * @param level of the block state
      * @param pos block position of the block state
      * @param state block state to check
+     * @param onPlace was block just placed
      */
-    void checkIfExtend(Level level, BlockPos pos, BlockState state);
+    void checkIfExtend(Level level, BlockPos pos, BlockState state, boolean onPlace);
 
     /**
      * What should it do on retract, nothing, retract and pull blocks or just retract without pulling
@@ -124,7 +126,7 @@ public interface PistonController {
      */
     boolean triggerEvent(BlockState state, Level level, BlockPos pos, int type, int data);
 
-    void playEvents(Level level, GameEvent event, BlockPos pos);
+    void playEvents(Level level, Holder<GameEvent> event, BlockPos pos);
 
     /**
      * Returns whether this piston can move the given block,

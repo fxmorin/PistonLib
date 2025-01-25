@@ -1,11 +1,11 @@
 package ca.fxco.pistonlib.items;
 
+import ca.fxco.pistonlib.base.ModDataComponents;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.helpers.SingleItemTooltip;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -20,9 +20,11 @@ import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.BundleContents;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import org.apache.commons.lang3.math.Fraction;
 
 import java.util.Optional;
 
@@ -31,10 +33,12 @@ public class PistonWandItem extends Item {
         super(properties);
     }
 
+    @Override
     public boolean isFoil(ItemStack itemStack) {
-        return true;
+        return false;
     }
 
+    @Override
     public boolean canAttackBlock(BlockState blockState, Level level, BlockPos blockPos, Player player) {
         return player.canUseGameMasterBlocks(); //todo: change later
     }
@@ -57,7 +61,7 @@ public class PistonWandItem extends Item {
             }
         }
 
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return level.isClientSide ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
     }
 
     @Override
@@ -105,44 +109,22 @@ public class PistonWandItem extends Item {
     }
 
     private static void add(ItemStack itemStack, ItemStack addingItem) {
-        CompoundTag compoundTag = itemStack.getOrCreateTag();
-        if (compoundTag.contains("Item")) {
-            compoundTag.remove("Item");
-        }
         ItemStack itemStack4 = addingItem.copy();
         itemStack4.setCount(1);
-        CompoundTag compoundTag3 = new CompoundTag();
-        itemStack4.save(compoundTag3);
-        compoundTag.put("Item", compoundTag3);
+        itemStack.set(ModDataComponents.WAND_ITEM, itemStack4);
     }
 
     private static Optional<ItemStack> removeItem(ItemStack itemStack) {
-        CompoundTag compoundTag = itemStack.getTag();
-        if (compoundTag == null) {
-            return Optional.empty();
-        }
-        if (!compoundTag.contains("Item")) {
-            return Optional.empty();
-        }
-        CompoundTag compoundTag2 = compoundTag.getCompound("Item");
-        ItemStack stack = ItemStack.of(compoundTag2);
+        ItemStack stack = itemStack.getOrDefault(ModDataComponents.WAND_ITEM, ItemStack.EMPTY);
         if (stack.isEmpty()) {
             return Optional.empty();
         }
-        itemStack.removeTagKey("Item");
+        itemStack.set(ModDataComponents.WAND_ITEM, null);
         return Optional.of(stack);
     }
 
-    private static ItemStack getWandItem(ItemStack itemStack) {
-        CompoundTag compoundTag = itemStack.getTag();
-        if (compoundTag == null) {
-            return ItemStack.EMPTY;
-        }
-        if (!compoundTag.contains("Item")) {
-            return ItemStack.EMPTY;
-        }
-        CompoundTag compoundTag2 = compoundTag.getCompound("Item");
-        ItemStack stack = ItemStack.of(compoundTag2);
+    static ItemStack getWandItem(ItemStack itemStack) {
+        ItemStack stack = itemStack.getOrDefault(ModDataComponents.WAND_ITEM, ItemStack.EMPTY);
         if (stack.isEmpty()) {
             return ItemStack.EMPTY;
         }
@@ -156,15 +138,15 @@ public class PistonWandItem extends Item {
     public Optional<TooltipComponent> getTooltipImage(ItemStack itemStack) {
         NonNullList<ItemStack> nonNullList = NonNullList.create();
         nonNullList.add(getWandItem(itemStack));
-        return Optional.of(new SingleItemTooltip(nonNullList, 64));
+        return Optional.of(new SingleItemTooltip(new BundleContents(nonNullList, Fraction.ONE, -1)));
     }
 
     private void playRemoveItemSound(Entity entity) {
-        entity.playSound(SoundEvents.BUNDLE_REMOVE_ONE, 0.8F, 0.8F + entity.getLevel().getRandom().nextFloat() * 0.4F);
+        entity.playSound(SoundEvents.BUNDLE_REMOVE_ONE, 0.8F, 0.8F + entity.level().getRandom().nextFloat() * 0.4F);
     }
 
     private void playInsertSound(Entity entity) {
-        entity.playSound(SoundEvents.BUNDLE_INSERT, 0.8F, 0.8F + entity.getLevel().getRandom().nextFloat() * 0.4F);
+        entity.playSound(SoundEvents.BUNDLE_INSERT, 0.8F, 0.8F + entity.level().getRandom().nextFloat() * 0.4F);
     }
 
 }

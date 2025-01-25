@@ -212,7 +212,6 @@ public interface PLBlockBehaviour extends BlockPistonBehavior, BlockPistonMergin
         return true;
     }
 
-
     // BlockQuasiPower
 
     @Deprecated

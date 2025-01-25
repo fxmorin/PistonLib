@@ -113,7 +113,8 @@ public class MergingStructureRunner extends BasicStructureRunner {
                     BlockEntity movingBlockEntity = this.family
                             .newMovingBlockEntity(structureGroup, dstPos, movingBlock, stateToMove, blockEntityToMove, facing, extend, false);
 
-                    level.setBlock(dstPos, movingBlock, UPDATE_MOVE_BY_PISTON | UPDATE_INVISIBLE);
+                    level.setBlock(dstPos, movingBlock, UPDATE_MOVE_BY_PISTON |
+                            (blockEntityToMove != null ? UPDATE_CLIENTS : UPDATE_INVISIBLE));
                     level.setBlockEntity(movingBlockEntity);
 
                     if (move) {
@@ -159,13 +160,13 @@ public class MergingStructureRunner extends BasicStructureRunner {
                 BlockState mergeBlockState = ModBlocks.MERGE_BLOCK.defaultBlockState();
                 MergeBlockEntity mergeBlockEntity;
                 BlockEntity mergeIntoBlockEntity = level.getBlockEntity(mergeIntoPos);
-                if (mergeIntoBlockEntity.pl$doInitialMerging()) {
+                if (mergeIntoBlockEntity != null && mergeIntoBlockEntity.pl$doInitialMerging()) {
                     mergeBlockEntity = new MergeBlockEntity(mergeIntoPos, mergeBlockState, mergeIntoState, mergeIntoBlockEntity);
                     mergeIntoBlockEntity.pl$onMerge(mergeBlockEntity, moveDir); // Call onMerge for the base block entity
 
                     if (stateToMerge.pl$getBlockEntityMergeRules().checkMerge()) {
                         BlockEntity blockEntityToMerge = level.getBlockEntity(posToMerge);
-                        if (blockEntityToMerge.pl$shouldStoreSelf(mergeBlockEntity)) {
+                        if (blockEntityToMerge != null && blockEntityToMerge.pl$shouldStoreSelf(mergeBlockEntity)) {
                             blockEntityToMerge.pl$onMerge(mergeBlockEntity, moveDir);
                             mergeBlockEntity.doMerge(stateToMerge, blockEntityToMerge, moveDir, speed);
                         } else {

@@ -9,5 +9,5 @@ public class ModScreens {
         MenuScreens.register(ModMenus.AUTO_CRAFTING, AutoCraftingScreen::new);
     }
 
-    public static void boostrap() { }
+    public static void bootstrap() { }
 }

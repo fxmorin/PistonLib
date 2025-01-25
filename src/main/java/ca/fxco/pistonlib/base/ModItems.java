@@ -1,20 +1,25 @@
 package ca.fxco.pistonlib.base;
 
 import ca.fxco.pistonlib.PistonLibConfig;
+import ca.fxco.pistonlib.items.PistonDebugWandItem;
 import ca.fxco.pistonlib.items.PistonWandItem;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.Block;
 
+import java.util.function.Function;
+
 import static ca.fxco.pistonlib.PistonLib.id;
 
 public class ModItems {
 
-    public static final PistonWandItem PISTON_WAND = register("piston_wand", new PistonWandItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
+    public static final PistonWandItem PISTON_WAND = register("piston_wand", PistonWandItem::new, new Item.Properties().stacksTo(1).rarity(Rarity.EPIC));
+    public static final PistonDebugWandItem PISTON_DEBUG_WAND = register("piston_debug_wand", PistonDebugWandItem::new, new Item.Properties().stacksTo(1).rarity(Rarity.EPIC));
 
     public static final BlockItem HALF_SLIME_BLOCK = registerBlock(ModBlocks.HALF_SLIME_BLOCK);
     public static final BlockItem HALF_HONEY_BLOCK = registerBlock(ModBlocks.HALF_HONEY_BLOCK);
@@ -34,6 +39,8 @@ public class ModItems {
     public static final BlockItem MOVE_COUNTING_BLOCK = registerBlock(ModBlocks.MOVE_COUNTING_BLOCK);
     public static final BlockItem WEAK_REDSTONE_BLOCK = registerBlock(ModBlocks.WEAK_REDSTONE_BLOCK);
     public static final BlockItem QUASI_BLOCK = registerBlock(ModBlocks.QUASI_BLOCK);
+    public static final BlockItem ERASE_BLOCK = registerBlock(ModBlocks.ERASE_BLOCK);
+    public static final BlockItem HEAVY_BLOCK = registerBlock(ModBlocks.HEAVY_BLOCK);
 
     public static final BlockItem SLIPPERY_SLIME_BLOCK = registerBlock(ModBlocks.SLIPPERY_SLIME_BLOCK);
     public static final BlockItem SLIPPERY_REDSTONE_BLOCK = registerBlock(ModBlocks.SLIPPERY_REDSTONE_BLOCK);
@@ -73,17 +80,19 @@ public class ModItems {
     }
 
     private static BlockItem registerBlock(Block block, Item.Properties itemProperties) {
-        return register(BuiltInRegistries.BLOCK.getKey(block), new BlockItem(block, itemProperties));
+        ResourceKey<Item> resourceKey = ResourceKey.create(Registries.ITEM, BuiltInRegistries.BLOCK.getKey(block));
+        return register(resourceKey, new BlockItem(block, itemProperties.setId(resourceKey)));
     }
 
-    private static <T extends Item> T register(String name, T item) {
-        return register(id(name), item);
+    private static <T extends Item> T register(String name, Function<Item.Properties, T>  item, Item.Properties properties) {
+        ResourceKey<Item> resourceKey = ResourceKey.create(Registries.ITEM, id(name));
+        return register(resourceKey, item.apply(properties.setId(resourceKey)));
     }
 
-    private static <T extends Item> T register(ResourceLocation id, T item) {
+    private static <T extends Item> T register(ResourceKey<Item> id, T item) {
         return Registry.register(BuiltInRegistries.ITEM, id, item);
     }
 
-    public static void boostrap() { }
+    public static void bootstrap() { }
 
 }

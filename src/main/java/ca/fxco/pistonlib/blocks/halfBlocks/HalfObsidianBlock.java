@@ -18,12 +18,12 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.SlabType;
 
 public class HalfObsidianBlock extends Block {
 
-    public static final DirectionProperty FACING = BlockStateProperties.FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.FACING;
 
     public HalfObsidianBlock(Properties properties) {
         super(properties);
@@ -86,16 +86,18 @@ public class HalfObsidianBlock extends Block {
 
     @Override
     public boolean pl$canUnMerge(BlockState state, BlockGetter level, BlockPos pos,
-                              BlockState neighborState, Direction direction) {
-        return true;
+                                 BlockState neighborState, Direction direction) {
+        return state.getValue(FACING).getAxis() == Direction.Axis.Y;
     }
 
     @Override
     public Pair<BlockState, BlockState> pl$doUnMerge(BlockState state, BlockGetter level,
-                                                  BlockPos pos, Direction direction) {
+                                                     BlockPos pos, Direction direction) {
+        SlabType stone = state.getValue(FACING) == Direction.UP ? SlabType.BOTTOM : SlabType.TOP;
+        SlabType obsidian = stone == SlabType.TOP ? SlabType.BOTTOM : SlabType.TOP;
         return new Pair<>(
-                Blocks.SMOOTH_STONE_SLAB.defaultBlockState().setValue(BlockStateProperties.SLAB_TYPE, SlabType.BOTTOM),
-                ModBlocks.OBSIDIAN_SLAB_BLOCK.defaultBlockState().setValue(BlockStateProperties.SLAB_TYPE, SlabType.TOP)
+                Blocks.SMOOTH_STONE_SLAB.defaultBlockState().setValue(BlockStateProperties.SLAB_TYPE, stone),
+                ModBlocks.OBSIDIAN_SLAB_BLOCK.defaultBlockState().setValue(BlockStateProperties.SLAB_TYPE, obsidian)
         );
     }
 }

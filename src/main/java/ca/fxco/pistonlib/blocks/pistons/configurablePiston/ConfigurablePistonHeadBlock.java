@@ -5,8 +5,6 @@ import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyType;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonHeadBlock;
 import ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock;
 
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -15,6 +13,7 @@ import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -28,10 +27,6 @@ import static ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock.MAX_DIST
 import static ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock.SLIPPERY_DELAY;
 
 public class ConfigurablePistonHeadBlock extends BasicPistonHeadBlock {
-
-    public ConfigurablePistonHeadBlock(PistonFamily family) {
-        this(family, FabricBlockSettings.copyOf(Blocks.PISTON_HEAD));
-    }
 
     public ConfigurablePistonHeadBlock(PistonFamily family, Properties properties) {
         super(family, properties);
@@ -50,11 +45,12 @@ public class ConfigurablePistonHeadBlock extends BasicPistonHeadBlock {
     }
 
     @Override
-    public BlockState updateShape(BlockState state, Direction dir, BlockState neighborState,
-                                  LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+    public BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess scheduledTickAccess,
+                                  BlockPos pos, Direction dir, BlockPos neighborPos, BlockState neighborState,
+                                 RandomSource random) {
         if (this.getFamily().isSlippery() && !level.isClientSide())
-            level.scheduleTick(pos, this, SLIPPERY_DELAY);
-        return super.updateShape(state, dir, neighborState, level, pos, neighborPos);
+            scheduledTickAccess.scheduleTick(pos, this, SLIPPERY_DELAY);
+        return super.updateShape(state, level, scheduledTickAccess, pos, dir, neighborPos, neighborState, random);
     }
 
     @Override

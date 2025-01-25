@@ -7,10 +7,6 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class LongPistonHeadBlock extends BasicPistonHeadBlock {
 
-    public LongPistonHeadBlock(PistonFamily family) {
-        super(family);
-    }
-
     public LongPistonHeadBlock(PistonFamily family, Properties settings) {
         super(family, settings);
     }

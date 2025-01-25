@@ -20,6 +20,7 @@ import ca.fxco.pistonlib.pistonLogic.structureRunners.MergingStructureRunner;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -92,7 +93,7 @@ public class VanillaPistonController implements PistonController {
     }
 
     @Override
-    public void checkIfExtend(Level level, BlockPos pos, BlockState state) {
+    public void checkIfExtend(Level level, BlockPos pos, BlockState state, boolean onPlace) {
         if (level.isClientSide()) {
             return;
         }
@@ -102,7 +103,7 @@ public class VanillaPistonController implements PistonController {
         boolean shouldExtend = hasNeighborSignal(level, pos, facing);
 
         PistonFamily family = getFamily();
-        if (PistonLibConfig.headlessPistonFix && length > family.getMinLength()) {
+        if (PistonLibConfig.headlessPistonFix && !onPlace && length > family.getMinLength()) {
             BlockState blockState = level.getBlockState(pos.relative(facing, length));
             if (shouldExtend && !blockState.is(family.getMoving()) && !blockState.is(family.getHead())) {
                 level.removeBlock(pos, false);
@@ -192,7 +193,7 @@ public class VanillaPistonController implements PistonController {
                 level.setBlock(pos, state.setValue(EXTENDED, true), UPDATE_MOVE_BY_PISTON | UPDATE_ALL);
             }
 
-            playEvents(level, GameEvent.PISTON_EXTEND, pos);
+            playEvents(level, GameEvent.BLOCK_ACTIVATE, pos);
         } else if (PistonEvents.isRetract(type)) {
             BlockPos headPos = pos.relative(facing, length);
             BlockEntity headBlockEntity = level.getBlockEntity(headPos);
@@ -268,18 +269,18 @@ public class VanillaPistonController implements PistonController {
                 }
             }
 
-            playEvents(level, GameEvent.PISTON_CONTRACT, pos);
+            playEvents(level, GameEvent.BLOCK_DEACTIVATE, pos);
         }
 
         return true;
     }
 
     @Override
-    public void playEvents(Level level, GameEvent event, BlockPos pos) {
+    public void playEvents(Level level, Holder<GameEvent> event, BlockPos pos) {
         level.playSound(
                 null,
                 pos,
-                event == GameEvent.PISTON_CONTRACT ?
+                event == GameEvent.BLOCK_DEACTIVATE ?
                         SoundEvents.PISTON_CONTRACT : SoundEvents.PISTON_EXTEND,
                 SoundSource.BLOCKS,
                 0.5F,
@@ -300,10 +301,10 @@ public class VanillaPistonController implements PistonController {
         } else if (state.isAir()) {
             return true; // air is never in the way
         } else if (moveDir == Direction.DOWN) {
-            if (pos.getY() == level.getMinBuildHeight()) {
+            if (pos.getY() == level.getMinY()) {
                 return false;
             }
-        } else if (moveDir == Direction.UP && pos.getY() == level.getMaxBuildHeight() - 1) {
+        } else if (moveDir == Direction.UP && pos.getY() == level.getMaxY() - 1) {
             return false;
         }
 

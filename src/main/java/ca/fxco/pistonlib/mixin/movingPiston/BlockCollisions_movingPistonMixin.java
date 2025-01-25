@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.state.BlockState;
 public class BlockCollisions_movingPistonMixin {
 
     @Redirect(
-        method = "computeNext()Lnet/minecraft/world/phys/shapes/VoxelShape;",
+        method = "computeNext",
         at = @At(
             value = "INVOKE",
             target = "Lnet/minecraft/world/level/block/state/BlockState;is(Lnet/minecraft/world/level/block/Block;)Z"

@@ -8,6 +8,7 @@ import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderGetter;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
@@ -33,6 +34,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+import static ca.fxco.pistonlib.PistonLib.DIRECTIONS;
 import static net.minecraft.world.level.block.piston.PistonMovingBlockEntity.*;
 
 @Getter
@@ -148,7 +150,7 @@ public class MergeBlockEntity extends BlockEntity {
                 } else {
                     level.setBlock(blockPos, blockState2, Block.UPDATE_MOVE_BY_PISTON | Block.UPDATE_ALL);
                 }
-                level.neighborChanged(blockPos, blockState2.getBlock(), blockPos);
+                level.neighborChanged(blockPos, blockState2.getBlock(), null);
             }
         }
     }
@@ -279,32 +281,33 @@ public class MergeBlockEntity extends BlockEntity {
         return (float)dir.getStepZ() * (this.getProgress(f, progress, lastProgress) - 1);
     }
 
-    public void load(CompoundTag compoundTag) {
-        super.load(compoundTag);
+    @Override
+    public void loadAdditional(CompoundTag compoundTag, HolderLookup.Provider lookup) {
+        super.loadAdditional(compoundTag, lookup);
         HolderGetter<Block> holderGetter = this.level != null ?
-                this.level.holderLookup(Registries.BLOCK) : BuiltInRegistries.BLOCK.asLookup();
+                this.level.holderLookup(Registries.BLOCK) : BuiltInRegistries.BLOCK;
         this.initialState = NbtUtils.readBlockState(holderGetter, compoundTag.getCompound("state"));
         if (compoundTag.contains("be", Tag.TAG_COMPOUND)) {
             EntityBlock movedBlock = (EntityBlock)this.initialState.getBlock();
             this.initialBlockEntity = movedBlock.newBlockEntity(BlockPos.ZERO, this.initialState);
-            this.initialBlockEntity.load(compoundTag.getCompound("be"));
+            this.initialBlockEntity.loadCustomOnly(compoundTag.getCompound("be"), lookup);
         }
-        for (Direction dir : Direction.values()) {
+        for (Direction dir : DIRECTIONS) {
             if (compoundTag.contains("dir" + dir.ordinal(), Tag.TAG_COMPOUND)) {
                 CompoundTag tag = compoundTag.getCompound("dir" + dir.ordinal());
-                mergingBlocks.put(dir, MergeData.loadNbt(holderGetter, tag));
+                mergingBlocks.put(dir, MergeData.loadNbt(holderGetter, tag, lookup));
             }
         }
     }
 
-    protected void saveAdditional(CompoundTag compoundTag) {
-        super.saveAdditional(compoundTag);
+    protected void saveAdditional(CompoundTag compoundTag, HolderLookup.Provider lookup) {
+        super.saveAdditional(compoundTag, lookup);
         compoundTag.put("state", NbtUtils.writeBlockState(initialState));
         if (this.initialBlockEntity != null) {
-            compoundTag.put("be", this.initialBlockEntity.saveWithoutMetadata());
+            compoundTag.put("be", this.initialBlockEntity.saveWithoutMetadata(lookup));
         }
         for (Map.Entry<Direction, MergeData> entry : mergingBlocks.entrySet()) {
-            compoundTag.put("dir" + entry.getKey().ordinal(), MergeData.writeNbt(entry.getValue()));
+            compoundTag.put("dir" + entry.getKey().ordinal(), MergeData.writeNbt(entry.getValue(), lookup));
         }
     }
 
@@ -374,11 +377,11 @@ public class MergeBlockEntity extends BlockEntity {
             }
         }
 
-        public static CompoundTag writeNbt(MergeData data) {
+        public static CompoundTag writeNbt(MergeData data, HolderLookup.Provider lookup) {
             CompoundTag compoundTag = new CompoundTag();
             compoundTag.put("state", NbtUtils.writeBlockState(data.getState()));
             if (data.hasBlockEntity()) {
-                compoundTag.put("be", data.getBlockEntity().saveWithoutMetadata());
+                compoundTag.put("be", data.getBlockEntity().saveWithoutMetadata(lookup));
             }
             if (data.getProgress() == data.getLastProgress()) {
                 compoundTag.putFloat("progress", data.getProgress());
@@ -392,13 +395,14 @@ public class MergeBlockEntity extends BlockEntity {
             return compoundTag;
         }
 
-        public static MergeData loadNbt(HolderGetter<Block> holderGetter, CompoundTag compoundTag) {
+        public static MergeData loadNbt(HolderGetter<Block> holderGetter,
+                                        CompoundTag compoundTag, HolderLookup.Provider lookup) {
             BlockState state = NbtUtils.readBlockState(holderGetter, compoundTag.getCompound("state"));
             BlockEntity entity;
             if (compoundTag.contains("be", Tag.TAG_COMPOUND)) {
                 EntityBlock movedBlock = (EntityBlock)state.getBlock();
                 entity = movedBlock.newBlockEntity(BlockPos.ZERO, state);
-                entity.load(compoundTag.getCompound("be"));
+                entity.loadCustomOnly(compoundTag.getCompound("be"), lookup);
             } else {
                 entity = null;
             }

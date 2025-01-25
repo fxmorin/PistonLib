@@ -22,7 +22,8 @@ public class PistonBaseBlock_pushOrderMixin {
             method = "moveBlocks",
             at = @At(
                     value = "INVOKE",
-                    target = "Lcom/google/common/collect/Maps;newHashMap()Ljava/util/HashMap;"
+                    target = "Lcom/google/common/collect/Maps;newHashMap()Ljava/util/HashMap;",
+                    remap = false
             )
     )
     private HashMap<BlockPos, BlockState> fixLocationalHashmap() {

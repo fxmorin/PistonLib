@@ -1,6 +1,7 @@
 package ca.fxco.pistonlib.mixin.blockEntity;
 
 import net.minecraft.core.Holder;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.profiling.ProfilerFiller;
@@ -28,10 +29,11 @@ import java.util.function.Supplier;
 public abstract class ServerLevel_blockEntityMixin extends Level {
 
     // constructor only needed to make the compiler happy
-    private ServerLevel_blockEntityMixin(WritableLevelData data, ResourceKey<Level> key, Holder<DimensionType> dimension,
-                                         Supplier<ProfilerFiller> profiler, boolean isClientSide, boolean isDebug, long seed,
+    private ServerLevel_blockEntityMixin(WritableLevelData data, ResourceKey<Level> key, RegistryAccess registryAccess,
+                                         Holder<DimensionType> dimension,
+                                         boolean isClientSide, boolean isDebug, long seed,
                                          int maxChainedNeighborUpdates) {
-        super(data, key, dimension, profiler, isClientSide, isDebug, seed, maxChainedNeighborUpdates);
+        super(data, key, registryAccess, dimension, isClientSide, isDebug, seed, maxChainedNeighborUpdates);
     }
 
     @Unique

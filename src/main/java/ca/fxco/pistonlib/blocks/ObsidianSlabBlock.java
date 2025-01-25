@@ -24,7 +24,8 @@ public class ObsidianSlabBlock extends SlabBlock {
     @Override
     public boolean pl$canMerge(BlockState state, BlockGetter level, BlockPos pos,
                             BlockState mergingIntoState, Direction direction) {
-        if (state.getBlock() != mergingIntoState.getBlock() && state.getBlock() != Blocks.SMOOTH_STONE_SLAB) {
+        if (state.getBlock() != mergingIntoState.getBlock() &&
+                mergingIntoState.getBlock() != Blocks.SMOOTH_STONE_SLAB) {
             return false;
         }
         SlabType type1 = state.getValue(BlockStateProperties.SLAB_TYPE);

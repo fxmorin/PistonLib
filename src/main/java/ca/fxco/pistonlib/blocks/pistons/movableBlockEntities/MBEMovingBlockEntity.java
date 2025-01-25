@@ -7,6 +7,7 @@ import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.api.pistonlib.pistonLogic.structure.StructureGroup;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -47,23 +48,23 @@ public class MBEMovingBlockEntity extends BasicMovingBlockEntity {
     }
 
     @Override
-    public void load(CompoundTag nbt) {
-        super.load(nbt);
+    public void loadAdditional(CompoundTag nbt, HolderLookup.Provider lookup) {
+        super.loadAdditional(nbt, lookup);
 
         if (this.movedState.hasBlockEntity() && nbt.contains("blockEntity")) {
             EntityBlock movedBlock = (EntityBlock)this.movedState.getBlock();
             this.movedBlockEntity = movedBlock.newBlockEntity(this.worldPosition, this.movedState);
 
-            this.movedBlockEntity.load(nbt.getCompound("blockEntity"));
+            this.movedBlockEntity.loadCustomOnly(nbt.getCompound("blockEntity"), lookup);
         }
     }
 
     @Override
-    public void saveAdditional(CompoundTag nbt) {
-        super.saveAdditional(nbt);
+    public void saveAdditional(CompoundTag nbt, HolderLookup.Provider lookup) {
+        super.saveAdditional(nbt, lookup);
 
         if (this.movedState.hasBlockEntity() && this.movedBlockEntity != null) {
-            nbt.put("blockEntity", this.movedBlockEntity.saveWithoutMetadata());
+            nbt.put("blockEntity", this.movedBlockEntity.saveWithoutMetadata(lookup));
         }
     }
 }

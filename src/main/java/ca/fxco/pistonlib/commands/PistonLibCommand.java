@@ -169,7 +169,7 @@ public class PistonLibCommand implements Command {
         boolean isPush = eventType == PistonEventType.PUSH;
         if (globalPos == null || facing == null) {
             ServerPlayer player = commandSourceStack.getPlayerOrException();
-            HitResult hitResult = player.pick(Minecraft.getInstance().gameMode.getPickRange(), 1.0F, false);
+            HitResult hitResult = player.pick(Minecraft.getInstance().player.blockInteractionRange(), 1.0F, false);
             if (hitResult.getType() == HitResult.Type.BLOCK && hitResult instanceof BlockHitResult blockHitResult) {
                 Direction face = blockHitResult.getDirection();
                 blockPos = blockHitResult.getBlockPos();
@@ -179,7 +179,7 @@ public class PistonLibCommand implements Command {
                         face.getOpposite(),
                         isPush
                 );
-                commandSourceStack.sendSuccess(Component.translatable(
+                commandSourceStack.sendSuccess(() -> Component.translatable(
                         "commands.pistonlib." + eventType.name().toLowerCase() + ".success",
                         blockPos.getX(), blockPos.getY(), blockPos.getZ(),
                         face.getName()
@@ -204,17 +204,17 @@ public class PistonLibCommand implements Command {
         if (serverLevel == null) {
             return 0;
         }
-        facing = facing.getOpposite();
+        Direction opposite = facing.getOpposite();
         serverLevel.pl$addPistonEvent(
                 basicPistonBaseBlock,
-                isPush ? blockPos.relative(facing) : blockPos,
-                facing.getOpposite(),
+                isPush ? blockPos.relative(opposite) : blockPos,
+                opposite,
                 isPush
         );
-        commandSourceStack.sendSuccess(Component.translatable(
+        commandSourceStack.sendSuccess(() -> Component.translatable(
                 "commands.pistonlib." + eventType.name().toLowerCase() + ".success",
                 blockPos.getX(), blockPos.getY(), blockPos.getZ(),
-                facing.getName()
+                opposite.getName()
         ), true);
         return 1;
     }
@@ -225,7 +225,7 @@ public class PistonLibCommand implements Command {
         PistonLib.getConfigManager().getParsedValues().forEach(parsedValue ->
             builder.then(Commands.literal(parsedValue.getName())
                     .executes(ctx -> {
-                        ctx.getSource().sendSuccess(Component.translatable("commands.pistonlib.config.value",
+                        ctx.getSource().sendSuccess(() -> Component.translatable("commands.pistonlib.config.value",
                                 parsedValue.getName(), parsedValue.getValue()), false);
                         return 1;
                     })
@@ -252,17 +252,17 @@ public class PistonLibCommand implements Command {
                                     }).executes(ctx -> {
                                         PistonLib.getConfigManager().saveValueFromCommand(parsedValue, ctx.getSource(),
                                                 StringArgumentType.getString(ctx, "new value"));
-                                        ctx.getSource().sendSuccess(Component.translatable(
+                                        ctx.getSource().sendSuccess(() -> Component.translatable(
                                                 "commands.pistonlib.config.success"
-                                                        + (parsedValue.isRequiresRestart() ? ".restart" : ""),
+                                                        + (parsedValue.requiresRestart() ? ".restart" : ""),
                                                 parsedValue.getName(), parsedValue.getValueToSave()), true);
                                         return 1;
                                     })))
                     .then(Commands.literal("default").executes(ctx -> {
                         PistonLib.getConfigManager().resetAndSaveValue(parsedValue);
-                        ctx.getSource().sendSuccess(Component.translatable(
+                        ctx.getSource().sendSuccess(() -> Component.translatable(
                                 "commands.pistonlib.config.success"
-                                        + (parsedValue.isRequiresRestart() ? ".restart" : ""),
+                                        + (parsedValue.requiresRestart() ? ".restart" : ""),
                                 parsedValue.getName(), parsedValue.getValueToSave()), true);
                         return 1;
                     }))
@@ -290,7 +290,7 @@ public class PistonLibCommand implements Command {
                         append(")").
                         withStyle(override.isPresent() ?
                                 ChatFormatting.GOLD : ChatFormatting.GREEN, ChatFormatting.BOLD));
-        source.sendSuccess(message, false);
+        source.sendSuccess(() -> message, false);
 
         return 1;
     }
@@ -304,6 +304,7 @@ public class PistonLibCommand implements Command {
         for (BlockState blockState : states) {
             PistonLibBehaviorManager.setOverride(blockState, override);
         }
+        PistonLibBehaviorManager.save(true);
 
         String stateString = BlockUtils.blockStateAsString(state, properties);
 
@@ -319,7 +320,7 @@ public class PistonLibCommand implements Command {
                         withStyle(override == PistonMoveBehavior.DEFAULT ?
                                 ChatFormatting.GREEN : ChatFormatting.GOLD, ChatFormatting.BOLD));
 
-        source.sendSuccess(message, true);
+        source.sendSuccess(() -> message, true);
 
         return 1;
     }

@@ -1,0 +1,84 @@
+plugins {
+    id 'fabric-loom'
+    id 'maven-publish'
+}
+
+version = project.mod_version
+group = project.maven_group
+
+loom {
+    accessWidenerPath = project(':').file("src/main/resources/pistonlib.accesswidener")
+    runs {
+        gametest {
+            server()
+            name "Game Test"
+            vmArg "-Dfabric-api.gametest"
+            vmArg "-Dfabric-api.gametest.server=true"
+            vmArg "-Dfabric-api.gametest.command=true"
+            vmArg "-Dgametestlib.keepAlive=true"
+            runDir "build/gametest"
+        }
+    }
+}
+
+repositories {
+    allprojects {
+        repositories {
+            maven {
+                name 'JitPack'
+                url 'https://jitpack.io'
+            }
+        }
+    }
+    mavenCentral()
+}
+
+
+sourceSets {
+    main {
+        resources {
+            srcDir "src/generated/resources"
+        }
+    }
+}
+
+dependencies {
+    // To change the versions see the gradle.properties file
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings loom.officialMojangMappings()
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+    // Fabric API. This is technically optional, but you probably want it anyway.
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+    // Toml
+    modImplementation "com.moandjiezana.toml:toml4j:${project.toml4j_version}"
+
+    // Lombok
+    compileOnly(annotationProcessor("org.projectlombok:lombok:${project.lombok_version}"))
+
+    implementation project(path: ":", configuration: "namedElements")
+
+    // GameTestLib
+    modImplementation 'com.github.fxmorin:GameTestLib:40fa982d22'
+}
+
+def targetJavaVersion = 21
+tasks.withType(JavaCompile).configureEach {
+    it.options.encoding = "UTF-8"
+    it.options.release = targetJavaVersion
+}
+
+repositories {}
+
+// configure the maven publication
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+
+    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
+    repositories {}
+}

@@ -5,6 +5,9 @@ import java.util.Optional;
 
 import ca.fxco.pistonlib.base.ModItems;
 import ca.fxco.pistonlib.base.ModPistonFamilies;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.data.models.model.*;
+import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
@@ -13,21 +16,15 @@ import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.base.ModRegistries;
 
+import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
 import net.minecraft.core.Direction;
-import net.minecraft.data.models.BlockModelGenerators;
-import net.minecraft.data.models.ItemModelGenerators;
-import net.minecraft.data.models.blockstates.MultiVariantGenerator;
-import net.minecraft.data.models.blockstates.PropertyDispatch;
-import net.minecraft.data.models.blockstates.Variant;
-import net.minecraft.data.models.blockstates.VariantProperties;
-import net.minecraft.data.models.model.ModelLocationUtils;
-import net.minecraft.data.models.model.ModelTemplate;
-import net.minecraft.data.models.model.ModelTemplates;
-import net.minecraft.data.models.model.TextureMapping;
-import net.minecraft.data.models.model.TextureSlot;
-import net.minecraft.data.models.model.TexturedModel;
+import net.minecraft.client.data.models.BlockModelGenerators;
+import net.minecraft.client.data.models.ItemModelGenerators;
+import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
+import net.minecraft.client.data.models.blockstates.PropertyDispatch;
+import net.minecraft.client.data.models.blockstates.Variant;
+import net.minecraft.client.data.models.blockstates.VariantProperties;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
@@ -36,7 +33,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.PistonType;
 
-import static net.minecraft.data.models.BlockModelGenerators.*;
+import static net.minecraft.client.data.models.BlockModelGenerators.*;
 
 public class ModModelProvider extends FabricModelProvider {
 
@@ -46,7 +43,7 @@ public class ModModelProvider extends FabricModelProvider {
 	public static final ModelTemplate TEMPLATE_PISTON_ARM_SHORT = new ModelTemplate(Optional.of(PistonLib.id("block/template_piston_arm_short")), Optional.empty(), TextureSlot.TEXTURE);
 	public static final ModelTemplate TEMPLATE_PARTICLE_ONLY = new ModelTemplate(Optional.of(PistonLib.id("block/template_empty")), Optional.empty(), TextureSlot.PARTICLE);
 	public static final ModelTemplate TEMPLATE_HALF_BLOCK = new ModelTemplate(Optional.of(PistonLib.id("block/template_half_block")), Optional.empty(), TextureSlot.TOP, TextureSlot.SIDE);
-	public static final ModelTemplate PISTON_BASE = new ModelTemplate(Optional.of(new ResourceLocation("block/piston_extended")), Optional.empty(), TextureSlot.BOTTOM, TextureSlot.SIDE, TextureSlot.INSIDE);
+	public static final ModelTemplate PISTON_BASE = new ModelTemplate(Optional.of(ResourceLocation.withDefaultNamespace("block/piston_extended")), Optional.empty(), TextureSlot.BOTTOM, TextureSlot.SIDE, TextureSlot.INSIDE);
 
 	public ModModelProvider(FabricDataOutput dataOutput) {
 		super(dataOutput);
@@ -99,7 +96,7 @@ public class ModModelProvider extends FabricModelProvider {
 		registerSlab(generator, Blocks.OBSIDIAN, ModBlocks.OBSIDIAN_SLAB_BLOCK);
 		registerStair(generator, Blocks.OBSIDIAN, ModBlocks.OBSIDIAN_STAIR_BLOCK);
 
-		generator.createTrivialBlock(ModBlocks.STICKY_TOP_BLOCK, new TextureMapping().put(TextureSlot.SIDE, TextureMapping.getBlockTexture(Blocks.DEEPSLATE_BRICKS)).put(TextureSlot.TOP, TextureMapping.getBlockTexture(ModBlocks.STICKY_TOP_BLOCK)), ModelTemplates.CUBE_TOP);
+		createTrivialBlock(ModBlocks.STICKY_TOP_BLOCK, new TextureMapping().put(TextureSlot.SIDE, TextureMapping.getBlockTexture(Blocks.DEEPSLATE_BRICKS)).put(TextureSlot.TOP, TextureMapping.getBlockTexture(ModBlocks.STICKY_TOP_BLOCK)), ModelTemplates.CUBE_TOP, generator);
 
 		generator.blockStateOutput.accept(createSimpleBlock(ModBlocks.SLIMY_REDSTONE_BLOCK, ModelLocationUtils.getModelLocation(ModBlocks.SLIMY_REDSTONE_BLOCK)));
 		generator.blockStateOutput.accept(createSimpleBlock(ModBlocks.SLIPPERY_SLIME_BLOCK, ModelLocationUtils.getModelLocation(ModBlocks.SLIPPERY_SLIME_BLOCK)));
@@ -115,17 +112,23 @@ public class ModModelProvider extends FabricModelProvider {
 		).with(BlockModelGenerators.createFacingDispatch()));
 
 		generator.blockStateOutput.accept(MultiVariantGenerator.multiVariant(ModBlocks.STICKY_CHAIN_BLOCK, Variant.variant().with(VariantProperties.MODEL, ModelLocationUtils.getModelLocation(ModBlocks.STICKY_CHAIN_BLOCK))).with(BlockModelGenerators.createRotatedPillar()));
-		generator.createSimpleFlatItemModel(ModBlocks.STICKY_CHAIN_BLOCK.asItem());
 
 		TextureMapping particleOnlyTextureMap = new TextureMapping().put(TextureSlot.PARTICLE, TextureMapping.getBlockTexture(Blocks.PISTON, "_side")); //TODO
-		generator.createTrivialBlock(ModBlocks.MERGE_BLOCK, particleOnlyTextureMap, TEMPLATE_PARTICLE_ONLY);
+		createTrivialBlock(ModBlocks.MERGE_BLOCK, particleOnlyTextureMap, TEMPLATE_PARTICLE_ONLY, generator);
 
 		LOGGER.info("Finished generating blockstate definitions and models!");
+	}
+
+	public static void createTrivialBlock(Block block, TextureMapping textureMapping, ModelTemplate modelTemplate, BlockModelGenerators generators) {
+		ResourceLocation resourceLocation = modelTemplate.create(block, textureMapping, generators.modelOutput);
+		generators.blockStateOutput.accept(BlockModelGenerators.createSimpleBlock(block, resourceLocation));
 	}
 
 	@Override
 	public void generateItemModels(ItemModelGenerators generator) {
 		generator.generateFlatItem(ModItems.PISTON_WAND, ModelTemplates.FLAT_ITEM);
+		generator.generateFlatItem(ModItems.PISTON_DEBUG_WAND, ModelTemplates.FLAT_ITEM);
+		generator.generateFlatItem(ModBlocks.STICKY_CHAIN_BLOCK.asItem(), ModelTemplates.FLAT_ITEM);
 	}
 
 	public static void registerCubeTextureMap(BlockModelGenerators generator, Block block,
@@ -167,7 +170,7 @@ public class ModModelProvider extends FabricModelProvider {
 		ResourceLocation top = ModelTemplates.SLAB_TOP.create(block, textureBase, generator.modelOutput);
 		ResourceLocation _double = ModelTemplates.CUBE_COLUMN.createWithOverride(block, "_double", textureBase, generator.modelOutput);
 		generator.blockStateOutput.accept(createSlab(block, bottom, top, _double));
-		generator.delegateItemModel(block, bottom);
+		generator.registerSimpleItemModel(block, bottom);
 	}
 
 	private static void registerStair(BlockModelGenerators generator, Block baseBlock, Block block) {
@@ -176,7 +179,7 @@ public class ModModelProvider extends FabricModelProvider {
 		ResourceLocation flat = ModelTemplates.STAIRS_STRAIGHT.create(block, textureBase, generator.modelOutput);
 		ResourceLocation outer = ModelTemplates.STAIRS_OUTER.create(block, textureBase, generator.modelOutput);
 		generator.blockStateOutput.accept(BlockModelGenerators.createStairs(block, inner, flat, outer));
-		generator.delegateItemModel(block, flat);
+		generator.registerSimpleItemModel(block, flat);
 	}
 
 	public static void registerHalfBlock(BlockModelGenerators generator, Block halfBlock, @Nullable Block base) {
@@ -217,14 +220,14 @@ public class ModModelProvider extends FabricModelProvider {
 			TextureMapping regularTextureMap = textureMap.copyAndUpdate(TextureSlot.PLATFORM, topRegularTextureId);
 			generator.createPistonVariant(normalBase, baseModelId, regularTextureMap);
 			ResourceLocation regularInventoryModelId = ModelTemplates.CUBE_BOTTOM_TOP.createWithSuffix(normalBase, "_inventory", textureMap.copyAndUpdate(TextureSlot.TOP, topRegularTextureId), generator.modelOutput);
-			if (normalBase.asItem() != Items.AIR) generator.delegateItemModel(normalBase, regularInventoryModelId);
+			if (normalBase.asItem() != Items.AIR) generator.registerSimpleItemModel(normalBase, regularInventoryModelId);
 		}
 
 		if (stickyBase != null) {
 			TextureMapping stickyTextureMap = textureMap.copyAndUpdate(TextureSlot.PLATFORM, topStickyTextureId);
 			generator.createPistonVariant(stickyBase, baseModelId, stickyTextureMap);
 			ResourceLocation stickyInventoryModelId = ModelTemplates.CUBE_BOTTOM_TOP.createWithSuffix(stickyBase, "_inventory", textureMap.copyAndUpdate(TextureSlot.TOP, topStickyTextureId), generator.modelOutput);
-			if (stickyBase.asItem() != Items.AIR) generator.delegateItemModel(stickyBase, stickyInventoryModelId);
+			if (stickyBase.asItem() != Items.AIR) generator.registerSimpleItemModel(stickyBase, stickyInventoryModelId);
 		}
 
 		if (head != null) {
@@ -260,7 +263,7 @@ public class ModModelProvider extends FabricModelProvider {
 		if (moving != null) {
 			TextureMapping movingPistonTextureMap = new TextureMapping().put(TextureSlot.PARTICLE, sideTextureId);
 
-			generator.createTrivialBlock(moving, movingPistonTextureMap, TEMPLATE_PARTICLE_ONLY);
+			createTrivialBlock(moving, movingPistonTextureMap, TEMPLATE_PARTICLE_ONLY, generator);
 		}
 	}
 

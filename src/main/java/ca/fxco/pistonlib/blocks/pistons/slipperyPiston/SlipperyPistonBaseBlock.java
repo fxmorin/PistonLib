@@ -12,6 +12,7 @@ import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
@@ -20,25 +21,26 @@ import static ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock.SLIPPERY
 
 public class SlipperyPistonBaseBlock extends BasicPistonBaseBlock {
 
-    public SlipperyPistonBaseBlock(PistonController pistonController) {
-        super(pistonController);
+    public SlipperyPistonBaseBlock(PistonController pistonController, Properties properties) {
+        super(pistonController, properties);
     }
 
     @Override
     public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         if (!oldState.is(state.getBlock()) && !level.isClientSide() && level.getBlockEntity(pos) == null) {
-            this.pl$getPistonController().checkIfExtend(level, pos, state);
+            this.pl$getPistonController().checkIfExtend(level, pos, state, true);
             level.scheduleTick(pos, this, SLIPPERY_DELAY);
         }
     }
 
     @Override
-    public BlockState updateShape(BlockState state, Direction dir, BlockState neighborState, LevelAccessor level,
-                                  BlockPos pos, BlockPos neighborPos) {
+    public BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess scheduledTickAccess,
+                                  BlockPos pos, Direction dir, BlockPos neighborPos,
+                                  BlockState neighborState, RandomSource random) {
         if (!level.isClientSide()) {
-            level.scheduleTick(pos, this, SLIPPERY_DELAY);
+            scheduledTickAccess.scheduleTick(pos, this, SLIPPERY_DELAY);
         }
-        return super.updateShape(state, dir, neighborState, level, pos, neighborPos);
+        return super.updateShape(state, level, scheduledTickAccess, pos, dir, neighborPos, neighborState, random);
     }
 
     @Override

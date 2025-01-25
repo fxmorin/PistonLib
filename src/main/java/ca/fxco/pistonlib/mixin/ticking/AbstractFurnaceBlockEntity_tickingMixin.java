@@ -5,6 +5,7 @@ import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.helpers.FakeBlockPos;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -21,7 +22,7 @@ public class AbstractFurnaceBlockEntity_tickingMixin implements MovingTickable {
     @Override
     public void pl$movingTick(Level level, BlockState state, BlockPos toPos, Direction dir, float progress, float speed, boolean merging) {
         if (PistonLibConfig.cookWhileMoving) {
-            serverTick(level, FakeBlockPos.of(toPos), state, (AbstractFurnaceBlockEntity)(Object)this);
+            serverTick((ServerLevel) level, FakeBlockPos.of(toPos), state, (AbstractFurnaceBlockEntity)(Object)this);
         }
     }
 
@@ -29,13 +30,13 @@ public class AbstractFurnaceBlockEntity_tickingMixin implements MovingTickable {
             method = "serverTick",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/world/level/Level;setBlock(Lnet/minecraft/core/BlockPos;" +
-                            "Lnet/minecraft/world/level/block/state/BlockState;I)Z",
+                    target = "Lnet/minecraft/server/level/ServerLevel;setBlock(" +
+                            "Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z",
                     shift = At.Shift.BEFORE
             ),
             cancellable = true
     )
-    private static void skipRemainingWorldEvents(Level level, BlockPos blockPos, BlockState blockState,
+    private static void skipRemainingWorldEvents(ServerLevel level, BlockPos blockPos, BlockState blockState,
                                                  AbstractFurnaceBlockEntity furnaceBlockEntity, CallbackInfo ci) {
         if (blockPos instanceof FakeBlockPos) {
             ci.cancel();

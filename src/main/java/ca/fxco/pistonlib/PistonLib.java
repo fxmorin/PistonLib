@@ -5,41 +5,52 @@ import java.util.*;
 import java.util.function.Consumer;
 
 import ca.fxco.api.pistonlib.PistonLibInitializer;
+import ca.fxco.api.pistonlib.PistonLibSupplier;
 import ca.fxco.api.pistonlib.config.ConfigFieldEntrypoint;
 import ca.fxco.api.pistonlib.config.ConfigManager;
 import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyGroups;
 import ca.fxco.pistonlib.base.*;
 import ca.fxco.api.pistonlib.config.ConfigManagerEntrypoint;
+import ca.fxco.pistonlib.config.ConfigManagerImpl;
 import ca.fxco.pistonlib.helpers.PistonLibBehaviorManager;
-import ca.fxco.pistonlib.network.PLNetwork;
+import ca.fxco.pistonlib.network.PLServerNetwork;
+import ca.fxco.pistonlib.network.packets.ModifyConfigS2CPayload;
 import lombok.Getter;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
+import net.minecraft.core.Direction;
+import net.minecraft.server.MinecraftServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.loader.impl.entrypoint.EntrypointUtils;
 
 import net.minecraft.resources.ResourceLocation;
 
-public class PistonLib implements ModInitializer, PistonLibInitializer {
+public class PistonLib implements ModInitializer, PistonLibInitializer, PistonLibSupplier {
 
     public static final String MOD_ID = "pistonlib";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     public static final boolean DATAGEN_ACTIVE = System.getProperty("fabric-api.datagen") != null;
+    public static final Direction[] DIRECTIONS = Direction.values();
 
     @Getter
-    private static final ConfigManager configManager = new ConfigManager(MOD_ID, PistonLibConfig.class);
+    private static final ConfigManager configManager = new ConfigManagerImpl(MOD_ID, PistonLibConfig.class);
+
+    @Getter
+    private static Optional<MinecraftServer> server = Optional.empty();
 
     public static ResourceLocation id(String path) {
-        return new ResourceLocation(MOD_ID, path);
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
     }
 
     @Override
     public void onInitialize() {
         ModRegistries.bootstrap();
 
+        initialize(p -> p.initialize(this));
         initialize(PistonLibInitializer::registerPistonFamilies);
         initialize(PistonLibInitializer::registerStickyGroups);
         initialize(PistonLibInitializer::bootstrap);
@@ -47,7 +58,7 @@ public class PistonLib implements ModInitializer, PistonLibInitializer {
         ModPistonFamilies.validate();
         ModStickyGroups.validate();
 
-        PLNetwork.initialize();
+        PLServerNetwork.initialize();
 
         Map<String, List<Field>> customParsedValues = new HashMap<>();
         for (EntrypointContainer<ConfigFieldEntrypoint> entrypointContainer : FabricLoader.getInstance()
@@ -64,11 +75,30 @@ public class PistonLib implements ModInitializer, PistonLibInitializer {
             );
         }
         PistonLibBehaviorManager.load();
+
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            // Send all options on player join, so that our configs match up
+            // TODO: Should send only the non-default options. However this will result in version mismatch issues.
+            PLServerNetwork.sendToClient(
+                    handler.player,
+                    ModifyConfigS2CPayload.fromCollection(PistonLib.getConfigManager().getParsedValues())
+            );
+        });
+    }
+
+    public static void onStartServer(MinecraftServer s) {
+        server = Optional.of(s);
+        PistonLib.getConfigManager().initializeConfig();
+        PistonLibBehaviorManager.load();
     }
 
     public static void onStopServer() {
         PistonLibBehaviorManager.save(false);
+        server = Optional.empty();
     }
+
+    @Override
+    public void initialize(PistonLibSupplier supplier) {}
 
     @Override
     public void registerPistonFamilies() {
@@ -85,17 +115,25 @@ public class PistonLib implements ModInitializer, PistonLibInitializer {
     public void bootstrap() {
         ModBlocks.bootstrap();
         ModBlockEntities.bootstrap();
-        ModItems.boostrap();
-        ModCreativeModeTabs.bootstrap();
+        ModItems.bootstrap();
+        ModDataComponents.bootstrap();
+        ModMenus.bootstrap();
+        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+            ModCreativeModeTabs.bootstrap();
+            ModScreens.bootstrap();
+        }
         ModRecipeTypes.boostrap();
         ModRecipeSerializers.boostrap();
-        ModMenus.boostrap();
-        ModScreens.boostrap();
         ModArgumentTypes.bootstrap();
         ModCommands.bootstrap();
     }
 
     private void initialize(Consumer<PistonLibInitializer> invoker) {
-        EntrypointUtils.invoke(MOD_ID, PistonLibInitializer.class, invoker);
+        FabricLoader.getInstance().invokeEntrypoints(MOD_ID, PistonLibInitializer.class, invoker);
+    }
+
+    @Override
+    public ConfigManager createSimpleConfigManager(String modId, Class<?> configClass) {
+        return new ConfigManagerImpl(modId, configClass);
     }
 }
