@@ -60,7 +60,7 @@ dependencies {
     implementation project(path: ":", configuration: "namedElements")
 
     // GameTestLib
-    modImplementation 'com.github.fxmorin:GameTestLib:5e12a7710a'
+    modImplementation 'com.github.fxmorin:GameTestLib:40fa982d22'
 }
 
 def targetJavaVersion = 17
