@@ -20,7 +20,7 @@
     "discord": "https://discord.gg/jqSFGY2hX3"
   },
 
-  "license": "MIT",
+  "license": "GPL-3.0-only",
   "icon": "assets/pistonlib/icon.png",
 
   "environment": "*",
