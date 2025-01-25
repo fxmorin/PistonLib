@@ -3,8 +3,8 @@ package ca.fxco.pistonlib.base;
 import java.util.Map;
 import java.util.function.Function;
 
-import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyType;
 import ca.fxco.pistonlib.PistonLibConfig;
+import ca.fxco.pistonlib.api.pistonLogic.sticky.StickyType;
 import ca.fxco.pistonlib.blocks.*;
 import ca.fxco.pistonlib.blocks.autoCraftingBlock.AutoCraftingBlock;
 import ca.fxco.pistonlib.blocks.halfBlocks.HalfHoneyBlock;

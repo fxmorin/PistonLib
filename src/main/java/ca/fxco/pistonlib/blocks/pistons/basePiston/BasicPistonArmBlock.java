@@ -3,9 +3,8 @@ package ca.fxco.pistonlib.blocks.pistons.basePiston;
 import java.util.Arrays;
 import java.util.function.BiPredicate;
 
-import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
+import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.base.ModTags;
-
 import com.mojang.serialization.MapCodec;
 import lombok.Getter;
 

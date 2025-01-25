@@ -1,9 +1,7 @@
 package ca.fxco.pistonlib.config;
 
-import ca.fxco.api.pistonlib.config.*;
-import ca.fxco.api.pistonlib.config.ConfigManager;
-import ca.fxco.api.pistonlib.config.Observer;
 import ca.fxco.pistonlib.PistonLib;
+import ca.fxco.pistonlib.api.config.*;
 import ca.fxco.pistonlib.helpers.Utils;
 import com.moandjiezana.toml.Toml;
 import com.moandjiezana.toml.TomlWriter;
@@ -131,7 +129,7 @@ public class ConfigManagerImpl implements ConfigManager, ConfigManagerEntrypoint
                         }
                     }
                     Parser<?>[] parsers = Utils.createInstances(Parser.class, configValue.parser());
-                    ca.fxco.api.pistonlib.config.Observer<?>[] observers = Utils.createInstances(Observer.class, configValue.observer());
+                    ca.fxco.pistonlib.api.config.Observer<?>[] observers = Utils.createInstances(Observer.class, configValue.observer());
                     ParsedValue<?> parsedValue = new ParsedValueImpl<>(
                             field,
                             configValue.desc(),
@@ -177,7 +175,7 @@ public class ConfigManagerImpl implements ConfigManager, ConfigManagerEntrypoint
     }
 
     @Override
-    public ca.fxco.api.pistonlib.config.ConfigManager getConfigManager() {
+    public ca.fxco.pistonlib.api.config.ConfigManager getConfigManager() {
         return this;
     }
 

@@ -1,8 +1,8 @@
 package ca.fxco.pistonlib.mixin;
 
-import ca.fxco.api.pistonlib.block.state.PLBlockStateBase;
-import ca.fxco.api.pistonlib.pistonLogic.PistonMoveBehavior;
 import ca.fxco.pistonlib.PistonLibConfig;
+import ca.fxco.pistonlib.api.block.state.PLBlockStateBase;
+import ca.fxco.pistonlib.api.pistonLogic.PistonMoveBehavior;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour.BlockStateBase;
 import net.minecraft.world.level.block.state.BlockState;

@@ -3,8 +3,8 @@ package ca.fxco.pistonlib.blocks.pistons.basePiston;
 import java.util.Collections;
 import java.util.List;
 
-import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.PistonLibConfig;
+import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
 import lombok.Getter;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;

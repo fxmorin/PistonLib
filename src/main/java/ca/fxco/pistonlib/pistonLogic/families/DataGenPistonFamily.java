@@ -1,6 +1,6 @@
 package ca.fxco.pistonlib.pistonLogic.families;
 
-import ca.fxco.api.pistonlib.pistonLogic.families.PistonBehavior;
+import ca.fxco.pistonlib.api.pistonLogic.families.PistonBehavior;
 
 public class DataGenPistonFamily extends ModPistonFamily {
 

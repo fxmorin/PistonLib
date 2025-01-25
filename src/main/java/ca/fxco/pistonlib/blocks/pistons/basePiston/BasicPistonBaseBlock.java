@@ -1,7 +1,7 @@
 package ca.fxco.pistonlib.blocks.pistons.basePiston;
 
-import ca.fxco.api.pistonlib.block.PLPistonController;
-import ca.fxco.api.pistonlib.pistonLogic.controller.PistonController;
+import ca.fxco.pistonlib.api.block.PLPistonController;
+import ca.fxco.pistonlib.api.pistonLogic.controller.PistonController;
 import com.mojang.serialization.MapCodec;
 
 import net.minecraft.core.BlockPos;

@@ -1,6 +1,6 @@
 package ca.fxco.pistonlib.blocks.pistons.longPiston;
 
-import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
+import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonHeadBlock;
 
 import net.minecraft.world.level.block.state.BlockState;

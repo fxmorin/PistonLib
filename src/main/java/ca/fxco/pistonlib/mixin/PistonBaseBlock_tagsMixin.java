@@ -1,7 +1,7 @@
 package ca.fxco.pistonlib.mixin;
 
-import ca.fxco.api.pistonlib.block.PLPistonController;
-import ca.fxco.api.pistonlib.pistonLogic.controller.PistonController;
+import ca.fxco.pistonlib.api.block.PLPistonController;
+import ca.fxco.pistonlib.api.pistonLogic.controller.PistonController;
 import ca.fxco.pistonlib.base.ModPistonFamilies;
 import ca.fxco.pistonlib.base.ModTags;
 import ca.fxco.pistonlib.pistonLogic.controller.VanillaPistonController;

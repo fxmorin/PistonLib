@@ -2,8 +2,7 @@ package ca.fxco.pistonlib.blocks.pistons.basePiston;
 
 import java.util.Arrays;
 
-import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
-
+import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
 import com.mojang.serialization.MapCodec;
 import lombok.Getter;
 

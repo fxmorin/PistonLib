@@ -1,8 +1,8 @@
 package ca.fxco.pistonlib.base;
 
-import ca.fxco.api.pistonlib.blockEntity.PLBlockEntities;
-import ca.fxco.api.pistonlib.pistonLogic.structure.StructureGroup;
-import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
+import ca.fxco.pistonlib.api.blockEntity.PLBlockEntities;
+import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
+import ca.fxco.pistonlib.api.pistonLogic.structure.StructureGroup;
 import ca.fxco.pistonlib.blocks.autoCraftingBlock.AutoCraftingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurableMovingBlockEntity;
@@ -23,7 +23,6 @@ import net.minecraft.world.level.block.piston.PistonMovingBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 import static ca.fxco.pistonlib.PistonLib.id;
-
 
 public class ModBlockEntities {
 

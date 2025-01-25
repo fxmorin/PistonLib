@@ -2,12 +2,12 @@ package ca.fxco.pistonlib.blocks.pistons.basePiston;
 
 import java.util.*;
 
-import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamilies;
-import ca.fxco.api.pistonlib.block.MovingTickable;
-import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
-import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyType;
-import ca.fxco.api.pistonlib.pistonLogic.structure.StructureGroup;
 import ca.fxco.pistonlib.PistonLibConfig;
+import ca.fxco.pistonlib.api.block.MovingTickable;
+import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamilies;
+import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
+import ca.fxco.pistonlib.api.pistonLogic.sticky.StickyType;
+import ca.fxco.pistonlib.api.pistonLogic.structure.StructureGroup;
 import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.mixin.accessors.BlockEntityAccessor;
 import ca.fxco.pistonlib.pistonLogic.structureGroups.LoadingStructureGroup;

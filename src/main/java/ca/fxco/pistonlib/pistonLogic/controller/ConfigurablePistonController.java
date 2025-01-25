@@ -1,7 +1,7 @@
 package ca.fxco.pistonlib.pistonLogic.controller;
 
-import ca.fxco.api.pistonlib.pistonLogic.PistonEvents;
-import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
+import ca.fxco.pistonlib.api.pistonLogic.PistonEvents;
+import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.helpers.Utils;
 import ca.fxco.pistonlib.pistonLogic.structureResolvers.BasicStructureResolver;
 import net.minecraft.core.BlockPos;

@@ -1,8 +1,8 @@
 package ca.fxco.pistonlib.pistonLogic.families;
 
-import ca.fxco.api.pistonlib.pistonLogic.families.PistonBehavior;
-import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.PistonLib;
+import ca.fxco.pistonlib.api.pistonLogic.families.PistonBehavior;
+import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
 
 public class ModPistonFamily extends PistonFamily {
 

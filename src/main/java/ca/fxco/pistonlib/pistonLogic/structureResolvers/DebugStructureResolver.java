@@ -1,6 +1,6 @@
 package ca.fxco.pistonlib.pistonLogic.structureResolvers;
 
-import ca.fxco.api.pistonlib.pistonLogic.controller.PistonController;
+import ca.fxco.pistonlib.api.pistonLogic.controller.PistonController;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
