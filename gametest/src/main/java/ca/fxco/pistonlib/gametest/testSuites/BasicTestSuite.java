@@ -1,5 +1,6 @@
 package ca.fxco.pistonlib.gametest.testSuites;
 
+import ca.fxco.api.gametestlib.gametest.Change;
 import ca.fxco.api.gametestlib.gametest.Config;
 import ca.fxco.api.gametestlib.gametest.GameTestChanges;
 import ca.fxco.api.gametestlib.gametest.GameTestLib;
@@ -27,7 +28,7 @@ public class BasicTestSuite {
         GameTestUtil.initializeGameTestLib(helper);
     }
 
-    // Make sure Honey does not stick to Slime
+    // Make sure Honey doesn't stick to Slime
     @GameTest(timeoutTicks = 5)
     public void slimeAndHoney(GameTestHelper helper) {
         GameTestUtil.initializeGameTestLib(helper);
@@ -40,11 +41,11 @@ public class BasicTestSuite {
     }
 
     // Check if 2 game tick pulses still keep waterlogged state
-    @GameTestLib(value =
-            "pistonsPushWaterloggedBlocks",
+    @GameTestLib(
+            variants = "pistonsPushWaterloggedBlocks",
             config = @Config(
-                    value = "NONE",
-                    changes = GameTestChanges.FLIP_ALL
+                    name = "pistonsPushWaterloggedBlocks",
+                    changes = @Change(value = "NONE", change = GameTestChanges.FLIP_ALL)
             )
     )
     @GameTest(timeoutTicks = 5)
@@ -52,10 +53,10 @@ public class BasicTestSuite {
 
     // Make sure 2 game tick pulses only push water when directly in front of the piston
     @GameTestLib(
-            value = "pistonsPushWaterloggedBlocks",
+            variants = "pistonsPushWaterloggedBlocks",
             config = @Config(
-                    value = "ALL",
-                    changes = GameTestChanges.FLIP_ALL
+                    name = "pistonsPushWaterloggedBlocks",
+                    changes = @Change(value = "ALL", change = GameTestChanges.FLIP_ALL)
             )
     )
     @GameTest(timeoutTicks = 5)
@@ -63,11 +64,12 @@ public class BasicTestSuite {
 
     // Piston should break bedrock if headless
     @GameTestLib(
-            value = {"illegalBreakingFix"},
+            variants = "illegalBreakingFix",
             config = @Config(
-                    value = "true",
-                    changes = GameTestChanges.FLIP_ALL
-            )
+                    name = "illegalBreakingFix",
+                    changes = @Change(value = "true", change = GameTestChanges.FLIP_ALL)
+            ),
+            inverted = "headlessPistonFix"
     )
     @GameTest(timeoutTicks = 4)
     public void headlessPistonIllegalBreak(GameTestHelper helper) {}
