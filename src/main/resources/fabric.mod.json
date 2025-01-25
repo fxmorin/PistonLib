@@ -3,16 +3,24 @@
   "id": "pistonlib",
   "version": "${version}",
   "name": "PistonLib",
-  "description": "A mod/library that expands the piston system",
+  "description": "A mod/library that rewrites the piston system, while keeping the vanilla mechanics and feel.",
   "authors": [
-    "FX - PR0CESS",
-    "Space Walker"
+    "FX",
+    "Space Walker",
+    "1Foxy2"
   ],
   "contributors": [
     "Shnupbups"
   ],
 
-  "license": "MIT",
+  "contact": {
+    "homepage": "https://github.com/FxMorin/PistonLib",
+    "issues": "https://github.com/FxMorin/PistonLib/issues",
+    "sources": "https://github.com/FxMorin/PistonLib",
+    "discord": "https://discord.gg/jqSFGY2hX3"
+  },
+
+  "license": "GPL-3.0-only",
   "icon": "assets/pistonlib/icon.png",
 
   "environment": "*",
@@ -52,10 +60,10 @@
     "pistonlib.mixins.json"
   ],
   "depends": {
-    "minecraft": ">=1.19.3",
-    "fabricloader": ">=0.14.0",
-    "fabric": ">=0.76.0",
-    "java": ">=17"
+    "minecraft": ">=1.21.4",
+    "fabricloader": ">=0.16.0",
+    "fabric": ">=0.115.0",
+    "java": ">=21"
   },
   "custom": {
     "loom:injected_interfaces": {
@@ -89,7 +97,9 @@
     },
     "modmenu": {
       "links": {
-        "modmenu.discord": "https://discord.gg/mezndgtD83"
+        "modmenu.discord": "https://discord.gg/jqSFGY2hX3",
+        "modmenu.github_releases": "https://github.com/FxMorin/PistonLib/releases",
+        "modmenu.wiki": "https://github.com/FxMorin/PistonLib/wiki"
       }
     }
   }
