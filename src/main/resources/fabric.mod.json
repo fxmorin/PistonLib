@@ -3,14 +3,22 @@
   "id": "pistonlib",
   "version": "${version}",
   "name": "PistonLib",
-  "description": "A mod/library that expands the piston system",
+  "description": "A mod/library that rewrites the piston system, while keeping the vanilla mechanics and feel.",
   "authors": [
-    "FX - PR0CESS",
-    "Space Walker"
+    "FX",
+    "Space Walker",
+    "1Foxy2"
   ],
   "contributors": [
     "Shnupbups"
   ],
+
+  "contact": {
+    "homepage": "https://github.com/FxMorin/PistonLib",
+    "issues": "https://github.com/FxMorin/PistonLib/issues",
+    "sources": "https://github.com/FxMorin/PistonLib",
+    "discord": "https://discord.gg/jqSFGY2hX3"
+  },
 
   "license": "MIT",
   "icon": "assets/pistonlib/icon.png",
@@ -89,7 +97,9 @@
     },
     "modmenu": {
       "links": {
-        "modmenu.discord": "https://discord.gg/mezndgtD83"
+        "modmenu.discord": "https://discord.gg/jqSFGY2hX3",
+        "modmenu.github_releases": "https://github.com/FxMorin/PistonLib/releases",
+        "modmenu.wiki": "https://github.com/FxMorin/PistonLib/wiki"
       }
     }
   }
