@@ -20,14 +20,16 @@ public class PLBlockEntities {
     /**
      * Builds a block entity type from the given factories and
      * registers it to the given namespaced id.
+     * <br>
+     * No blocks need to be passed here since they are added
+     * to the block entity type after the corresponding piston
+     * families are registered.
      *
      * @param <T>      the type of moving block entity
      * @param id       a namespaced id to uniquely identify the block
      *                 entity type
      * @param factory  the block entity factory for the block
      *                 entity registry
-     * @param families the piston families to register the moving
-     *                 block entity type to
      * @return the block entity type that was registered
      */
     public static <T extends BasicMovingBlockEntity> BlockEntityType<T> register(
@@ -37,7 +39,7 @@ public class PLBlockEntities {
         BlockEntityType<T> type = Registry.register(
                 BuiltInRegistries.BLOCK_ENTITY_TYPE,
                 id,
-                FabricBlockEntityTypeBuilder.create(factory).build(null)
+                FabricBlockEntityTypeBuilder.create(factory).build()
         );
 
         return type;
