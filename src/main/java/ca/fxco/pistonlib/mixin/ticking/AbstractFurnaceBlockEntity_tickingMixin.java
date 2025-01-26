@@ -1,7 +1,7 @@
 package ca.fxco.pistonlib.mixin.ticking;
 
-import ca.fxco.api.pistonlib.block.MovingTickable;
 import ca.fxco.pistonlib.PistonLibConfig;
+import ca.fxco.pistonlib.api.block.MovingTickable;
 import ca.fxco.pistonlib.helpers.FakeBlockPos;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

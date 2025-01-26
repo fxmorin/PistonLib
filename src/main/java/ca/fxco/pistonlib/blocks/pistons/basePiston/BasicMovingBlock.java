@@ -3,9 +3,11 @@ package ca.fxco.pistonlib.blocks.pistons.basePiston;
 import java.util.Collections;
 import java.util.List;
 
-import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.PistonLibConfig;
+import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
+import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamilyMember;
 import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -38,15 +40,20 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 @Getter
-public class BasicMovingBlock extends MovingPistonBlock {
+public class BasicMovingBlock extends MovingPistonBlock implements PistonFamilyMember {
 
-    private final PistonFamily family;
+    private PistonFamily family;
 
-    public BasicMovingBlock(PistonFamily family, Properties properties) {
+    public BasicMovingBlock(Properties properties) {
         super(properties.isValidSpawn((a,b,c,d) -> !PistonLibConfig.mobsSpawnOnMovingPistonsFix));
+    }
 
+    @Override
+    public void setFamily(PistonFamily family) {
+        if (this.family != null) {
+            throw new IllegalStateException("Family has already been set! - " + this.family);
+        }
         this.family = family;
-        this.family.setMoving(this);
     }
 
     @Override @Nullable

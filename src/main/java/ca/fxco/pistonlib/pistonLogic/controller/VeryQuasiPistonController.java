@@ -1,6 +1,5 @@
 package ca.fxco.pistonlib.pistonLogic.controller;
 
-import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.helpers.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -11,8 +10,8 @@ public class VeryQuasiPistonController extends VanillaPistonController {
 
     private final int quasiStrength; // Use 1 to replicate vanilla behaviour
 
-    public VeryQuasiPistonController(PistonFamily family, PistonType type, int quasiStrength) {
-        super(family, type);
+    public VeryQuasiPistonController(PistonType type, int quasiStrength) {
+        super(type);
 
         this.quasiStrength = quasiStrength;
     }

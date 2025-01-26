@@ -1,7 +1,7 @@
 package ca.fxco.pistonlib.mixin.stuck;
 
-import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyType;
 import ca.fxco.pistonlib.PistonLibConfig;
+import ca.fxco.pistonlib.api.pistonLogic.sticky.StickyType;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.ChestBlock;

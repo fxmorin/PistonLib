@@ -3,8 +3,8 @@ package ca.fxco.pistonlib.gametest;
 import ca.fxco.api.gametestlib.config.IndirectResolvedValue;
 import ca.fxco.api.gametestlib.config.ResolvedValue;
 import ca.fxco.api.gametestlib.config.binder.ConfigBinder;
-import ca.fxco.api.pistonlib.config.ParsedValue;
 import ca.fxco.pistonlib.PistonLib;
+import ca.fxco.pistonlib.api.config.ParsedValue;
 
 import java.util.HashMap;
 import java.util.Map;

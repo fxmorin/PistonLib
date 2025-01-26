@@ -3,12 +3,13 @@ package ca.fxco.pistonlib.blocks.pistons.basePiston;
 import java.util.Arrays;
 import java.util.function.BiPredicate;
 
-import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
+import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
+import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamilyMember;
 import ca.fxco.pistonlib.base.ModTags;
-
 import com.mojang.serialization.MapCodec;
 import lombok.Getter;
 
+import lombok.Setter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
@@ -33,7 +34,8 @@ import org.jetbrains.annotations.Nullable;
 
 import static ca.fxco.pistonlib.PistonLib.DIRECTIONS;
 
-public class BasicPistonArmBlock extends DirectionalBlock {
+@Getter
+public class BasicPistonArmBlock extends DirectionalBlock implements PistonFamilyMember {
 
     // This is the BASIC ARM BLOCK that you should be extending to create your own arm blocks
 
@@ -54,37 +56,25 @@ public class BasicPistonArmBlock extends DirectionalBlock {
     protected static final VoxelShape SHORT_WEST_ARM_SHAPE = Block.box(4.0, 6.0, 6.0, 16.0, 10.0, 10.0);
     private static final VoxelShape[] SHORT_ARM_SHAPES = getArmShapes(true);
     private static final VoxelShape[] ARM_SHAPES = getArmShapes(false);
-
-    BiPredicate<BlockState,BlockState> OR_IS_ATTACHED = (state, selfState) ->
+    private static final BiPredicate<BlockState,BlockState> OR_IS_ATTACHED = (state, selfState) ->
             state.is(ModTags.MOVING_PISTONS) && state.getValue(FACING) == selfState.getValue(FACING);
 
-    public static VoxelShape getArmShape(Direction direction, boolean shortArm) {
-        return switch (direction) {
-            default -> shortArm ? SHORT_DOWN_ARM_SHAPE : DOWN_ARM_SHAPE;
-            case UP -> shortArm ? SHORT_UP_ARM_SHAPE : UP_ARM_SHAPE;
-            case NORTH -> shortArm ? SHORT_NORTH_ARM_SHAPE : NORTH_ARM_SHAPE;
-            case SOUTH -> shortArm ? SHORT_SOUTH_ARM_SHAPE : SOUTH_ARM_SHAPE;
-            case WEST -> shortArm ? SHORT_WEST_ARM_SHAPE : WEST_ARM_SHAPE;
-            case EAST -> shortArm ? SHORT_EAST_ARM_SHAPE : EAST_ARM_SHAPE;
-        };
-    }
+    private PistonFamily family;
 
-    public static VoxelShape[] getArmShapes(boolean shortArm) {
-        return Arrays.stream(DIRECTIONS).map((dir) -> getArmShape(dir, shortArm)).toArray(VoxelShape[]::new);
-    }
-
-    @Getter
-    private final PistonFamily family;
-
-    public BasicPistonArmBlock(PistonFamily family, Properties properties) {
+    public BasicPistonArmBlock(Properties properties) {
         super(properties);
-
-        this.family = family;
-        this.family.setArm(this);
 
         this.registerDefaultState(this.stateDefinition.any()
             .setValue(FACING, Direction.NORTH)
             .setValue(SHORT, false));
+    }
+
+    @Override
+    public void setFamily(PistonFamily family) {
+        if (this.family != null) {
+            throw new IllegalStateException("Family has already been set! - " + this.family);
+        }
+        this.family = family;
     }
 
     @Override
@@ -254,5 +244,20 @@ public class BasicPistonArmBlock extends DirectionalBlock {
     @Override
     protected MapCodec<? extends DirectionalBlock> codec() {
         return null;
+    }
+
+    public static VoxelShape getArmShape(Direction direction, boolean shortArm) {
+        return switch (direction) {
+            case UP -> shortArm ? SHORT_UP_ARM_SHAPE : UP_ARM_SHAPE;
+            case NORTH -> shortArm ? SHORT_NORTH_ARM_SHAPE : NORTH_ARM_SHAPE;
+            case SOUTH -> shortArm ? SHORT_SOUTH_ARM_SHAPE : SOUTH_ARM_SHAPE;
+            case WEST -> shortArm ? SHORT_WEST_ARM_SHAPE : WEST_ARM_SHAPE;
+            case EAST -> shortArm ? SHORT_EAST_ARM_SHAPE : EAST_ARM_SHAPE;
+            default -> shortArm ? SHORT_DOWN_ARM_SHAPE : DOWN_ARM_SHAPE;
+        };
+    }
+
+    public static VoxelShape[] getArmShapes(boolean shortArm) {
+        return Arrays.stream(DIRECTIONS).map((dir) -> getArmShape(dir, shortArm)).toArray(VoxelShape[]::new);
     }
 }

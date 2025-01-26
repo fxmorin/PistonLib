@@ -1,14 +1,14 @@
 package ca.fxco.pistonlib.renderers;
 
-import ca.fxco.pistonlib.helpers.BlockAndTintWrapper;
-import ca.fxco.api.pistonlib.pistonLogic.structure.StructureGroup;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
-import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
+import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
+import ca.fxco.pistonlib.api.pistonLogic.structure.StructureGroup;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonHeadBlock;
+import ca.fxco.pistonlib.helpers.BlockAndTintWrapper;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

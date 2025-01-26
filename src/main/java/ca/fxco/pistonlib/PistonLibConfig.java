@@ -1,8 +1,8 @@
 package ca.fxco.pistonlib;
 
-import ca.fxco.api.pistonlib.config.ConfigValue;
-import ca.fxco.api.pistonlib.config.Category;
-import ca.fxco.api.pistonlib.config.TestValues;
+import ca.fxco.pistonlib.api.config.Category;
+import ca.fxco.pistonlib.api.config.ConfigValue;
+import ca.fxco.pistonlib.api.config.TestValues;
 
 public class PistonLibConfig {
 
