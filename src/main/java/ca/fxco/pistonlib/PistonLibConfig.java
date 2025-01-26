@@ -251,6 +251,16 @@ public class PistonLibConfig {
     )
     public static double pistonBlockEventDistance = 64D;
 
+    // TODO: Add some sort of validation, since this number should never be a negative
+    @ConfigValue(
+            desc = "Change the default piston push limit",
+            more = {"This will change the push limit of all pistons using the default push limit of 12"},
+            keyword = {"block event", "distance"},
+            suggestions = {"6", "12", "24", "128", "256"},
+            category = Category.TWEAK
+    )
+    public static int defaultPistonPushLimit = 12;
+
     public enum WaterloggedState {
         NONE,
         VANILLA,
