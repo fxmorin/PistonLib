@@ -17,7 +17,7 @@ import net.minecraft.world.level.block.Block;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
-
+/*TODO do codec, not sure how
 public class SingleCrushingConditionalRecipe extends SingleCrushingRecipe {
 
     protected final Condition condition;
@@ -212,4 +212,4 @@ public class SingleCrushingConditionalRecipe extends SingleCrushingRecipe {
             return null;
         }
     }
-}
+}*/

@@ -9,6 +9,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -17,6 +18,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,7 +29,9 @@ import java.util.function.Predicate;
 public class PLServerNetwork {
 
     public static final StreamCodec<ByteBuf, BlockState> BLOCKSTATE_STREAM_CODEC =
-            ByteBufCodecs.fromCodec(BlockState.CODEC);
+            ByteBufCodecs.idMapper(Block.BLOCK_STATE_REGISTRY);
+    public static final StreamCodec<RegistryFriendlyByteBuf, Block> BLOCK_STREAM_CODEC =
+            ByteBufCodecs.registry(Registries.BLOCK);
 
     public static void initialize() {
         //client to server

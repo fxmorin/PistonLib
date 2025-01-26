@@ -1,6 +1,6 @@
 package ca.fxco.api.pistonlib.recipes.pistonCrushing.builders;
 
-import ca.fxco.api.pistonlib.recipes.pistonCrushing.PairCrushingRecipe;
+import ca.fxco.api.pistonlib.recipes.pistonCrushing.MultiCrushingRecipe;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRequirements;
 import net.minecraft.advancements.AdvancementRewards;
@@ -16,34 +16,33 @@ import net.minecraft.world.item.crafting.Recipe;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
-public class PairCrushingRecipeBuilder implements RecipeBuilder {
+public class MultiCrushingRecipeBuilder implements RecipeBuilder {
 
-    protected final Ingredient first;
-    protected final Ingredient second;
+    protected final List<Ingredient> ingredients;
     protected final ItemStack result;
     protected final Map<String, Criterion<?>> criteria = new LinkedHashMap<>();
     @Nullable
     protected String group;
 
-    public PairCrushingRecipeBuilder(Ingredient first, Ingredient second, ItemStack result) {
-        this.first = first;
-        this.second = second;
+    public MultiCrushingRecipeBuilder(List<Ingredient> ingredients, ItemStack result) {
+        this.ingredients = ingredients;
         this.result = result;
     }
 
-    public static PairCrushingRecipeBuilder crushing(Ingredient first, Ingredient second, ItemStack result) {
-        return new PairCrushingRecipeBuilder(first, second, result);
+    public static MultiCrushingRecipeBuilder crushing(List<Ingredient> ingredients, ItemStack result) {
+        return new MultiCrushingRecipeBuilder(ingredients, result);
     }
 
     @Override
-    public PairCrushingRecipeBuilder unlockedBy(String string, Criterion<?> criterion) {
+    public MultiCrushingRecipeBuilder unlockedBy(String string, Criterion<?> criterion) {
         this.criteria.put(string, criterion);
         return this;
     }
 
-    public PairCrushingRecipeBuilder group(@Nullable String string) {
+    public MultiCrushingRecipeBuilder group(@Nullable String string) {
         this.group = string;
         return this;
     }
@@ -60,7 +59,7 @@ public class PairCrushingRecipeBuilder implements RecipeBuilder {
                 .rewards(AdvancementRewards.Builder.recipe(key))
                 .requirements(AdvancementRequirements.Strategy.OR);
         this.criteria.forEach(advancement::addCriterion);
-        PairCrushingRecipe recipe = new PairCrushingRecipe(this.first, this.second, this.result);
+        MultiCrushingRecipe recipe = new MultiCrushingRecipe(this.ingredients, this.result);
         output.accept(key, recipe, advancement.build(key.location().withPrefix("recipes/")));
     }
 }

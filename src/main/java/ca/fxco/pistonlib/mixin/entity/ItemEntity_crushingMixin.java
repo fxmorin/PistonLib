@@ -1,16 +1,16 @@
 package ca.fxco.pistonlib.mixin.entity;
 
-import ca.fxco.api.pistonlib.containers.CrushingContainer;
+import ca.fxco.api.pistonlib.recipes.PistonCrushingInput;
 import ca.fxco.api.pistonlib.recipes.PistonCrushingRecipe;
 import ca.fxco.pistonlib.base.ModRecipeTypes;
-import ca.fxco.pistonlib.impl.EntityPistonMechanics;
-import net.minecraft.core.NonNullList;
+import ca.fxco.api.pistonlib.EntityPistonMechanics;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
@@ -35,49 +35,61 @@ public abstract class ItemEntity_crushingMixin extends Entity implements EntityP
     }
 
     @Override
-    public void onPistonCrushing(@Nullable Block crushedAgainst) {
+    public void onPistonCrushing(@Nullable BlockState crushedAgainst) {
         if (this.isRemoved()) {
             return;
         }
 
-        List<ItemEntity> itemEntities = this.level.getEntities(
+        List<ItemEntity> itemEntities = this.level().getEntities(
                 EntityTypeTest.forClass(ItemEntity.class), new AABB(this.blockPosition()), ItemEntity::isAlive);
 
         if (itemEntities.isEmpty()) {
             return;
         }
 
-        NonNullList<ItemStack> itemsToMerge = NonNullList.create();
+        List<ItemStack> itemsToMerge = new ArrayList<>();
 
         for (ItemEntity itemEntity : itemEntities) {
             itemsToMerge.add(itemEntity.getItem());
         }
 
-        CrushingContainer crushingContainer = new CrushingContainer(itemsToMerge, crushedAgainst);
+        PistonCrushingInput input = new PistonCrushingInput(itemsToMerge, crushedAgainst);
 
-        Optional<PistonCrushingRecipe> optionalRecipe = this.level.getRecipeManager()
-                .getRecipeFor(ModRecipeTypes.PISTON_CRUSHING, crushingContainer, this.level);
+        Optional<? extends RecipeHolder<? extends PistonCrushingRecipe>> optionalRecipe = this.level().getServer().getRecipeManager()
+                .getRecipeFor(ModRecipeTypes.PISTON_CRUSHING, input, this.level());
         if (optionalRecipe.isEmpty()) {
             return;
         }
-        PistonCrushingRecipe crushingRecipe = optionalRecipe.get();
-        NonNullList<ItemStack> results = crushingRecipe.getRemainingItems(crushingContainer);
-
-        for(int i = 0; i < results.size(); ++i) {
-            ItemStack toMerge = itemsToMerge.get(i);
-            ItemStack result = results.get(i);
-            if (!toMerge.isEmpty()) {
-                toMerge.shrink(1);
-            }
-
-            if (!result.isEmpty()) {
-                if (toMerge.isEmpty()) {
-                    toMerge.setCount(result.getCount());
-                } else if (ItemStack.isSame(toMerge, result) && ItemStack.tagMatches(toMerge, result)) {
-                    toMerge.setCount(result.getCount() + toMerge.getCount());
-                }
+        PistonCrushingRecipe crushingRecipe = optionalRecipe.get().value();
+        List<ItemStack> results = new ArrayList<>();
+        int ingredientAmount = 0;
+        for (ItemStack itemStack : input.items()) {
+            if (ingredientAmount == 0) {
+                ingredientAmount = itemStack.getCount();
+            } else {
+                ingredientAmount = Math.min(itemStack.getCount(), ingredientAmount);
             }
         }
-        this.level.addFreshEntity(new ItemEntity(this.level, this.getX(), this.getY(), this.getZ(), crushingRecipe.getResultItem()));
+        for (ItemStack itemStack : input.items()) {
+            itemStack.shrink(ingredientAmount);
+        }
+
+        ingredientAmount = ingredientAmount * crushingRecipe.getResultSize();
+        ItemStack resultItem;
+        while (true) {
+            resultItem = crushingRecipe.assemble(input, level().registryAccess());
+            if (ingredientAmount > resultItem.getMaxStackSize()) {
+                ingredientAmount -= resultItem.getMaxStackSize();
+                resultItem.setCount(resultItem.getMaxStackSize());
+            } else {
+                resultItem.setCount(ingredientAmount);
+
+                this.level().addFreshEntity(
+                        new ItemEntity(this.level(), this.getX(), this.getY(), this.getZ(), resultItem));
+                break;
+            }
+            this.level().addFreshEntity(
+                    new ItemEntity(this.level(), this.getX(), this.getY(), this.getZ(), resultItem));
+        }
     }
 }

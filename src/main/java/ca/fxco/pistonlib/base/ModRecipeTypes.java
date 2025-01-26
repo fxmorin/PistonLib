@@ -9,7 +9,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 
 public class ModRecipeTypes {
 
-    public static final RecipeType<PistonCrushingRecipe> PISTON_CRUSHING = register("piston_crushing");
+    public static final RecipeType<? extends PistonCrushingRecipe> PISTON_CRUSHING = register("piston_crushing");
 
     static <T extends Recipe<?>> RecipeType<T> register(String string) {
         return Registry.register(BuiltInRegistries.RECIPE_TYPE, PistonLib.id(string), new RecipeType<T>() {

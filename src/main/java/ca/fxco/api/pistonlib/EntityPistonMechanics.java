@@ -1,7 +1,6 @@
-package ca.fxco.pistonlib.impl;
+package ca.fxco.api.pistonlib;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,5 +28,5 @@ public interface EntityPistonMechanics {
      * This still runs when `canPushIntoBlocks` is false, although `crushedAgainst` will always be null.
      * If the entity is getting crushed against multiple blocks, `crushedAgainst` will be null
      */
-    default void onPistonCrushing(@Nullable Block crushedAgainst) {}
+    default void onPistonCrushing(@Nullable BlockState crushedAgainst) {}
 }

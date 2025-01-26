@@ -38,4 +38,3 @@ accessible field net/minecraft/world/inventory/TransientCraftingContainer items 
 accessible class net/minecraft/world/inventory/MenuType
 
 # Recipes
-accessible field net/minecraft/world/item/crafting/SingleItemRecipe serializer Lnet/minecraft/world/item/crafting/RecipeSerializer;

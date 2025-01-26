@@ -1,11 +1,10 @@
 package ca.fxco.pistonlib.mixin.entity;
 
 import ca.fxco.pistonlib.helpers.BlockPosUtils;
-import ca.fxco.pistonlib.impl.EntityPistonMechanics;
+import ca.fxco.api.pistonlib.EntityPistonMechanics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -30,7 +29,7 @@ public abstract class Entity_pushIntoMixin implements EntityPistonMechanics {
     )
     private Vec3 checkPushInto(Entity instance, Vec3 vec3, MoverType moverType) {
         if (moverType == MoverType.PISTON && !instance.level().isClientSide) {
-            Block crushedAgainst = null;
+            BlockState crushedAgainst = null;
             if (canPushIntoBlocks()) {
                 // This looks kinda scary, although it only checks max 25 blocks.
                 // Honestly it's not very expensive compared to a lot of the other movement logic which runs every tick
@@ -47,7 +46,7 @@ public abstract class Entity_pushIntoMixin implements EntityPistonMechanics {
                             BlockState state = instance.level().getBlockState(pos);
                             if (single) {
                                 single = false;
-                                crushedAgainst = state.getBlock();
+                                crushedAgainst = state;
                             } else {
                                 crushedAgainst = null;
                             }
