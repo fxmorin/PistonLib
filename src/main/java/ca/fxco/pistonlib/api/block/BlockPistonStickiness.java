@@ -23,15 +23,15 @@ public interface BlockPistonStickiness {
      * @return sticky group of the block
      * @since 1.0.4
      */
-    @Nullable StickyGroup pl$getStickyGroup();
+    @Nullable StickyGroup pl$getStickyGroup(BlockState state);
 
 
     /**
      * @return true if block has sticky group
      * @since 1.0.4
      */
-    default boolean pl$hasStickyGroup() {
-        return pl$getStickyGroup() != null;
+    default boolean pl$hasStickyGroup(BlockState state) {
+        return pl$getStickyGroup(state) != null;
     }
 
     /*

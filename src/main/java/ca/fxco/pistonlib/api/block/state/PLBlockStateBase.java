@@ -171,12 +171,12 @@ public interface PLBlockStateBase extends BlockStatePistonBehavior,
 
     @Override
     default @Nullable StickyGroup pl$getStickyGroup() {
-        return this.pl$getBlock().pl$getStickyGroup();
+        return this.pl$getBlock().pl$getStickyGroup(this.pl$asState());
     }
 
     @Override
     default boolean pl$hasStickyGroup() {
-        return this.pl$getBlock().pl$hasStickyGroup();
+        return this.pl$getBlock().pl$hasStickyGroup(this.pl$asState());
     }
 
     @Override
