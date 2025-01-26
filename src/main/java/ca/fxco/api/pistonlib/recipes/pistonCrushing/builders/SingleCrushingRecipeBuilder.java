@@ -1,24 +1,23 @@
 package ca.fxco.api.pistonlib.recipes.pistonCrushing.builders;
 
-import ca.fxco.pistonlib.base.ModRecipeSerializers;
-import com.google.gson.JsonObject;
-import net.minecraft.advancements.CriterionTriggerInstance;
-import net.minecraft.core.registries.BuiltInRegistries;
+import ca.fxco.api.pistonlib.recipes.pistonCrushing.SingleCrushingAgainstRecipe;
+import ca.fxco.api.pistonlib.recipes.pistonCrushing.SingleCrushingConditionalRecipe;
+import ca.fxco.api.pistonlib.recipes.pistonCrushing.SingleCrushingRecipe;
+import com.mojang.datafixers.util.Either;
+import net.minecraft.advancements.Criterion;
 import net.minecraft.data.recipes.RecipeBuilder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Consumer;
-/*TODO
 public class SingleCrushingRecipeBuilder implements RecipeBuilder {
-    protected final Item result;
+    protected final ItemStack result;
     protected final Ingredient ingredient;
-    protected final int count;
     @Nullable
     protected String group;
     @Nullable
@@ -26,20 +25,20 @@ public class SingleCrushingRecipeBuilder implements RecipeBuilder {
     @Nullable
     protected SingleCrushingConditionalRecipe.Condition condition;
     @Nullable
-    protected Object data;
+    protected Either<Float, Either<Block, String>> data;
 
-    public SingleCrushingRecipeBuilder(Ingredient ingredient, ItemLike itemLike, int count) {
+    public SingleCrushingRecipeBuilder(Ingredient ingredient, ItemStack itemStack, int count) {
         this.ingredient = ingredient;
-        this.result = itemLike.asItem();
-        this.count = count;
+        this.result = itemStack;
+        result.setCount(count);
     }
 
-    public static SingleCrushingRecipeBuilder crushing(Ingredient ingredient, ItemLike itemLike) {
-        return crushing(ingredient, itemLike, 1);
+    public static SingleCrushingRecipeBuilder crushing(Ingredient ingredient, ItemStack itemStack) {
+        return crushing(ingredient, itemStack, 1);
     }
 
-    public static SingleCrushingRecipeBuilder crushing(Ingredient ingredient, ItemLike itemLike, int count) {
-        return new SingleCrushingRecipeBuilder(ingredient, itemLike, count);
+    public static SingleCrushingRecipeBuilder crushing(Ingredient ingredient, ItemStack itemStack, int count) {
+        return new SingleCrushingRecipeBuilder(ingredient, itemStack, count);
     }
 
     public SingleCrushingRecipeBuilder mustBeAgainst(Block againstBlock) {
@@ -55,13 +54,18 @@ public class SingleCrushingRecipeBuilder implements RecipeBuilder {
             throw new IllegalStateException("You can only use either `mustBeAgainst` or `hasConditional`");
         }
         this.condition = condition;
-        this.data = data;
+        if (data instanceof Block block) {
+            this.data = Either.right(Either.left(block));
+        } else if (data instanceof Float floatNum) {
+            this.data = Either.left(floatNum);
+        } else if (data instanceof String string) {
+            this.data = Either.right(Either.right(string));
+        }
         return this;
     }
 
     @Override
-    public SingleCrushingRecipeBuilder unlockedBy(String string, CriterionTriggerInstance criterionTriggerInstance) {
-        // Crushing recipes don't have advancements
+    public SingleCrushingRecipeBuilder unlockedBy(String string, Criterion<?> criterion) {
         return this;
     }
 
@@ -72,101 +76,17 @@ public class SingleCrushingRecipeBuilder implements RecipeBuilder {
 
     @Override
     public Item getResult() {
-        return this.result;
+        return this.result.getItem();
     }
 
     @Override
-    public void save(Consumer<FinishedRecipe> consumer, ResourceLocation resourceLocation) {
+    public void save(RecipeOutput output, ResourceKey<Recipe<?>> key) {
         if (this.againstBlock != null) {
-            consumer.accept(new SingleCrushingRecipeBuilder.ResultWithAgainst(resourceLocation, this.group == null ? "" : this.group, this.ingredient, this.result, this.count, this.againstBlock));
+            output.accept(key, new SingleCrushingAgainstRecipe(this.ingredient, this.result, this.againstBlock), null);
         } else if (this.condition != null) {
-            consumer.accept(new SingleCrushingRecipeBuilder.ResultWithCondition(resourceLocation, this.group == null ? "" : this.group, this.ingredient, this.result, this.count, this.condition, this.data));
+            output.accept(key, new SingleCrushingConditionalRecipe(this.ingredient, this.result, this.condition, this.data), null);
         } else {
-            consumer.accept(new SingleCrushingRecipeBuilder.Result(resourceLocation, this.group == null ? "" : this.group, this.ingredient, this.result, this.count));
+            output.accept(key, new SingleCrushingRecipe(this.ingredient, this.result), null);
         }
     }
-
-    public static class Result implements FinishedRecipe {
-        private final ResourceLocation id;
-        private final String group;
-        private final Ingredient ingredient;
-        private final Item result;
-        private final int count;
-
-        public Result(ResourceLocation resourceLocation, String group, Ingredient ingredient, Item item, int count) {
-            this.id = resourceLocation;
-            this.group = group;
-            this.ingredient = ingredient;
-            this.result = item;
-            this.count = count;
-        }
-
-        public void serializeRecipeData(JsonObject jsonObject) {
-            if (!this.group.isEmpty()) {
-                jsonObject.addProperty("group", this.group);
-            }
-
-            jsonObject.add("ingredient", this.ingredient.toJson());
-            jsonObject.addProperty("result", BuiltInRegistries.ITEM.getKey(this.result).toString());
-            jsonObject.addProperty("count", this.count);
-        }
-
-        public ResourceLocation getId() {
-            return this.id;
-        }
-
-        public RecipeSerializer<?> getType() {
-            return ModRecipeSerializers.SINGLE_PISTON_CRUSHING;
-        }
-
-        @Nullable
-        public JsonObject serializeAdvancement() {
-            return null;
-        }
-
-        @Nullable
-        public ResourceLocation getAdvancementId() {
-            return null;
-        }
-    }
-
-    public static class ResultWithAgainst extends Result {
-
-        private final Block againstBlock;
-
-        public ResultWithAgainst(ResourceLocation id, String group, Ingredient ingredient, Item item, int count, Block againstBlock) {
-            super(id, group, ingredient, item, count);
-            this.againstBlock = againstBlock;
-        }
-
-        public void serializeRecipeData(JsonObject jsonObject) {
-            super.serializeRecipeData(jsonObject);
-            jsonObject.addProperty("against", BuiltInRegistries.BLOCK.getKey(againstBlock).toString());
-        }
-
-        public RecipeSerializer<?> getType() {
-            return ModRecipeSerializers.SINGLE_AGAINST_PISTON_CRUSHING;
-        }
-    }
-
-    public static class ResultWithCondition extends Result {
-
-        private final SingleCrushingConditionalRecipe.Condition condition;
-        private final Object data;
-
-        public ResultWithCondition(ResourceLocation id, String group, Ingredient ingredient, Item item, int count, SingleCrushingConditionalRecipe.Condition condition, Object data) {
-            super(id, group, ingredient, item, count);
-            this.condition = condition;
-            this.data = data;
-        }
-
-        public void serializeRecipeData(JsonObject jsonObject) {
-            super.serializeRecipeData(jsonObject);
-            condition.writeCondition(jsonObject, this.data);
-        }
-
-        public RecipeSerializer<?> getType() {
-            return ModRecipeSerializers.SINGLE_CONDITIONAL_PISTON_CRUSHING;
-        }
-    }
-}*/
+}

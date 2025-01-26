@@ -3,6 +3,7 @@ package ca.fxco.api.pistonlib.recipes.pistonCrushing;
 import ca.fxco.api.pistonlib.recipes.PistonCrushingInput;
 import ca.fxco.pistonlib.base.ModRecipeSerializers;
 import ca.fxco.pistonlib.network.PLServerNetwork;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import lombok.Getter;
@@ -41,11 +42,13 @@ public class SingleCrushingAgainstRecipe extends SingleCrushingRecipe {
     }
 
     public static class Serializer implements RecipeSerializer<SingleCrushingAgainstRecipe> {
+        public static final Codec<Block> BLOCK_CODEC = BuiltInRegistries.BLOCK.byNameCodec();
+
         public static final MapCodec<SingleCrushingAgainstRecipe> CODEC = RecordCodecBuilder.mapCodec(
                 inst -> inst.group(
                         Ingredient.CODEC.fieldOf("ingredient").forGetter(SingleCrushingAgainstRecipe::getIngredient),
                         ItemStack.CODEC.fieldOf("result").forGetter(SingleCrushingAgainstRecipe::getResult),
-                        BuiltInRegistries.BLOCK.byNameCodec().fieldOf("against_block").forGetter(SingleCrushingAgainstRecipe::getAgainstBlock)
+                        BLOCK_CODEC.fieldOf("against_block").forGetter(SingleCrushingAgainstRecipe::getAgainstBlock)
                 ).apply(inst, SingleCrushingAgainstRecipe::new));
         public static final StreamCodec<RegistryFriendlyByteBuf, SingleCrushingAgainstRecipe> STREAM_CODEC =
                 StreamCodec.composite(

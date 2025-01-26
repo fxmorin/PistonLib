@@ -1,8 +1,10 @@
 package ca.fxco.pistonlib.datagen;
 
 import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
+import ca.fxco.api.pistonlib.recipes.pistonCrushing.SingleCrushingConditionalRecipe;
 import ca.fxco.api.pistonlib.recipes.pistonCrushing.builders.MultiCrushingRecipeBuilder;
 import ca.fxco.api.pistonlib.recipes.pistonCrushing.builders.PairCrushingRecipeBuilder;
+import ca.fxco.api.pistonlib.recipes.pistonCrushing.builders.SingleCrushingRecipeBuilder;
 import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.base.ModPistonFamilies;
@@ -69,14 +71,14 @@ public class ModRecipeProvider extends FabricRecipeProvider {
 
 				generateRecipes(new BlockFamily.Builder(Blocks.OBSIDIAN).slab(ModBlocks.OBSIDIAN_SLAB_BLOCK).stairs(ModBlocks.OBSIDIAN_STAIR_BLOCK).getFamily(), FeatureFlags.VANILLA_SET);
 
-				//SingleCrushingRecipeBuilder.crushing(Ingredient.of(Blocks.IRON_ORE), Items.RAW_IRON).save(exporter);
-				//SingleCrushingRecipeBuilder.crushing(Ingredient.of(Blocks.COPPER_ORE), Items.RAW_COPPER).save(exporter);
-				//SingleCrushingRecipeBuilder.crushing(Ingredient.of(Blocks.GOLD_ORE), Items.RAW_GOLD).save(exporter);
+				SingleCrushingRecipeBuilder.crushing(Ingredient.of(Blocks.IRON_ORE), Items.RAW_IRON.getDefaultInstance()).save(exporter);
+				SingleCrushingRecipeBuilder.crushing(Ingredient.of(Blocks.COPPER_ORE), Items.RAW_COPPER.getDefaultInstance()).save(exporter);
+				SingleCrushingRecipeBuilder.crushing(Ingredient.of(Blocks.GOLD_ORE), Items.RAW_GOLD.getDefaultInstance()).save(exporter);
 
-				//SingleCrushingRecipeBuilder.crushing(Ingredient.of(Blocks.STONE_BRICKS), Items.CRACKED_STONE_BRICKS).mustBeAgainst(Blocks.OBSIDIAN).save(exporter);
-				//SingleCrushingRecipeBuilder.crushing(Ingredient.of(Blocks.STONE_BRICKS), Items.CRACKED_STONE_BRICKS)
+				//SingleCrushingRecipeBuilder.crushing(Ingredient.of(Blocks.STONE_BRICKS), Items.CRACKED_STONE_BRICKS.getDefaultInstance()).mustBeAgainst(Blocks.OBSIDIAN).save(exporter);
+				//SingleCrushingRecipeBuilder.crushing(Ingredient.of(Blocks.STONE_BRICKS), Items.CRACKED_STONE_BRICKS.getDefaultInstance())
 				//		.hasConditional(SingleCrushingConditionalRecipe.Condition.HIGHER_RESISTANCE, 1199F).save(exporter);
-				//offerCrushingCrackedRecipe(exporter, Blocks.STONE_BRICKS, Items.CRACKED_STONE_BRICKS);
+				offerCrushingCrackedRecipe(exporter, Blocks.STONE_BRICKS, Items.CRACKED_STONE_BRICKS.getDefaultInstance());
 
 				PairCrushingRecipeBuilder.crushing(Ingredient.of(Blocks.OAK_PLANKS), Ingredient.of(Blocks.OAK_PLANKS), Items.STICK.getDefaultInstance()).save(exporter);
 				PairCrushingRecipeBuilder.crushing(Ingredient.of(Blocks.COAL_BLOCK), Ingredient.of(Items.COAL), Items.DIAMOND.getDefaultInstance()).save(exporter);
@@ -104,8 +106,8 @@ public class ModRecipeProvider extends FabricRecipeProvider {
 		return "PistonLibRecipeProvider";
 	}
 
-	//public void offerCrushingCrackedRecipe(Consumer<FinishedRecipe> exporter, Block block, Item item) {
-	//	SingleCrushingRecipeBuilder.crushing(Ingredient.of(block), item)
-	//			.hasConditional(SingleCrushingConditionalRecipe.Condition.HIGHER_RESISTANCE, 1199F).save(exporter);
-	//}
+	public void offerCrushingCrackedRecipe(RecipeOutput exporter, Block block, ItemStack item) {
+		SingleCrushingRecipeBuilder.crushing(Ingredient.of(block), item)
+				.hasConditional(SingleCrushingConditionalRecipe.Condition.HIGHER_RESISTANCE, 1199F).save(exporter);
+	}
 }
