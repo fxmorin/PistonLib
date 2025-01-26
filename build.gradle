@@ -9,9 +9,6 @@ configurations {
     commonJava{
         canBeResolved = true
     }
-    commonResources{
-        canBeResolved = true
-    }
 }
 
 version = project.mod_version
@@ -49,7 +46,7 @@ repositories {
 sourceSets {
     main {
         resources {
-            srcDir "src/generated/resources"
+            srcDir "src/main/generated/resources"
         }
     }
 }
@@ -72,7 +69,6 @@ dependencies {
 
     implementation project(path: ":api", configuration: "namedElements")
     commonJava project(path: ':api', configuration: 'commonJava')
-    commonResources project(path: ':api', configuration: 'commonResources')
 }
 
 processResources {
