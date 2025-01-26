@@ -1,5 +1,6 @@
 package ca.fxco.pistonlib.api.pistonLogic.families;
 
+import ca.fxco.pistonlib.PistonLibConfig;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,7 +16,7 @@ public class PistonBehavior {
     private final boolean frontPowered;
     private final boolean slippery;
     private final boolean quasi;
-    @Builder.Default private final int pushLimit = 12;
+    @Builder.Default private final int pushLimit = PistonLibConfig.defaultPistonPushLimit;
     private final float extendingSpeed;
     private final float retractingSpeed;
     @Builder.Default private final boolean retractOnExtending = true;

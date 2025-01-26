@@ -1,7 +1,8 @@
 package ca.fxco.pistonlib.api.config;
 
 /**
- * Categories for config values
+ * Categories for config values.
+ * In alphabetical order
  *
  * @see ConfigValue
  * @author FX
@@ -10,32 +11,11 @@ package ca.fxco.pistonlib.api.config;
 public enum Category {
 
     /**
-     * Fixes a vanilla bug
+     * An experimental config value, use with caution
      *
      * @since 1.0.4
      */
-    FIX,
-
-    /**
-     * A feature toggle, features aren't mechanics
-     *
-     * @since 1.0.4
-     */
-    FEATURE,
-
-    /**
-     * Related to the merging api
-     *
-     * @since 1.0.4
-     */
-    MERGING,
-
-    /**
-     * A core mechanic, disabling this probably causes many things to stop working
-     *
-     * @since 1.0.4
-     */
-    MECHANIC,
+    EXPERIMENTAL,
 
     /**
      * Extreme means this has a Major impact on how pistons work and likely
@@ -46,11 +26,32 @@ public enum Category {
     EXTREME,
 
     /**
-     * An experimental config value, use with caution
+     * A feature toggle, features aren't mechanics
      *
      * @since 1.0.4
      */
-    EXPERIMENTAL,
+    FEATURE,
+
+    /**
+     * Fixes a vanilla bug
+     *
+     * @since 1.0.4
+     */
+    FIX,
+
+    /**
+     * A core mechanic, disabling this probably causes many things to stop working
+     *
+     * @since 1.0.4
+     */
+    MECHANIC,
+
+    /**
+     * Related to the merging api
+     *
+     * @since 1.0.4
+     */
+    MERGING,
 
     /**
      * An optimization config value, performance go brrrr
@@ -60,7 +61,14 @@ public enum Category {
     OPTIMIZATION,
 
     /**
-     * Work In Progress, this is still missing some features
+     * A tweak, when it simply tweaks a setting
+     *
+     * @since 1.1.0
+     */
+    TWEAK,
+
+    /**
+     * Work In Progress, it's still missing some features
      *
      * @since 1.0.4
      */

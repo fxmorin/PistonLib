@@ -235,6 +235,31 @@ public class PistonLibConfig {
     )
     public static boolean pistonPushingCacheFix = true;
 
+    // ============
+    //    Tweaks
+    // ============
+
+    // TODO: Add some sort of validation, since this number should never be a negative
+    @ConfigValue(
+            desc = "Change the distance in blocks that piston block events are sent.",
+            more = {"In vanilla, its set to 64 block by default.",
+                    "Fixes pistons looking jittery when they are far away",
+                    "Can also be used to make the distance shorter, to reduce the piston rendering lag"},
+            keyword = {"block event", "distance"},
+            suggestions = {"16", "32", "64", "128", "256"},
+            category = {Category.TWEAK, Category.OPTIMIZATION, Category.FIX}
+    )
+    public static double pistonBlockEventDistance = 64D;
+
+    // TODO: Add some sort of validation, since this number should never be a negative
+    @ConfigValue(
+            desc = "Change the default piston push limit",
+            more = {"This will change the push limit of all pistons using the default push limit of 12"},
+            keyword = {"block event", "distance"},
+            suggestions = {"6", "12", "24", "128", "256"},
+            category = Category.TWEAK
+    )
+    public static int defaultPistonPushLimit = 12;
 
     public enum WaterloggedState {
         NONE,
