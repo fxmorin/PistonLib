@@ -140,7 +140,7 @@ public class ModPistonFamilies {
             .moving(ModBlocks.STICKY_MOVING_BLOCK)
             .movingBlockEntity(ModBlockEntities.BASIC_MOVING_BLOCK_ENTITY, BasicMovingBlockEntity::new));
 
-    private static PistonFamily register(String name, PistonFamily. PistonFamilyBuilder familyBuilder) {
+    private static PistonFamily register(String name, PistonFamily.PistonFamilyBuilder familyBuilder) {
         return register(name, familyBuilder.build());
     }
 
@@ -172,7 +172,9 @@ public class ModPistonFamilies {
             }
 
             family.getBases().forEach((type, base) -> ((PistonFamilyMember) base).setFamily(family));
-            if (family.getArm() != null) ((PistonFamilyMember) family.getArm()).setFamily(family);
+            if (family.getArm() != null) {
+                ((PistonFamilyMember) family.getArm()).setFamily(family);
+            }
             ((PistonFamilyMember) family.getHead()).setFamily(family);
             ((PistonFamilyMember) family.getMoving()).setFamily(family);
 

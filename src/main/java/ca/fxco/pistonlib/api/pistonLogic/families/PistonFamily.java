@@ -44,7 +44,7 @@ public class PistonFamily {
     @Delegate(types = PistonBehavior.class, excludes = PistonBehavior.PistonBehaviorBuilder.class)
     private final PistonBehavior behavior;
 
-    private final Map<PistonType, Block> bases = new EnumMap<>(PistonType.class);
+    private final Map<PistonType, Block> bases;
     @Getter
     private final @Nullable Block arm;
     @Getter
@@ -110,12 +110,16 @@ public class PistonFamily {
 
     public static class PistonFamilyBuilder {
 
-        Map<PistonType, Block> bases = new EnumMap<>(PistonType.class);
-        BlockEntityType<? extends PistonMovingBlockEntity> movingBlockEntityType;
-        Factory<? extends PistonMovingBlockEntity> movingBlockEntityFactory;
-
         public PistonFamilyBuilder base(PistonType type, Block base) {
+            if (this.bases == null) {
+                this.bases = new EnumMap<>(PistonType.class);
+            }
             this.bases.put(type, base);
+            return this;
+        }
+
+        public PistonFamilyBuilder behavior(PistonBehavior behavior) {
+            this.behavior = behavior;
             return this;
         }
 
