@@ -1,5 +1,6 @@
 package ca.fxco.pistonlib.pistonLogic.structureGroups;
 
+import ca.fxco.pistonlib.api.pistonLogic.base.PLMovingBlockEntity;
 import ca.fxco.pistonlib.api.pistonLogic.structure.StructureGroup;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import ca.fxco.pistonlib.helpers.NbtUtils;
@@ -8,6 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.piston.PistonMovingBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.*;
@@ -17,7 +19,7 @@ import java.util.function.Consumer;
 public class ServerStructureGroup implements StructureGroup {
 
     // The order they are added to the group is the order they should run in
-    private final List<BasicMovingBlockEntity> blockEntities = new ArrayList<>();
+    private final List<PistonMovingBlockEntity> blockEntities = new ArrayList<>();
 
     @Override
     public boolean hasInitialized() {
@@ -25,17 +27,17 @@ public class ServerStructureGroup implements StructureGroup {
     }
 
     @Override
-    public void add(BasicMovingBlockEntity blockEntity) {
+    public <P extends PistonMovingBlockEntity & PLMovingBlockEntity> void add(P blockEntity) {
         this.blockEntities.add(blockEntity);
     }
 
     @Override
-    public void add(int index, BasicMovingBlockEntity blockEntity) {
+    public <P extends PistonMovingBlockEntity & PLMovingBlockEntity> void add(int index, P blockEntity) {
         this.blockEntities.add(index, blockEntity);
     }
 
     @Override
-    public void remove(BasicMovingBlockEntity blockEntity) {
+    public <P extends PistonMovingBlockEntity & PLMovingBlockEntity> void remove(P blockEntity) {
         this.blockEntities.remove(blockEntity);
     }
 
@@ -45,13 +47,14 @@ public class ServerStructureGroup implements StructureGroup {
     }
 
     @Override
-    public BasicMovingBlockEntity get(int index) {
-        return blockEntities.get(index);
+    public <P extends PistonMovingBlockEntity & PLMovingBlockEntity> P get(int index) {
+        //noinspection unchecked
+        return (P) this.blockEntities.get(index);
     }
 
     @Override
     public int size() {
-        return blockEntities.size();
+        return this.blockEntities.size();
     }
 
     @Override
@@ -63,21 +66,18 @@ public class ServerStructureGroup implements StructureGroup {
     // Grouped methods
     //
 
-    /**
-     * Calls a consumer against all group children including the controller
-     */
     @Override
-    public void forEach(Consumer<BasicMovingBlockEntity> action) {
-        blockEntities.forEach(action);
+    public <P extends PistonMovingBlockEntity & PLMovingBlockEntity> void forEach(Consumer<P> action) {
+        this.blockEntities.forEach(be -> {
+
+        });
     }
 
-    /**
-     * Calls a consumer against all group children except the controller
-     */
     @Override
-    public void forNonControllers(Consumer<BasicMovingBlockEntity> action) {
-        for (int i = 1; i < blockEntities.size(); i++) {
-            action.accept(blockEntities.get(i));
+    public <P extends PistonMovingBlockEntity & PLMovingBlockEntity> void forNonControllers(Consumer<P> action) {
+        for (int i = 1; i < this.blockEntities.size(); i++) {
+            //noinspection unchecked
+            action.accept((P) this.blockEntities.get(i));
         }
     }
 
@@ -86,6 +86,7 @@ public class ServerStructureGroup implements StructureGroup {
     //
 
     // Attempt to find other block entities from your structure
+    @Override
     public void load(Level level, List<BlockPos> blockPosList) {
         for (BlockPos blockPos : blockPosList) {
             BlockEntity be = level.getBlockEntity(blockPos);
@@ -96,19 +97,20 @@ public class ServerStructureGroup implements StructureGroup {
         }
     }
 
+    @Override
     public void saveAdditional(CompoundTag nbt) {
-        blockEntities.removeIf(be -> be.isRemoved() || !be.hasLevel());
-        if (blockEntities.size() == 0) {
+        this.blockEntities.removeIf(be -> be.isRemoved() || !be.hasLevel());
+        if (this.blockEntities.isEmpty()) {
             return;
         }
-        BasicMovingBlockEntity controller = blockEntities.get(0);
+        PistonMovingBlockEntity controller = this.blockEntities.getFirst();
         NbtUtils.saveCompactRelativeBlockPosList(
                 nbt,
                 "controller",
                 controller.getBlockPos(),
-                i -> blockEntities.get(i + 1).getBlockPos(),
-                blockEntities.size() - 1,
-                controller.getFamily().getPushLimit()
+                i -> this.blockEntities.get(i + 1).getBlockPos(),
+                this.blockEntities.size() - 1,
+                ((PLMovingBlockEntity)controller).getFamily().getPushLimit()
         );
     }
 }

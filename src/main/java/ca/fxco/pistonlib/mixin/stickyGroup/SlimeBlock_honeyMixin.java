@@ -2,7 +2,7 @@ package ca.fxco.pistonlib.mixin.stickyGroup;
 
 import ca.fxco.pistonlib.api.block.PLBlockBehaviour;
 import ca.fxco.pistonlib.api.pistonLogic.sticky.StickyGroup;
-import ca.fxco.pistonlib.api.pistonLogic.sticky.StickyGroups;
+import ca.fxco.pistonlib.base.ModStickyGroups;
 import net.minecraft.world.level.block.SlimeBlock;
 import org.spongepowered.asm.mixin.Mixin;
 
@@ -11,6 +11,6 @@ public class SlimeBlock_honeyMixin implements PLBlockBehaviour {
 
     @Override
     public StickyGroup pl$getStickyGroup() {
-        return StickyGroups.SLIME;
+        return ModStickyGroups.SLIME;
     }
 }

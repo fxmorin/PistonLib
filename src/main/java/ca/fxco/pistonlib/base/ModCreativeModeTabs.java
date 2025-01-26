@@ -1,5 +1,6 @@
 package ca.fxco.pistonlib.base;
 
+import ca.fxco.pistonlib.api.PistonLibRegistries;
 import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 
@@ -65,7 +66,7 @@ public class ModCreativeModeTabs {
                 .icon(() -> new ItemStack(ModItems.STRONG_STICKY_PISTON))
                 .title(Component.translatable("itemGroup.pistonlib.pistons"))
                 .displayItems((displayParameters, output) -> {
-                    for (PistonFamily family : ModRegistries.PISTON_FAMILY) {
+                    for (PistonFamily family : PistonLibRegistries.PISTON_FAMILY) {
                         for (Block base : family.getBases().values()) {
                             output.accept(base);
                         }

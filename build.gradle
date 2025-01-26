@@ -60,6 +60,8 @@ dependencies {
 
     // Lombok
     compileOnly(annotationProcessor("org.projectlombok:lombok:${project.lombok_version}"))
+
+    implementation project(":api")
 }
 
 processResources {

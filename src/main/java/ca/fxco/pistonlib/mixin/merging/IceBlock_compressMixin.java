@@ -2,7 +2,7 @@ package ca.fxco.pistonlib.mixin.merging;
 
 import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.api.block.PLBlockBehaviour;
-import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlockEntity;
+import ca.fxco.pistonlib.api.pistonLogic.base.PLMergeBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
@@ -33,8 +33,9 @@ public class IceBlock_compressMixin implements PLBlockBehaviour {
     }
 
     @Override
-    public boolean pl$canMultiMerge(BlockState state, BlockGetter getter, BlockPos pos, BlockState mergingIntoState,
-                                 Direction direction, Map<Direction, MergeBlockEntity.MergeData> currentlyMerging) {
+    public boolean pl$canMultiMerge(BlockState state, BlockGetter getter, BlockPos pos,
+                                    BlockState mergingIntoState, Direction direction,
+                                    Map<Direction, PLMergeBlockEntity.MergeData> currentlyMerging) {
         return currentlyMerging.size() <= 2; // max 3
     }
 

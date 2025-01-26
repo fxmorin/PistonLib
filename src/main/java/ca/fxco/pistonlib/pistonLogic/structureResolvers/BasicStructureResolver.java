@@ -9,6 +9,7 @@ import ca.fxco.pistonlib.api.pistonLogic.controller.PistonController;
 import ca.fxco.pistonlib.api.pistonLogic.sticky.StickRules;
 import ca.fxco.pistonlib.api.pistonLogic.sticky.StickyGroup;
 import ca.fxco.pistonlib.api.pistonLogic.sticky.StickyType;
+import ca.fxco.pistonlib.api.pistonLogic.structure.StructureResolver;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 
 import net.minecraft.core.BlockPos;
@@ -21,7 +22,7 @@ import net.minecraft.world.level.material.PushReaction;
 
 import static ca.fxco.pistonlib.PistonLib.DIRECTIONS;
 
-public class BasicStructureResolver extends PistonStructureResolver {
+public class BasicStructureResolver extends PistonStructureResolver implements StructureResolver {
 
     protected final PistonController controller;
     protected final int maxMovableWeight;
@@ -356,14 +357,7 @@ public class BasicStructureResolver extends PistonStructureResolver {
         this.toPush.addAll(list3);
     }
 
-    public int getMoveLimit() {
+    protected int getMoveLimit() {
         return this.maxMovableWeight;
-    }
-
-    @FunctionalInterface
-    public interface Factory<T extends BasicStructureResolver> {
-
-        T create(Level level, BlockPos pos, Direction facing, int length, boolean extend);
-
     }
 }

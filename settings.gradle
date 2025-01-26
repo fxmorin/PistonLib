@@ -8,5 +8,6 @@ pluginManagement {
     }
 }
 
+include('api')
 include('gametest')
 

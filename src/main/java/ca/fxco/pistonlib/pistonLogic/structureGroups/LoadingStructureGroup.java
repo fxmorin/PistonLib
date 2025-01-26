@@ -1,12 +1,14 @@
 package ca.fxco.pistonlib.pistonLogic.structureGroups;
 
+import ca.fxco.pistonlib.api.pistonLogic.base.PLMovingBlockEntity;
 import ca.fxco.pistonlib.api.pistonLogic.structure.StructureGroup;
-import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import ca.fxco.pistonlib.helpers.NbtUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.piston.PistonMovingBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.ArrayList;
@@ -14,28 +16,31 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * This structure group temporarily holds a blockPos list till the block entity ticks for the first time and sets the real structure group
+ * This structure group temporarily holds a blockPos list till the block entity ticks for the first time,
+ * and sets the real structure group.
+ *
+ * @author FX
  */
+@Getter
 @AllArgsConstructor
 public class LoadingStructureGroup implements StructureGroup {
 
-    @Getter
     private final List<BlockPos> blockPosList = new ArrayList<>();
 
     @Override
-    public void add(BasicMovingBlockEntity blockEntity) {}
+    public <P extends PistonMovingBlockEntity & PLMovingBlockEntity> void add(P blockEntity) {}
 
     @Override
-    public void add(int index, BasicMovingBlockEntity blockEntity) {}
+    public <P extends PistonMovingBlockEntity & PLMovingBlockEntity> void add(int index, P blockEntity) {}
 
     @Override
-    public void remove(BasicMovingBlockEntity blockEntity) {}
+    public <P extends PistonMovingBlockEntity & PLMovingBlockEntity> void remove(P blockEntity) {}
 
     @Override
     public void remove(int index) {}
 
     @Override
-    public BasicMovingBlockEntity get(int index) {
+    public <P extends PistonMovingBlockEntity & PLMovingBlockEntity> P get(int index) {
         return null;
     }
 
@@ -50,10 +55,13 @@ public class LoadingStructureGroup implements StructureGroup {
     }
 
     @Override
-    public void forEach(Consumer<BasicMovingBlockEntity> action) {}
+    public <P extends PistonMovingBlockEntity & PLMovingBlockEntity> void forEach(Consumer<P> action) {}
 
     @Override
-    public void forNonControllers(Consumer<BasicMovingBlockEntity> action) {}
+    public <P extends PistonMovingBlockEntity & PLMovingBlockEntity> void forNonControllers(Consumer<P> action) {}
+
+    @Override
+    public void load(Level level, List<BlockPos> blockPosList) {}
 
     @Override
     public void saveAdditional(CompoundTag nbt) {}

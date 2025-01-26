@@ -3,11 +3,11 @@ package ca.fxco.pistonlib.pistonLogic.structureRunners;
 import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.api.pistonLogic.structure.StructureGroup;
+import ca.fxco.pistonlib.api.pistonLogic.structure.StructureResolver;
 import ca.fxco.pistonlib.api.pistonLogic.structure.StructureRunner;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlock;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonHeadBlock;
 import ca.fxco.pistonlib.helpers.BlockReplaceUtils;
-import ca.fxco.pistonlib.pistonLogic.structureResolvers.BasicStructureResolver;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -59,9 +59,10 @@ public class BasicStructureRunner implements StructureRunner {
     protected BlockState[] affectedStates;
     protected int affectedIndex = 0;
 
-    public BasicStructureRunner(Level level, BlockPos pos, Direction facing, int length,
-                                PistonFamily family, PistonType type, boolean extend,
-                                BasicStructureResolver.Factory<? extends BasicStructureResolver> structureProvider) {
+    public <S extends PistonStructureResolver & StructureResolver> BasicStructureRunner(
+            Level level, BlockPos pos, Direction facing, int length, PistonFamily family, PistonType type,
+            boolean extend, StructureResolver.Factory<S> structureProvider
+    ) {
         this.level = level;
         this.family = family;
         this.type = type;

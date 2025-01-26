@@ -12,6 +12,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.function.BooleanSupplier;
 
+import static ca.fxco.pistonlib.PistonLib.NEVER_ENABLED_SET;
+
 @Mixin(BlockBehaviour.class)
 public class BlockBehaviour_toggleMixin implements PLBlockBehaviour {
 

@@ -5,6 +5,7 @@ import ca.fxco.pistonlib.api.pistonLogic.PistonEvents;
 import ca.fxco.pistonlib.api.pistonLogic.PistonMoveBehavior;
 import ca.fxco.pistonlib.api.pistonLogic.controller.PistonController;
 import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
+import ca.fxco.pistonlib.api.pistonLogic.structure.StructureResolver;
 import ca.fxco.pistonlib.api.pistonLogic.structure.StructureRunner;
 import ca.fxco.pistonlib.base.ModTags;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
@@ -30,6 +31,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.piston.MovingPistonBlock;
 import net.minecraft.world.level.block.piston.PistonMovingBlockEntity;
+import net.minecraft.world.level.block.piston.PistonStructureResolver;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.PistonType;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -61,17 +63,19 @@ public class VanillaPistonController implements PistonController {
     }
 
     @Override
-    public BasicStructureResolver newStructureResolver(Level level, BlockPos pos, Direction facing,
-                                                       int length, boolean extend) {
-        return PistonLibConfig.mergingApi ?
+    public <S extends PistonStructureResolver & StructureResolver> S newStructureResolver(
+            Level level, BlockPos pos, Direction facing, int length, boolean extend
+    ) {
+        //noinspection unchecked
+        return (S) (PistonLibConfig.mergingApi ?
                 new MergingPistonStructureResolver(this, level, pos, facing, length, extend) :
-                new BasicStructureResolver(this, level, pos, facing, length, extend);
+                new BasicStructureResolver(this, level, pos, facing, length, extend));
     }
 
     @Override
-    public StructureRunner newStructureRunner(
+    public <S extends PistonStructureResolver & StructureResolver> StructureRunner newStructureRunner(
             Level level, BlockPos pos, Direction facing, int length, boolean extend,
-            BasicStructureResolver.Factory<? extends BasicStructureResolver> structureProvider
+            StructureResolver.Factory<S> structureProvider
     ) {
         PistonFamily family = getFamily();
         PistonType type = getType();

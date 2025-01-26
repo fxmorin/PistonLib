@@ -1,0 +1,39 @@
+plugins {
+    id 'fabric-loom'
+    id 'maven-publish'
+}
+
+version = project.mod_version
+group = project.maven_group
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // To change the versions see the gradle.properties file
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings loom.officialMojangMappings()
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+    // Fabric API. This is technically optional, but you probably want it anyway.
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+}
+
+def targetJavaVersion = 21
+tasks.withType(JavaCompile).configureEach {
+    it.options.encoding = "UTF-8"
+    it.options.release = targetJavaVersion
+}
+
+// configure the maven publication
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+
+    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
+    repositories {}
+}

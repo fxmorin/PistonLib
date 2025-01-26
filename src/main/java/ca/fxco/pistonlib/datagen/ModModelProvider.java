@@ -1,20 +1,17 @@
 package ca.fxco.pistonlib.datagen;
 
-import java.util.Map;
 import java.util.Optional;
 
+import ca.fxco.pistonlib.api.PistonLibRegistries;
 import ca.fxco.pistonlib.base.ModItems;
 import ca.fxco.pistonlib.base.ModPistonFamilies;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.data.models.model.*;
-import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.base.ModBlocks;
-import ca.fxco.pistonlib.base.ModRegistries;
 
 import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -53,7 +50,7 @@ public class ModModelProvider extends FabricModelProvider {
 	public void generateBlockStateModels(BlockModelGenerators generator) {
 		LOGGER.info("Generating blockstate definitions and models...");
 
-		for (Map.Entry<ResourceKey<PistonFamily>, PistonFamily> entry : ModRegistries.PISTON_FAMILY.entrySet()) {
+		for (var entry : PistonLibRegistries.PISTON_FAMILY.entrySet()) {
             ResourceKey<PistonFamily> key = entry.getKey();
             PistonFamily family = entry.getValue();
 

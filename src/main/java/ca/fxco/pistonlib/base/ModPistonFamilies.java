@@ -1,6 +1,6 @@
 package ca.fxco.pistonlib.base;
 
-import ca.fxco.pistonlib.api.pistonLogic.families.PistonBehavior;
+import ca.fxco.pistonlib.api.PistonLibRegistries;
 import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamilies;
 import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamilyMember;
@@ -9,6 +9,8 @@ import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurableMovingBlo
 import ca.fxco.pistonlib.blocks.pistons.fastPiston.FastMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.movableBlockEntities.MBEMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.speedPiston.SpeedMovingBlockEntity;
+import ca.fxco.pistonlib.pistonLogic.families.PistonBehaviorImpl;
+import ca.fxco.pistonlib.pistonLogic.families.PistonFamilyImpl;
 import net.fabricmc.loader.impl.FabricLoaderImpl;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.Blocks;
@@ -22,24 +24,24 @@ import static ca.fxco.pistonlib.PistonLib.id;
 
 public class ModPistonFamilies {
 
-    public static final PistonFamily VANILLA = register("vanilla", PistonFamily.builder()
-            .behavior(PistonBehavior.DEFAULT)
+    public static final PistonFamily VANILLA = register("vanilla", PistonFamilyImpl.builder()
+            .behavior(PistonBehaviorImpl.DEFAULT)
             .base(PistonType.DEFAULT, Blocks.PISTON)
             .base(PistonType.STICKY, Blocks.STICKY_PISTON)
             .head(Blocks.PISTON_HEAD)
             .moving(Blocks.MOVING_PISTON)
             .vanillaMovingBlockEntity(BlockEntityType.PISTON, PistonMovingBlockEntity::new));
 
-    public static final PistonFamily BASIC = register("basic", PistonFamily.builder()
-            .behavior(PistonBehavior.DEFAULT)
+    public static final PistonFamily BASIC = register("basic", PistonFamilyImpl.builder()
+            .behavior(PistonBehaviorImpl.DEFAULT)
             .base(PistonType.DEFAULT, ModBlocks.BASIC_PISTON)
             .base(PistonType.STICKY, ModBlocks.BASIC_STICKY_PISTON)
             .head(ModBlocks.BASIC_PISTON_HEAD)
             .moving(ModBlocks.BASIC_MOVING_BLOCK)
             .movingBlockEntity(ModBlockEntities.BASIC_MOVING_BLOCK_ENTITY, BasicMovingBlockEntity::new));
 
-    public static final PistonFamily LONG = register("long", PistonFamily.builder()
-            .behavior(PistonBehavior.builder()
+    public static final PistonFamily LONG = register("long", PistonFamilyImpl.builder()
+            .behavior(PistonBehaviorImpl.builder()
                     .maxLength(12)
                     .noQuasi())
             .base(PistonType.DEFAULT, ModBlocks.LONG_PISTON)
@@ -49,8 +51,8 @@ public class ModPistonFamilies {
             .moving(ModBlocks.LONG_MOVING_BLOCK)
             .movingBlockEntity(ModBlockEntities.BASIC_MOVING_BLOCK_ENTITY, BasicMovingBlockEntity::new));
 
-    public static final PistonFamily CONFIGURABLE = register("configurable", PistonFamily.builder()
-            .behavior(PistonBehavior.builder()
+    public static final PistonFamily CONFIGURABLE = register("configurable", PistonFamilyImpl.builder()
+            .behavior(PistonBehaviorImpl.builder()
                     .maxLength(2)
                     .noQuasi()
                     .extendingSpeed(0.1F)
@@ -62,8 +64,8 @@ public class ModPistonFamilies {
             .moving(ModBlocks.CONFIGURABLE_MOVING_BLOCK)
             .movingBlockEntity(ModBlockEntities.CONFIGURABLE_MOVING_BLOCK_ENTITY, ConfigurableMovingBlockEntity::new));
 
-    public static final PistonFamily STALE = register("stale", PistonFamily.builder()
-            .behavior(PistonBehavior.builder()
+    public static final PistonFamily STALE = register("stale", PistonFamilyImpl.builder()
+            .behavior(PistonBehaviorImpl.builder()
                     .noQuasi())
             .base(PistonType.DEFAULT, ModBlocks.STALE_PISTON)
             .base(PistonType.STICKY, ModBlocks.STALE_STICKY_PISTON)
@@ -71,16 +73,16 @@ public class ModPistonFamilies {
             .moving(ModBlocks.STALE_MOVING_BLOCK)
             .movingBlockEntity(ModBlockEntities.BASIC_MOVING_BLOCK_ENTITY, BasicMovingBlockEntity::new));
 
-    public static final PistonFamily VERY_QUASI = register("very_quasi", PistonFamily.builder()
-            .behavior(PistonBehavior.DEFAULT)
+    public static final PistonFamily VERY_QUASI = register("very_quasi", PistonFamilyImpl.builder()
+            .behavior(PistonBehaviorImpl.DEFAULT)
             .base(PistonType.DEFAULT, ModBlocks.VERY_QUASI_PISTON)
             .base(PistonType.STICKY, ModBlocks.VERY_QUASI_STICKY_PISTON)
             .head(ModBlocks.VERY_QUASI_PISTON_HEAD)
             .moving(ModBlocks.VERY_QUASI_MOVING_BLOCK)
             .movingBlockEntity(ModBlockEntities.BASIC_MOVING_BLOCK_ENTITY, BasicMovingBlockEntity::new));
 
-    public static final PistonFamily STRONG = register("strong", PistonFamily.builder()
-            .behavior(PistonBehavior.builder()
+    public static final PistonFamily STRONG = register("strong", PistonFamilyImpl.builder()
+            .behavior(PistonBehaviorImpl.builder()
                     .speed(0.05F)
                     .pushLimit(24))
             .base(PistonType.DEFAULT, ModBlocks.STRONG_PISTON)
@@ -90,8 +92,8 @@ public class ModPistonFamilies {
             .movingBlockEntity(ModBlockEntities.SPEED_MOVING_BLOCK_ENTITY, SpeedMovingBlockEntity::new)
             .customTextures(true));
 
-    public static final PistonFamily FAST = register("fast", PistonFamily.builder()
-            .behavior(PistonBehavior.builder()
+    public static final PistonFamily FAST = register("fast", PistonFamilyImpl.builder()
+            .behavior(PistonBehaviorImpl.builder()
                     .pushLimit(2))
             .base(PistonType.DEFAULT, ModBlocks.FAST_PISTON)
             .base(PistonType.STICKY, ModBlocks.FAST_STICKY_PISTON)
@@ -99,8 +101,8 @@ public class ModPistonFamilies {
             .moving(ModBlocks.FAST_MOVING_BLOCK)
             .movingBlockEntity(ModBlockEntities.FAST_MOVING_BLOCK_ENTITY, FastMovingBlockEntity::new));
 
-    public static final PistonFamily FRONT_POWERED = register("front_powered", PistonFamily.builder()
-            .behavior(PistonBehavior.builder()
+    public static final PistonFamily FRONT_POWERED = register("front_powered", PistonFamilyImpl.builder()
+            .behavior(PistonBehaviorImpl.builder()
                     .frontPowered())
             .base(PistonType.DEFAULT, ModBlocks.FRONT_POWERED_PISTON)
             .base(PistonType.STICKY, ModBlocks.FRONT_POWERED_STICKY_PISTON)
@@ -108,16 +110,16 @@ public class ModPistonFamilies {
             .moving(ModBlocks.FRONT_POWERED_MOVING_BLOCK)
             .movingBlockEntity(ModBlockEntities.BASIC_MOVING_BLOCK_ENTITY, BasicMovingBlockEntity::new));
 
-    public static final PistonFamily SLIPPERY = register("slippery", PistonFamily.builder()
-            .behavior(PistonBehavior.DEFAULT)
+    public static final PistonFamily SLIPPERY = register("slippery", PistonFamilyImpl.builder()
+            .behavior(PistonBehaviorImpl.DEFAULT)
             .base(PistonType.DEFAULT, ModBlocks.SLIPPERY_PISTON)
             .base(PistonType.STICKY, ModBlocks.SLIPPERY_STICKY_PISTON)
             .head(ModBlocks.SLIPPERY_PISTON_HEAD)
             .moving(ModBlocks.SLIPPERY_MOVING_BLOCK)
             .movingBlockEntity(ModBlockEntities.BASIC_MOVING_BLOCK_ENTITY, BasicMovingBlockEntity::new));
 
-    public static final PistonFamily SUPER = register("super", PistonFamily.builder()
-            .behavior(PistonBehavior.builder()
+    public static final PistonFamily SUPER = register("super", PistonFamilyImpl.builder()
+            .behavior(PistonBehaviorImpl.builder()
                     .pushLimit(Integer.MAX_VALUE)
                     .verySticky())
             .base(PistonType.DEFAULT, ModBlocks.SUPER_PISTON)
@@ -126,23 +128,23 @@ public class ModPistonFamilies {
             .moving(ModBlocks.SUPER_MOVING_BLOCK)
             .movingBlockEntity(ModBlockEntities.BASIC_MOVING_BLOCK_ENTITY, BasicMovingBlockEntity::new));
 
-    public static final PistonFamily MBE = register("mbe", PistonFamily.builder()
-            .behavior(PistonBehavior.DEFAULT)
+    public static final PistonFamily MBE = register("mbe", PistonFamilyImpl.builder()
+            .behavior(PistonBehaviorImpl.DEFAULT)
             .base(PistonType.DEFAULT, ModBlocks.MBE_PISTON)
             .base(PistonType.STICKY, ModBlocks.MBE_STICKY_PISTON)
             .head(ModBlocks.MBE_PISTON_HEAD_BLOCK)
             .moving(ModBlocks.MBE_MOVING_BLOCK)
             .movingBlockEntity(ModBlockEntities.MBE_MOVING_BLOCK_ENTITY, MBEMovingBlockEntity::new));
 
-    public static final PistonFamily VERY_STICKY = register("very_sticky", PistonFamily.builder()
-            .behavior(PistonBehavior.builder()
+    public static final PistonFamily VERY_STICKY = register("very_sticky", PistonFamilyImpl.builder()
+            .behavior(PistonBehaviorImpl.builder()
                     .verySticky())
             .base(PistonType.STICKY, ModBlocks.VERY_STICKY_PISTON)
             .head(ModBlocks.STICKY_PISTON_HEAD)
             .moving(ModBlocks.STICKY_MOVING_BLOCK)
             .movingBlockEntity(ModBlockEntities.BASIC_MOVING_BLOCK_ENTITY, BasicMovingBlockEntity::new));
 
-    private static PistonFamily register(String name, PistonFamily.PistonFamilyBuilder familyBuilder) {
+    private static PistonFamily register(String name, PistonFamily.Builder familyBuilder) {
         return register(name, familyBuilder.build());
     }
 
@@ -153,7 +155,7 @@ public class ModPistonFamilies {
     public static void bootstrap() { }
 
     public static void validate() {
-        ModRegistries.PISTON_FAMILY.forEach(family -> {
+        PistonLibRegistries.PISTON_FAMILY.forEach(family -> {
             try {
                 if (family.getMinLength() > family.getMaxLength()) {
                     throw new IllegalStateException("min length is greater than max length");

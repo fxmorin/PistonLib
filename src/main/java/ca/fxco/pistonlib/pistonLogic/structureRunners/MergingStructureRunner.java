@@ -2,6 +2,7 @@ package ca.fxco.pistonlib.pistonLogic.structureRunners;
 
 import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.api.pistonLogic.structure.StructureGroup;
+import ca.fxco.pistonlib.api.pistonLogic.structure.StructureResolver;
 import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlock;
 import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlock;
@@ -14,6 +15,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.piston.PistonStructureResolver;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.PistonType;
 
@@ -30,9 +32,10 @@ public class MergingStructureRunner extends BasicStructureRunner {
     private BlockState[] unMergingStates;
     private int unMergingIndex = 0;
 
-    public MergingStructureRunner(Level level, BlockPos pos, Direction facing, int length,
-                                  PistonFamily family, PistonType type, boolean extend,
-                                  BasicStructureResolver.Factory<? extends BasicStructureResolver> structureProvider) {
+    public <S extends PistonStructureResolver & StructureResolver> MergingStructureRunner(
+            Level level, BlockPos pos, Direction facing, int length, PistonFamily family, PistonType type,
+            boolean extend, StructureResolver.Factory<S> structureProvider
+    ) {
         super(level, pos, facing, length, family, type, extend, structureProvider);
     }
 

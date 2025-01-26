@@ -1,10 +1,10 @@
 package ca.fxco.pistonlib.datagen;
 
 import ca.fxco.pistonlib.PistonLib;
+import ca.fxco.pistonlib.api.PistonLibRegistries;
 import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.base.ModPistonFamilies;
-import ca.fxco.pistonlib.base.ModRegistries;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootTableProvider;
 import net.minecraft.core.HolderLookup;
@@ -27,7 +27,7 @@ public class ModBlockLootTableProvider extends FabricBlockLootTableProvider {
     public void generate() {
         LOGGER.info("Generating block loot tables...");
 
-        for (Map.Entry<ResourceKey<PistonFamily>, PistonFamily> entry : ModRegistries.PISTON_FAMILY.entrySet()) {
+        for (Map.Entry<ResourceKey<PistonFamily>, PistonFamily> entry : PistonLibRegistries.PISTON_FAMILY.entrySet()) {
             ResourceKey<PistonFamily> key = entry.getKey();
             PistonFamily family = entry.getValue();
 
