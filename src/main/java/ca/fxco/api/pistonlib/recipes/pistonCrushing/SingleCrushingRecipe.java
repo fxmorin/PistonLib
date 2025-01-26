@@ -26,6 +26,10 @@ public class SingleCrushingRecipe extends AbstractCrushingRecipe {
 
     @Override
     public boolean matches(PistonCrushingInput input, Level level) {
+        if (input.size() != 1) {
+            return false;
+        }
+
         return this.ingredient.test(input.getItem(0));
     }
 

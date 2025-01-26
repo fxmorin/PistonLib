@@ -37,6 +37,10 @@ public class SingleCrushingConditionalRecipe extends SingleCrushingRecipe {
 
     @Override
     public boolean matches(PistonCrushingInput input, Level level) {
+        if (input.againstBlock() == null) {
+            return false;
+        }
+
         return matchesCondition(condition, data, input.againstBlock().getBlock()) &&
                 this.ingredient.test(input.getItem(0));
     }
