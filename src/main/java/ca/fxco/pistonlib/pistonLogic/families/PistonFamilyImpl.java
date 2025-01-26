@@ -4,7 +4,7 @@ import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.pistonlib.api.pistonLogic.families.PistonBehavior;
 import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamilies;
 import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
-import ca.fxco.pistonlib.api.pistonLogic.structure.StructureGroup;
+import ca.fxco.pistonlib.api.pistonLogic.structureGroups.StructureGroup;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Delegate;

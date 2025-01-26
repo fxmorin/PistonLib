@@ -8,10 +8,10 @@ import ca.fxco.pistonlib.api.pistonLogic.base.PLMovingBlockEntity;
 import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamilies;
 import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.api.pistonLogic.sticky.StickyType;
-import ca.fxco.pistonlib.api.pistonLogic.structure.StructureGroup;
+import ca.fxco.pistonlib.api.pistonLogic.structureGroups.StructureGroup;
 import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.mixin.accessors.BlockEntityAccessor;
-import ca.fxco.pistonlib.pistonLogic.structureGroups.LoadingStructureGroup;
+import ca.fxco.pistonlib.api.pistonLogic.structureGroups.LoadingStructureGroup;
 import it.unimi.dsi.fastutil.Pair;
 import lombok.Getter;
 import lombok.Setter;
@@ -403,7 +403,6 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity implements P
         }
     }
 
-    @Override
     public void tick() {
         tickStart();
         tickMovement();
@@ -528,7 +527,12 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity implements P
         if (PistonLibConfig.pistonStructureGrouping && nbt.contains("controller")) {
             LoadingStructureGroup loadingStructureGroup = new LoadingStructureGroup();
             this.structureGroup = loadingStructureGroup;
-            loadingStructureGroup.onLoad(nbt, this.worldPosition, this.family.getPushLimit());
+            if (nbt.contains("controller")) {
+                loadingStructureGroup.getBlockPosList().addAll(
+                        ca.fxco.pistonlib.helpers.NbtUtils.loadCompactRelativeBlockPosList(
+                                nbt, "controller", this.worldPosition, this.family.getPushLimit()
+                        ));
+            }
             this.isGroupController = true;
         }
     }

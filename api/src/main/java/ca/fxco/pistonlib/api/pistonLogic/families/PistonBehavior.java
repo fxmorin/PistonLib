@@ -1,40 +1,158 @@
 package ca.fxco.pistonlib.api.pistonLogic.families;
 
-//TODO-API: JavaDoc
+/**
+ * The PistonBehavior that should be used by a piston
+ *
+ * @author FX
+ * @since 1.2.0
+ */
 public interface PistonBehavior {
 
+    /**
+     * Check if this is a very sticky piston.
+     * This makes the front of the sticky piston stick like a slime block.
+     *
+     * @return {@code true} if the piston is very sticky, otherwise {@code false}
+     * @since 1.2.0
+     */
     boolean isVerySticky();
 
+    /**
+     * Check if this piston can be powered from the front.
+     *
+     * @return {@code true} if the piston can be powered from the front, otherwise {@code false}
+     * @since 1.2.0
+     */
     boolean isFrontPowered();
 
+    /**
+     * If this piston is slippery.
+     * Slippery pistons fall if no blocks are supporting them.
+     *
+     * @return {@code true} if the piston is slippery, otherwise {@code false}
+     * @since 1.2.0
+     * @deprecated This behavior is getting removed from the core library
+     */
+    @Deprecated(forRemoval = true)
     boolean isSlippery();
 
+    /**
+     * If this piston is quasi.
+     * If it's affected by quasi-connectivity.
+     *
+     * @return {@code true} if the piston is affected by quasi-connectivity, otherwise {@code false}
+     * @since 1.2.0
+     */
     boolean isQuasi();
 
+    /**
+     * Gets the piston push limit.
+     *
+     * @return The push limit
+     * @since 1.2.0
+     */
     int getPushLimit();
 
+    /**
+     * Gets the extending speed
+     *
+     * @return The extending speed
+     * @since 1.2.0
+     */
     float getExtendingSpeed();
 
+    /**
+     * Gets the retracting speed
+     *
+     * @return The retracting speed
+     * @since 1.2.0
+     */
     float getRetractingSpeed();
 
+    /**
+     * If this piston is allowed to retract while its extending
+     *
+     * @return {@code true} if its able to retract while extending, otherwise {@code false}
+     * @since 1.2.0
+     */
     boolean isRetractOnExtending();
 
+    /**
+     * If this piston is allowed to extend while its retracting
+     *
+     * @return {@code true} if its able to extend while retracting, otherwise {@code false}
+     * @since 1.2.0
+     */
     boolean isExtendOnRetracting();
 
+    /**
+     * Gets the minimum length (in blocks) that the piston can be.
+     * Vanilla is 0
+     *
+     * @return The minimum length
+     * @since 1.2.0
+     */
     int getMinLength();
 
+    /**
+     * Gets the maximum length (in blocks) that the piston can be.
+     * Vanilla is 1
+     *
+     * @return The maximum length
+     * @since 1.2.0
+     */
     int getMaxLength();
 
+    /**
+     * The PistonBehavior builder
+     *
+     * @since 1.2.0
+     */
     interface Builder {
 
+        /**
+         * Makes the front of the sticky piston stick like a slime block.
+         *
+         * @return The builder
+         * @since 1.2.0
+         */
         Builder verySticky();
 
+        /**
+         * This piston can be powered from the front.
+         *
+         * @return The builder
+         * @since 1.2.0
+         */
         Builder frontPowered();
 
+        /**
+         * Make this piston slippery.
+         * Slippery pistons fall if no blocks are supporting them.
+         *
+         * @return The builder
+         * @since 1.2.0
+         * @deprecated This behavior is getting removed from the core library
+         */
+        @Deprecated(forRemoval = true)
         Builder slippery();
 
+        /**
+         * If this piston shouldn't be quasi.
+         * Meaning it'd no longer be affected by quasi-connectivity.
+         *
+         * @return The builder
+         * @since 1.2.0
+         */
         Builder noQuasi();
 
+        /**
+         * Sets the piston push limit for this piston.
+         *
+         * @param limit the push limit
+         * @return The builder
+         * @since 1.2.0
+         */
         Builder pushLimit(int limit);
 
         Builder speed(float generalSpeed);

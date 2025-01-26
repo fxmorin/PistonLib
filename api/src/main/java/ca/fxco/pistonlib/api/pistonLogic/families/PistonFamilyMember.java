@@ -9,6 +9,8 @@ package ca.fxco.pistonlib.api.pistonLogic.families;
 public interface PistonFamilyMember {
 
     /**
+     * Gets the family of this family member
+     *
      * @return the piston family this member belongs to.
      * @since 1.2.0
      */

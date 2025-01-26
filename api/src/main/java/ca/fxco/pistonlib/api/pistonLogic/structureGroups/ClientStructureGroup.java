@@ -1,7 +1,6 @@
-package ca.fxco.pistonlib.pistonLogic.structureGroups;
+package ca.fxco.pistonlib.api.pistonLogic.structureGroups;
 
 import ca.fxco.pistonlib.api.pistonLogic.base.PLMovingBlockEntity;
-import lombok.NoArgsConstructor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.piston.PistonMovingBlockEntity;
@@ -10,10 +9,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.util.HashMap;
 import java.util.Map;
 
-@NoArgsConstructor
 public class ClientStructureGroup extends ServerStructureGroup {
 
     private final Map<BlockPos, BlockState> fastStateLookup = new HashMap<>();
+
+    public ClientStructureGroup() {}
 
     @Override
     public <P extends PistonMovingBlockEntity & PLMovingBlockEntity> void add(P blockEntity) {

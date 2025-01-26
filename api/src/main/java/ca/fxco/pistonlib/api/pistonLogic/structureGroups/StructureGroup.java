@@ -1,4 +1,4 @@
-package ca.fxco.pistonlib.api.pistonLogic.structure;
+package ca.fxco.pistonlib.api.pistonLogic.structureGroups;
 
 import ca.fxco.pistonlib.api.pistonLogic.base.PLMovingBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -144,10 +144,9 @@ public interface StructureGroup {
      * @since 1.2.0
      */
     static StructureGroup create(Level level) { // TODO-API: Move out of here...
-        /*if (level.isClientSide) {
+        if (level.isClientSide) {
             return new ClientStructureGroup(); // Holds rendering cache
         }
-        return new ServerStructureGroup();*/
-        return null;
+        return new ServerStructureGroup();
     }
 }

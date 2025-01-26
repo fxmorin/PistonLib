@@ -32,6 +32,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -90,7 +91,7 @@ public class MergeBlockEntity extends BlockEntity implements PLMergeBlockEntity 
     }
 
     @Override
-    public void doMerge(BlockState state, BlockEntity blockEntity, Direction dir, float speed) {
+    public void doMerge(BlockState state, @NotNull BlockEntity blockEntity, Direction dir, float speed) {
         MergeData data = new MergeData(blockEntity, state);
         data.setSpeed(speed);
         mergingBlocks.put(dir, data);
@@ -286,18 +287,18 @@ public class MergeBlockEntity extends BlockEntity implements PLMergeBlockEntity 
     }
 
     @Override
-    public float getXOff(Direction dir, float f, float progress, float lastProgress) {
-        return (float)dir.getStepX() * (this.getProgress(f, progress, lastProgress) - 1);
+    public float getXOff(Direction dir, float partialTick, float progress, float lastProgress) {
+        return (float)dir.getStepX() * (this.getProgress(partialTick, progress, lastProgress) - 1);
     }
 
     @Override
-    public float getYOff(Direction dir, float f, float progress, float lastProgress) {
-        return (float)dir.getStepY() * (this.getProgress(f, progress, lastProgress) - 1);
+    public float getYOff(Direction dir, float partialTick, float progress, float lastProgress) {
+        return (float)dir.getStepY() * (this.getProgress(partialTick, progress, lastProgress) - 1);
     }
 
     @Override
-    public float getZOff(Direction dir, float f, float progress, float lastProgress) {
-        return (float)dir.getStepZ() * (this.getProgress(f, progress, lastProgress) - 1);
+    public float getZOff(Direction dir, float partialTick, float progress, float lastProgress) {
+        return (float)dir.getStepZ() * (this.getProgress(partialTick, progress, lastProgress) - 1);
     }
 
     @Override

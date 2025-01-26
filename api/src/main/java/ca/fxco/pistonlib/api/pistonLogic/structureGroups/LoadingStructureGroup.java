@@ -1,10 +1,6 @@
-package ca.fxco.pistonlib.pistonLogic.structureGroups;
+package ca.fxco.pistonlib.api.pistonLogic.structureGroups;
 
 import ca.fxco.pistonlib.api.pistonLogic.base.PLMovingBlockEntity;
-import ca.fxco.pistonlib.api.pistonLogic.structure.StructureGroup;
-import ca.fxco.pistonlib.helpers.NbtUtils;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
@@ -21,11 +17,15 @@ import java.util.function.Consumer;
  *
  * @author FX
  */
-@Getter
-@AllArgsConstructor
 public class LoadingStructureGroup implements StructureGroup {
 
     private final List<BlockPos> blockPosList = new ArrayList<>();
+
+    public LoadingStructureGroup() {}
+
+    public List<BlockPos> getBlockPosList() {
+        return blockPosList;
+    }
 
     @Override
     public <P extends PistonMovingBlockEntity & PLMovingBlockEntity> void add(P blockEntity) {}
@@ -65,12 +65,4 @@ public class LoadingStructureGroup implements StructureGroup {
 
     @Override
     public void saveAdditional(CompoundTag nbt) {}
-
-    public void onLoad(CompoundTag nbt, BlockPos basePos, int pushLimit) {
-        if (!nbt.contains("controller")) {
-            return;
-        }
-
-        blockPosList.addAll(NbtUtils.loadCompactRelativeBlockPosList(nbt, "controller", basePos, pushLimit));
-    }
 }
