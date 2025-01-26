@@ -13,12 +13,10 @@ public interface PistonLibInitializer {
 
     /**
      * The first method to be called.
-     * Passes a supplier to give developers access to internal implementations.
      *
-     * @param supplier The {@link PistonLibSupplier} to pass to other mods.
      * @since 1.0.4
      */
-    void initialize(PistonLibSupplier supplier);
+    void initialize();
 
     /**
      * Register custom piston families through {@link PistonFamilies#register}

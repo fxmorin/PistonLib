@@ -52,7 +52,7 @@ public class PistonLib implements ModInitializer, PistonLibInitializer, PistonLi
     public void onInitialize() {
         PistonLibApi.setSupplier(this);
 
-        initialize(p -> p.initialize(this));
+        initialize(p -> p.initialize());
         initialize(PistonLibInitializer::bootstrap);
         initialize(PistonLibInitializer::registerPistonFamilies);
         initialize(PistonLibInitializer::registerStickyGroups);
@@ -89,7 +89,7 @@ public class PistonLib implements ModInitializer, PistonLibInitializer, PistonLi
     }
 
     @Override
-    public void initialize(PistonLibSupplier supplier) {}
+    public void initialize() {}
 
     @Override
     public void registerPistonFamilies() {

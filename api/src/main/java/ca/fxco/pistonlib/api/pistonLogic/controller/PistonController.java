@@ -26,6 +26,7 @@ public interface PistonController {
      * Gets the piston family used by this controller.
      *
      * @return The piston family for this controller.
+     * @since 1.2.0
      */
     PistonFamily getFamily();
 
@@ -33,6 +34,7 @@ public interface PistonController {
      * Sets the piston family used by this controller.
      *
      * @param family The piston family for this controller.
+     * @since 1.2.0
      */
     void setFamily(PistonFamily family);
 
@@ -40,6 +42,7 @@ public interface PistonController {
      * Gets the piston type used by this controller.
      *
      * @return The piston type for this controller.
+     * @since 1.2.0
      */
     PistonType getType();
 
@@ -53,6 +56,7 @@ public interface PistonController {
      * @param extend If this should be an extension or retraction
      * @param <S> The structure resolver type
      * @return The new structure resolver
+     * @since 1.2.0
      */
     <S extends PistonStructureResolver & StructureResolver> S newStructureResolver(
             Level level, BlockPos pos, Direction facing, int length, boolean extend
@@ -69,6 +73,7 @@ public interface PistonController {
      * @param structureProvider A structure resolver provider
      * @param <S> The structure resolver type
      * @return The new structure runner
+     * @since 1.2.0
      */
     <S extends PistonStructureResolver & StructureResolver> StructureRunner newStructureRunner(
             Level level, BlockPos pos, Direction facing, int length, boolean extend,
@@ -80,6 +85,7 @@ public interface PistonController {
      * When retracting, it gets the minimum length of the piston.
      *
      * @return the length that the piston should have once it's done moving blocks
+     * @since 1.2.0
      */
     int getLength(Level level, BlockPos pos, BlockState state);
 
@@ -90,6 +96,7 @@ public interface PistonController {
      * @param pos block position of the block state
      * @param facing direction to not check for the signal, usually piston facing
      * @return {@code true} if block states neighbors has signal except from one direction
+     * @since 1.2.0
      */
     boolean hasNeighborSignal(Level level, BlockPos pos, Direction facing);
 
@@ -100,6 +107,7 @@ public interface PistonController {
      * @param pos block position of the block state
      * @param state block state to check
      * @param onPlace was block just placed
+     * @since 1.2.0
      */
     void checkIfExtend(Level level, BlockPos pos, BlockState state, boolean onPlace);
 
@@ -111,6 +119,7 @@ public interface PistonController {
      * @param facing the direction piston extends in
      * @param length of the piston
      * @return retract type of the block state
+     * @since 1.2.0
      */
     int getRetractType(ServerLevel level, BlockPos pos, Direction facing, int length);
 
@@ -122,10 +131,19 @@ public interface PistonController {
      * @param pos block position of the block state
      * @param type retract type {@link ca.fxco.pistonlib.api.pistonLogic.PistonEvents}
      * @param data 3D data of the direction
-     * @return {@code false} if event failed
+     * @return {@code false} if event failed, otherwise {@code true}
+     * @since 1.2.0
      */
     boolean triggerEvent(BlockState state, Level level, BlockPos pos, int type, int data);
 
+    /**
+     * plays a {@link GameEvent} from a position.
+     *
+     * @param level of the block state
+     * @param event an event as a holder
+     * @param pos   block position to play the game event at
+     * @since 1.2.0
+     */
     void playEvents(Level level, Holder<GameEvent> event, BlockPos pos);
 
     /**
@@ -139,6 +157,8 @@ public interface PistonController {
      * @param moveDir      The direction we're attempting to move the block in
      * @param allowDestroy If we're allowed to destroy blocks
      * @param pistonFacing The direction that the piston moving this block is facing
+     * @return {@code true} if the controller is able to move the block, otherwise {@code false}
+     * @since 1.2.0
      */
     boolean canMoveBlock(BlockState state, Level level, BlockPos pos, Direction moveDir,
                          boolean allowDestroy, Direction pistonFacing);
@@ -149,6 +169,8 @@ public interface PistonController {
      * checks have all succeeded.
      *
      * @param state The block state that we're attempting to move
+     * @return {@code true} if the controller is able to move the block, otherwise {@code false}
+     * @since 1.2.0
      */
     boolean canMoveBlock(BlockState state);
 
@@ -162,6 +184,7 @@ public interface PistonController {
      * @param length The length that the piston should have once it's done moving blocks
      * @param extend If this should be an extension or retraction
      * @return {@code true} if the controller was able to move the blocks, otherwise {@code false}
+     * @since 1.2.0
      */
     boolean moveBlocks(Level level, BlockPos pos, Direction facing, int length, boolean extend);
 }

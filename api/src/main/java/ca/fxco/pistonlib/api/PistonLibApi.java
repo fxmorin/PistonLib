@@ -12,12 +12,26 @@ package ca.fxco.pistonlib.api;
  */
 public class PistonLibApi {
 
-    protected static PistonLibSupplier SUPPLIER;
+    private static PistonLibSupplier SUPPLIER;
 
+    /**
+     * Gets the {@link PistonLibSupplier}
+     * This provides you with access to more internal PistonLib implementations.
+     *
+     * @return The PistonLibSupplier
+     * @since 1.2.0
+     */
     public static PistonLibSupplier getSupplier() {
         return SUPPLIER;
     }
 
+    /**
+     * For internal PistonLib use only.
+     * Sets the {@link PistonLibSupplier} within the API
+     *
+     * @param supplier The supplier to set
+     * @since 1.2.0
+     */
     public static void setSupplier(PistonLibSupplier supplier) {
         if (PistonLibApi.SUPPLIER != null) {
             throw new RuntimeException("PistonLibSupplier must only be set by PistonLib!");
