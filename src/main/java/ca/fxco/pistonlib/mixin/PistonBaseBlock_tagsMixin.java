@@ -2,7 +2,8 @@ package ca.fxco.pistonlib.mixin;
 
 import ca.fxco.pistonlib.api.block.PLPistonController;
 import ca.fxco.pistonlib.api.pistonLogic.controller.PistonController;
-import ca.fxco.pistonlib.base.ModPistonFamilies;
+import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
+import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamilyMember;
 import ca.fxco.pistonlib.base.ModTags;
 import ca.fxco.pistonlib.pistonLogic.controller.VanillaPistonController;
 import net.minecraft.core.BlockPos;
@@ -28,7 +29,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
  * This ensures even vanilla pistons will respect custom movability and sticky behavior.
  */
 @Mixin(PistonBaseBlock.class)
-public class PistonBaseBlock_tagsMixin implements PLPistonController {
+public class PistonBaseBlock_tagsMixin implements PLPistonController, PistonFamilyMember {
 
     @Unique
     private static final PistonController VANILLA_CONTROLLER_DEFAULT = new VanillaPistonController(PistonType.DEFAULT);
@@ -38,6 +39,16 @@ public class PistonBaseBlock_tagsMixin implements PLPistonController {
     @Shadow
     @Final
     private boolean isSticky;
+
+    @Override
+    public PistonFamily getFamily() {
+        return this.pl$getPistonController().getFamily();
+    }
+
+    @Override
+    public void setFamily(PistonFamily family) {
+        this.pl$getPistonController().setFamily(family);
+    }
 
     @Redirect(
             method = "checkIfExtend(Lnet/minecraft/world/level/Level;" +

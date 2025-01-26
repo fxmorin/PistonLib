@@ -37,7 +37,6 @@
     "movingPiston.FallingBlockEntity_movingPistonMixin",
     "movingPiston.Shulker_movingPistonMixin",
 	"pistonFamilies.MovingPistonBlock_vanillaFamilyMixin",
-	"pistonFamilies.PistonBaseBlock_vanillaFamilyMixin",
 	"pistonFamilies.PistonHeadBlock_vanillaFamilyMixin",
     "quasi.DispenserBlock_quasiMixin",
     "quasi.Level_quasiMixin",

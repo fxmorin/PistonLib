@@ -57,6 +57,9 @@ public class VanillaPistonController implements PistonController {
 
     @Override
     public void setFamily(PistonFamily family) {
+        if (this.family != null) {
+            throw new IllegalStateException("Family has already been set! - " + this.family);
+        }
         this.family = family;
     }
 
