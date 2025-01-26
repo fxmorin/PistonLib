@@ -61,7 +61,7 @@ dependencies {
     // Lombok
     compileOnly(annotationProcessor("org.projectlombok:lombok:${project.lombok_version}"))
 
-    implementation project(":api")
+    implementation project(path: ":api", configuration: "namedElements")
 }
 
 processResources {
