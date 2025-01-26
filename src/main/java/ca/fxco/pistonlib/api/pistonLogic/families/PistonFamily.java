@@ -3,11 +3,10 @@ package ca.fxco.pistonlib.api.pistonLogic.families;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.function.BiFunction;
 
 import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.pistonlib.api.pistonLogic.structure.StructureGroup;
-import ca.fxco.pistonlib.base.ModBlockEntities;
-import ca.fxco.pistonlib.base.ModPistonFamilies;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -55,7 +54,7 @@ public class PistonFamily {
     @Getter
     private final BlockEntityType<? extends PistonMovingBlockEntity> movingBlockEntityType;
     @Getter
-    private final ModBlockEntities.Factory<? extends PistonMovingBlockEntity> movingBlockEntityFactory;
+    private final Factory<? extends PistonMovingBlockEntity> movingBlockEntityFactory;
 
     private final boolean customTextures;
 
@@ -113,20 +112,48 @@ public class PistonFamily {
 
         Map<PistonType, Block> bases = new EnumMap<>(PistonType.class);
         BlockEntityType<? extends PistonMovingBlockEntity> movingBlockEntityType;
-        ModBlockEntities.Factory<? extends PistonMovingBlockEntity> movingBlockEntityFactory;
+        Factory<? extends PistonMovingBlockEntity> movingBlockEntityFactory;
 
         public PistonFamilyBuilder base(PistonType type, Block base) {
             this.bases.put(type, base);
             return this;
         }
 
+        public PistonFamilyBuilder behavior(PistonBehavior.PistonBehaviorBuilder builder) {
+            this.behavior = builder.build();
+            return this;
+        }
+
         public <T extends PistonMovingBlockEntity> PistonFamilyBuilder movingBlockEntity(
             BlockEntityType<T> type,
-            ModBlockEntities.Factory<T> factory
+            Factory<T> factory
         ) {
             this.movingBlockEntityType = type;
             this.movingBlockEntityFactory = factory;
             return this;
         }
+
+        public <T extends PistonMovingBlockEntity> PistonFamilyBuilder vanillaMovingBlockEntity(
+                BlockEntityType<T> type,
+                BiFunction<BlockPos, BlockState, T> factory
+        ) {
+            this.movingBlockEntityType = type;
+            this.movingBlockEntityFactory = (family, structureGroup, pos, state, movedState, movedBlockEntity,
+                                             facing, extending, isSourcePiston) -> factory.apply(pos, state);
+            return this;
+        }
+    }
+
+    /**
+     * Factory used to create PistonMovingBlockEntities
+     *
+     * @param <T> The type of the piston moving block entity
+     */
+    @FunctionalInterface
+    public interface Factory<T extends PistonMovingBlockEntity> {
+
+        T create(PistonFamily family, StructureGroup structureGroup, BlockPos pos, BlockState state,
+                 BlockState movedState, BlockEntity movedBlockEntity, Direction facing, boolean extending,
+                 boolean isSourcePiston);
     }
 }
