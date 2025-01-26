@@ -184,7 +184,7 @@ public interface PLBlockBehaviour extends BlockPistonBehavior, BlockPistonMergin
 
     @Deprecated
     @Override
-    default @Nullable StickyGroup pl$getStickyGroup() {
+    default @Nullable StickyGroup pl$getStickyGroup(BlockState state) {
         return null;
     }
 
