@@ -16,6 +16,7 @@ import ca.fxco.pistonlib.pistonLogic.structureResolvers.BasicStructureResolver;
 import ca.fxco.pistonlib.pistonLogic.structureResolvers.MergingPistonStructureResolver;
 import ca.fxco.pistonlib.pistonLogic.structureRunners.BasicStructureRunner;
 import ca.fxco.pistonlib.pistonLogic.structureRunners.MergingStructureRunner;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -44,6 +45,7 @@ import static net.minecraft.world.level.block.state.properties.BlockStatePropert
  * @author FX
  * @since 1.0.4
  */
+@Getter
 @RequiredArgsConstructor
 public class VanillaPistonController implements PistonController {
 
@@ -51,21 +53,11 @@ public class VanillaPistonController implements PistonController {
     private PistonFamily family;
 
     @Override
-    public PistonFamily getFamily() {
-        return family;
-    }
-
-    @Override
     public void setFamily(PistonFamily family) {
         if (this.family != null) {
             throw new IllegalStateException("Family has already been set! - " + this.family);
         }
         this.family = family;
-    }
-
-    @Override
-    public PistonType getType() {
-        return type;
     }
 
     @Override
