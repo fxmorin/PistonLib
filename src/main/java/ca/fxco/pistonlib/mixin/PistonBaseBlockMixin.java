@@ -29,7 +29,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
  * This ensures even vanilla pistons will respect custom movability and sticky behavior.
  */
 @Mixin(PistonBaseBlock.class)
-public class PistonBaseBlock_tagsMixin implements PLPistonController, PistonFamilyMember {
+public class PistonBaseBlockMixin implements PLPistonController, PistonFamilyMember {
 
     @Unique
     private static final PistonController VANILLA_CONTROLLER_DEFAULT = new VanillaPistonController(PistonType.DEFAULT);

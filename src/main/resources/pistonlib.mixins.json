@@ -12,7 +12,7 @@
     "Item_coreMixin",
     "ItemProperties_coreMixin",
     "Level_coreMixin",
-    "PistonBaseBlock_tagsMixin",
+    "PistonBaseBlockMixin",
     "ServerLevel_interactionMixin",
     "accessors.BlockEntityAccessor",
     "behavior.MovingPistonBlock_behaviorMixin",
