@@ -1,8 +1,8 @@
 package ca.fxco.pistonlib.mixin.stickyGroup;
 
-import ca.fxco.api.pistonlib.block.PLBlockBehaviour;
-import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyGroup;
-import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyGroups;
+import ca.fxco.pistonlib.api.block.PLBlockBehaviour;
+import ca.fxco.pistonlib.api.pistonLogic.sticky.StickyGroup;
+import ca.fxco.pistonlib.api.pistonLogic.sticky.StickyGroups;
 import net.minecraft.world.level.block.SlimeBlock;
 import org.spongepowered.asm.mixin.Mixin;
 

@@ -5,10 +5,10 @@ import java.util.Map;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import org.jetbrains.annotations.Nullable;
 
-import ca.fxco.api.pistonlib.pistonLogic.sticky.StickRules;
-import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyGroup;
-import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyGroups;
-import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyType;
+import ca.fxco.pistonlib.api.pistonLogic.sticky.StickRules;
+import ca.fxco.pistonlib.api.pistonLogic.sticky.StickyGroup;
+import ca.fxco.pistonlib.api.pistonLogic.sticky.StickyGroups;
+import ca.fxco.pistonlib.api.pistonLogic.sticky.StickyType;
 import ca.fxco.pistonlib.helpers.HalfBlockUtils;
 
 import net.minecraft.core.BlockPos;

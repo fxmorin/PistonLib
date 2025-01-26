@@ -1,9 +1,9 @@
 package ca.fxco.pistonlib.blocks.mergeBlock;
 
 import ca.fxco.pistonlib.PistonLibConfig;
+import ca.fxco.pistonlib.api.block.MovingTickable;
 import ca.fxco.pistonlib.base.ModBlockEntities;
 import ca.fxco.pistonlib.helpers.Utils;
-import ca.fxco.api.pistonlib.block.MovingTickable;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

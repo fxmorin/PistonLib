@@ -2,8 +2,7 @@ package ca.fxco.pistonlib.blocks.pistons.veryStickyPiston;
 
 import java.util.Map;
 
-import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
-import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyType;
+import ca.fxco.pistonlib.api.pistonLogic.sticky.StickyType;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonHeadBlock;
 
 import net.minecraft.core.BlockPos;
@@ -13,8 +12,8 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class StickyPistonHeadBlock extends BasicPistonHeadBlock {
 
-    public StickyPistonHeadBlock(PistonFamily family, Properties properties) {
-        super(family, properties);
+    public StickyPistonHeadBlock(Properties properties) {
+        super(properties);
     }
 
     @Override

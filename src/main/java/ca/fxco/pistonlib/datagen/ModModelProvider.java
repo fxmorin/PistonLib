@@ -11,8 +11,8 @@ import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
-import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.PistonLib;
+import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.base.ModRegistries;
 

@@ -1,8 +1,7 @@
 package ca.fxco.pistonlib.blocks.pistons.configurablePiston;
 
-import ca.fxco.api.pistonlib.pistonLogic.controller.PistonController;
-import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
-import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyType;
+import ca.fxco.pistonlib.api.pistonLogic.controller.PistonController;
+import ca.fxco.pistonlib.api.pistonLogic.sticky.StickyType;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlock;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock;
@@ -32,12 +31,12 @@ import static ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock.SLIPPERY
 
 public class ConfigurableMovingBlock extends BasicMovingBlock {
 
-    public ConfigurableMovingBlock(PistonFamily family) {
-        this(family, BasicMovingBlock.createDefaultSettings());
+    public ConfigurableMovingBlock() {
+        this(BasicMovingBlock.createDefaultSettings());
     }
 
-    public ConfigurableMovingBlock(PistonFamily family, Properties properties) {
-        super(family, properties);
+    public ConfigurableMovingBlock(Properties properties) {
+        super(properties);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package ca.fxco.pistonlib.config;
 
-import ca.fxco.api.pistonlib.config.*;
 import ca.fxco.pistonlib.PistonLib;
+import ca.fxco.pistonlib.api.config.*;
 import ca.fxco.pistonlib.network.PLServerNetwork;
 import ca.fxco.pistonlib.network.packets.ModifyConfigS2CPayload;
 import com.google.common.collect.ImmutableSet;

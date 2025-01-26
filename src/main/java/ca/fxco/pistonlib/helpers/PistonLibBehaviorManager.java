@@ -1,8 +1,7 @@
 package ca.fxco.pistonlib.helpers;
 
-import ca.fxco.api.pistonlib.pistonLogic.PistonMoveBehavior;
-
 import ca.fxco.pistonlib.PistonLib;
+import ca.fxco.pistonlib.api.pistonLogic.PistonMoveBehavior;
 import com.moandjiezana.toml.Toml;
 import com.moandjiezana.toml.TomlWriter;
 import net.minecraft.core.registries.BuiltInRegistries;

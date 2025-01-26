@@ -1,6 +1,5 @@
 package ca.fxco.pistonlib.pistonLogic.controller;
 
-import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.helpers.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -13,8 +12,8 @@ import static net.minecraft.world.level.block.state.properties.BlockStatePropert
 
 public class LongPistonController extends VanillaPistonController {
 
-    public LongPistonController(PistonFamily family, PistonType type) {
-        super(family, type);
+    public LongPistonController(PistonType type) {
+        super(type);
     }
 
     @Override

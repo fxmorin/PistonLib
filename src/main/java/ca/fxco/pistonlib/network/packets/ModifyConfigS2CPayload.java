@@ -1,7 +1,7 @@
 package ca.fxco.pistonlib.network.packets;
 
-import ca.fxco.api.pistonlib.config.ParsedValue;
 import ca.fxco.pistonlib.PistonLib;
+import ca.fxco.pistonlib.api.config.ParsedValue;
 import ca.fxco.pistonlib.config.ParsedValueImpl;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.network.FriendlyByteBuf;

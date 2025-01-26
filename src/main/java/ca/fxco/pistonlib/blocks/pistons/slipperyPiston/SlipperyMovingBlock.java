@@ -1,6 +1,5 @@
 package ca.fxco.pistonlib.blocks.pistons.slipperyPiston;
 
-import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.base.ModProperties;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlock;
 import ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock;
@@ -26,8 +25,8 @@ public class SlipperyMovingBlock extends BasicMovingBlock {
 
     public static final IntegerProperty SLIPPERY_DISTANCE = ModProperties.SLIPPERY_DISTANCE;
 
-    public SlipperyMovingBlock(PistonFamily family, Properties properties) {
-        super(family, properties);
+    public SlipperyMovingBlock(Properties properties) {
+        super(properties);
 
         this.registerDefaultState(this.stateDefinition.any().setValue(SLIPPERY_DISTANCE, 0));
     }

@@ -1,7 +1,7 @@
 package ca.fxco.pistonlib.network.packets;
 
-import ca.fxco.api.pistonlib.pistonLogic.PistonMoveBehavior;
 import ca.fxco.pistonlib.PistonLib;
+import ca.fxco.pistonlib.api.pistonLogic.PistonMoveBehavior;
 import ca.fxco.pistonlib.helpers.PistonLibBehaviorManager;
 import ca.fxco.pistonlib.network.PLServerNetwork;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;

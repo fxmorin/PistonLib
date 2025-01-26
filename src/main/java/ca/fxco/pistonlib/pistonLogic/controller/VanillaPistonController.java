@@ -1,11 +1,11 @@
 package ca.fxco.pistonlib.pistonLogic.controller;
 
-import ca.fxco.api.pistonlib.pistonLogic.PistonEvents;
-import ca.fxco.api.pistonlib.pistonLogic.PistonMoveBehavior;
-import ca.fxco.api.pistonlib.pistonLogic.controller.PistonController;
-import ca.fxco.api.pistonlib.pistonLogic.structure.StructureRunner;
-import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.PistonLibConfig;
+import ca.fxco.pistonlib.api.pistonLogic.PistonEvents;
+import ca.fxco.pistonlib.api.pistonLogic.PistonMoveBehavior;
+import ca.fxco.pistonlib.api.pistonLogic.controller.PistonController;
+import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
+import ca.fxco.pistonlib.api.pistonLogic.structure.StructureRunner;
 import ca.fxco.pistonlib.base.ModTags;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonArmBlock;
@@ -16,6 +16,7 @@ import ca.fxco.pistonlib.pistonLogic.structureResolvers.BasicStructureResolver;
 import ca.fxco.pistonlib.pistonLogic.structureResolvers.MergingPistonStructureResolver;
 import ca.fxco.pistonlib.pistonLogic.structureRunners.BasicStructureRunner;
 import ca.fxco.pistonlib.pistonLogic.structureRunners.MergingStructureRunner;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -44,20 +45,19 @@ import static net.minecraft.world.level.block.state.properties.BlockStatePropert
  * @author FX
  * @since 1.0.4
  */
+@Getter
 @RequiredArgsConstructor
 public class VanillaPistonController implements PistonController {
 
-    private final PistonFamily family;
     private final PistonType type;
+    private PistonFamily family;
 
     @Override
-    public PistonFamily getFamily() {
-        return family;
-    }
-
-    @Override
-    public PistonType getType() {
-        return type;
+    public void setFamily(PistonFamily family) {
+        if (this.family != null) {
+            throw new IllegalStateException("Family has already been set! - " + this.family);
+        }
+        this.family = family;
     }
 
     @Override

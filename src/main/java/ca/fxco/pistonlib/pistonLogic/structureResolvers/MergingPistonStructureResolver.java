@@ -3,7 +3,7 @@ package ca.fxco.pistonlib.pistonLogic.structureResolvers;
 import java.util.ArrayList;
 import java.util.List;
 
-import ca.fxco.api.pistonlib.pistonLogic.controller.PistonController;
+import ca.fxco.pistonlib.api.pistonLogic.controller.PistonController;
 import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlock;
 import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlockEntity;
 

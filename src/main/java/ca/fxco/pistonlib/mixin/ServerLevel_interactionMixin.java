@@ -1,12 +1,12 @@
 package ca.fxco.pistonlib.mixin;
 
-import ca.fxco.api.pistonlib.pistonLogic.controller.PistonController;
+import ca.fxco.pistonlib.api.pistonLogic.controller.PistonController;
+import ca.fxco.pistonlib.api.pistonLogic.structure.StructureRunner;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.helpers.PistonEventData;
 import ca.fxco.pistonlib.network.PLServerNetwork;
 import ca.fxco.pistonlib.network.packets.PistonEventS2CPayload;
 import ca.fxco.pistonlib.pistonLogic.structureRunners.DecoupledStructureRunner;
-import ca.fxco.api.pistonlib.pistonLogic.structure.StructureRunner;
 import net.minecraft.core.*;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;

@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import ca.fxco.api.pistonlib.pistonLogic.controller.PistonController;
-import ca.fxco.api.pistonlib.pistonLogic.sticky.StickRules;
-import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyGroup;
-import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyType;
 import ca.fxco.pistonlib.PistonLibConfig;
+import ca.fxco.pistonlib.api.pistonLogic.controller.PistonController;
+import ca.fxco.pistonlib.api.pistonLogic.sticky.StickRules;
+import ca.fxco.pistonlib.api.pistonLogic.sticky.StickyGroup;
+import ca.fxco.pistonlib.api.pistonLogic.sticky.StickyType;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 
 import net.minecraft.core.BlockPos;

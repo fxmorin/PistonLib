@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 
-import ca.fxco.api.pistonlib.pistonLogic.PistonMoveBehavior;
+import ca.fxco.pistonlib.api.pistonLogic.PistonMoveBehavior;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.context.CommandContext;

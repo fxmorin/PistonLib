@@ -1,7 +1,7 @@
 package ca.fxco.pistonlib.mixin.stuck;
 
-import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyType;
 import ca.fxco.pistonlib.PistonLibConfig;
+import ca.fxco.pistonlib.api.pistonLogic.sticky.StickyType;
 import ca.fxco.pistonlib.base.ModTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
