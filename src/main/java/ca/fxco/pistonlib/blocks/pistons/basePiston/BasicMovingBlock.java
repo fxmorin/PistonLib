@@ -7,6 +7,7 @@ import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamilyMember;
 import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -48,12 +49,10 @@ public class BasicMovingBlock extends MovingPistonBlock implements PistonFamilyM
     }
 
     @Override
-    public PistonFamily getFamily() {
-        return this.family;
-    }
-
-    @Override
     public void setFamily(PistonFamily family) {
+        if (this.family != null) {
+            throw new IllegalStateException("Family has already been set! - " + this.family);
+        }
         this.family = family;
     }
 

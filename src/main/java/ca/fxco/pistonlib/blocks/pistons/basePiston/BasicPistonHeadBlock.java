@@ -7,6 +7,7 @@ import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamilyMember;
 import com.mojang.serialization.MapCodec;
 import lombok.Getter;
 
+import lombok.Setter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
@@ -29,7 +30,6 @@ import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jetbrains.annotations.Nullable;
 
 import static ca.fxco.pistonlib.PistonLib.DIRECTIONS;
 
@@ -61,22 +61,6 @@ public class BasicPistonHeadBlock extends DirectionalBlock implements PistonFami
 
     private PistonFamily family;
 
-    public static VoxelShape[] getHeadShapes(boolean shortHead) {
-        return Arrays.stream(DIRECTIONS).map((dir) -> getHeadShape(dir, shortHead)).toArray(VoxelShape[]::new);
-    }
-
-    //TODO: Make PistonHeadBlock.getHeadShape() public and call it in here instead of re-initializing all this garbage
-    public static VoxelShape getHeadShape(Direction direction, boolean shortHead) {
-        return switch (direction) {
-            default -> Shapes.or(DOWN_HEAD_SHAPE, shortHead ? SHORT_DOWN_ARM_SHAPE : DOWN_ARM_SHAPE);
-            case UP -> Shapes.or(UP_HEAD_SHAPE, shortHead ? SHORT_UP_ARM_SHAPE : UP_ARM_SHAPE);
-            case NORTH -> Shapes.or(NORTH_HEAD_SHAPE, shortHead ? SHORT_NORTH_ARM_SHAPE : NORTH_ARM_SHAPE);
-            case SOUTH -> Shapes.or(SOUTH_HEAD_SHAPE, shortHead ? SHORT_SOUTH_ARM_SHAPE : SOUTH_ARM_SHAPE);
-            case WEST -> Shapes.or(WEST_HEAD_SHAPE, shortHead ? SHORT_WEST_ARM_SHAPE : WEST_ARM_SHAPE);
-            case EAST -> Shapes.or(EAST_HEAD_SHAPE, shortHead ? SHORT_EAST_ARM_SHAPE : EAST_ARM_SHAPE);
-        };
-    }
-
     public BasicPistonHeadBlock(Properties properties) {
         super(properties);
 
@@ -86,12 +70,10 @@ public class BasicPistonHeadBlock extends DirectionalBlock implements PistonFami
     }
 
     @Override
-    public PistonFamily getFamily() {
-        return this.family;
-    }
-
-    @Override
     public void setFamily(PistonFamily family) {
+        if (this.family != null) {
+            throw new IllegalStateException("Family has already been set! - " + this.family);
+        }
         this.family = family;
     }
 
@@ -192,8 +174,28 @@ public class BasicPistonHeadBlock extends DirectionalBlock implements PistonFami
         return false;
     }
 
-    static {
+    @Override
+    protected MapCodec<? extends DirectionalBlock> codec() {
+        return null;
+    }
 
+    public static VoxelShape[] getHeadShapes(boolean shortHead) {
+        return Arrays.stream(DIRECTIONS).map((dir) -> getHeadShape(dir, shortHead)).toArray(VoxelShape[]::new);
+    }
+
+    //TODO: Make PistonHeadBlock.getHeadShape() public and call it in here instead of re-initializing all this garbage
+    public static VoxelShape getHeadShape(Direction direction, boolean shortHead) {
+        return switch (direction) {
+            case UP -> Shapes.or(UP_HEAD_SHAPE, shortHead ? SHORT_UP_ARM_SHAPE : UP_ARM_SHAPE);
+            case NORTH -> Shapes.or(NORTH_HEAD_SHAPE, shortHead ? SHORT_NORTH_ARM_SHAPE : NORTH_ARM_SHAPE);
+            case SOUTH -> Shapes.or(SOUTH_HEAD_SHAPE, shortHead ? SHORT_SOUTH_ARM_SHAPE : SOUTH_ARM_SHAPE);
+            case WEST -> Shapes.or(WEST_HEAD_SHAPE, shortHead ? SHORT_WEST_ARM_SHAPE : WEST_ARM_SHAPE);
+            case EAST -> Shapes.or(EAST_HEAD_SHAPE, shortHead ? SHORT_EAST_ARM_SHAPE : EAST_ARM_SHAPE);
+            default -> Shapes.or(DOWN_HEAD_SHAPE, shortHead ? SHORT_DOWN_ARM_SHAPE : DOWN_ARM_SHAPE);
+        };
+    }
+
+    static {
         TYPE = BlockStateProperties.PISTON_TYPE;
         SHORT = BlockStateProperties.SHORT;
         EAST_HEAD_SHAPE = Block.box(12.0, 0.0, 0.0, 16.0, 16.0, 16.0);
@@ -216,11 +218,5 @@ public class BasicPistonHeadBlock extends DirectionalBlock implements PistonFami
         SHORT_WEST_ARM_SHAPE = Block.box(4.0, 6.0, 6.0, 16.0, 10.0, 10.0);
         SHORT_HEAD_SHAPES = getHeadShapes(true);
         HEAD_SHAPES = getHeadShapes(false);
-
-    }
-
-    @Override
-    protected MapCodec<? extends DirectionalBlock> codec() {
-        return null;
     }
 }
