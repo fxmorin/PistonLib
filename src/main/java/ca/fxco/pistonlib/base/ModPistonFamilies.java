@@ -9,6 +9,8 @@ import ca.fxco.pistonlib.blocks.pistons.configurablePiston.ConfigurableMovingBlo
 import ca.fxco.pistonlib.blocks.pistons.fastPiston.FastMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.movableBlockEntities.MBEMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.speedPiston.SpeedMovingBlockEntity;
+import net.fabricmc.loader.impl.FabricLoaderImpl;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.piston.PistonMovingBlockEntity;
@@ -180,5 +182,13 @@ public class ModPistonFamilies {
 
             family.getMovingBlockEntityType().addSupportedBlock(family.getMoving());
         });
+
+        if (FabricLoaderImpl.INSTANCE.isDevelopmentEnvironment()) {
+            BuiltInRegistries.BLOCK.entrySet().forEach(entry -> {
+                if (entry.getValue() instanceof PistonFamilyMember familyMember && familyMember.getFamily() == null) {
+                    throw new IllegalStateException("Missing piston family for: " + entry.getValue());
+                }
+            });
+        }
     }
 }
