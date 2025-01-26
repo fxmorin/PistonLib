@@ -105,7 +105,7 @@ public class HalfSlimeBlock extends Block {
     }
 
     @Override
-    public @Nullable StickyGroup pl$getStickyGroup() {
+    public @Nullable StickyGroup pl$getStickyGroup(BlockState state) {
         return StickyGroups.SLIME;
     }
 
