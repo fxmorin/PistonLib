@@ -82,7 +82,7 @@ public class ModRecipeProvider extends FabricRecipeProvider {
 
 				PairCrushingRecipeBuilder.crushing(Ingredient.of(Blocks.OAK_PLANKS), Ingredient.of(Blocks.OAK_PLANKS), Items.STICK.getDefaultInstance()).save(exporter);
 
-				MultiCrushingRecipeBuilder.crushing(List.of(Ingredient.of(Blocks.STONE), Ingredient.of(Items.QUARTZ), Ingredient.of(Blocks.ANDESITE)), Blocks.DIORITE.asItem().getDefaultInstance()).save(exporter);
+				MultiCrushingRecipeBuilder.crushing(List.of(Ingredient.of(Blocks.STONE), Ingredient.of(Items.QUARTZ), Ingredient.of(Blocks.ANDESITE)), Blocks.DIORITE.asItem().getDefaultInstance(), 3).save(exporter);
 
 				LOGGER.info("Finished generating recipes!");
 			}
