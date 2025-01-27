@@ -1,7 +1,7 @@
 package ca.fxco.pistonlib.mixin.entity;
 
 import ca.fxco.pistonlib.helpers.BlockPosUtils;
-import ca.fxco.api.pistonlib.EntityPistonMechanics;
+import ca.fxco.api.pistonlib.entity.EntityPistonMechanics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MoverType;
@@ -50,7 +50,7 @@ public abstract class Entity_pushIntoMixin implements EntityPistonMechanics {
                             } else {
                                 crushedAgainst = null;
                             }
-                            if (((EntityPistonMechanics)instance).onPushedIntoBlock(state, pos)) {
+                            if (instance.onPushedIntoBlock(state, pos)) {
                                 state.pl$onPushEntityInto(instance.level(), pos, instance);
                             }
                         }

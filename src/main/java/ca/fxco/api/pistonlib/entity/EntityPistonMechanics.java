@@ -1,4 +1,4 @@
-package ca.fxco.api.pistonlib;
+package ca.fxco.api.pistonlib.entity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
