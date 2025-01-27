@@ -33,7 +33,7 @@ public class SingleCrushingAgainstRecipe extends SingleCrushingRecipe {
 
     @Override
     public boolean matches(PistonCrushingInput input, Level level) {
-        return input.againstBlock().getBlock() == againstBlock && this.ingredient.test(input.getItem(0));
+        return input.againstBlock().getBlock() == againstBlock && super.matches(input, level);
     }
 
     @Override

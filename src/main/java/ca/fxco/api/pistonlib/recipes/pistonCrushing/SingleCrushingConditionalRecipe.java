@@ -42,7 +42,7 @@ public class SingleCrushingConditionalRecipe extends SingleCrushingRecipe {
         }
 
         return matchesCondition(condition, data, input.againstBlock().getBlock()) &&
-                this.ingredient.test(input.getItem(0));
+                super.matches(input, level);
     }
 
     @Override
