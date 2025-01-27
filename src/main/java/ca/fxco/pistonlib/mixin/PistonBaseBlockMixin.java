@@ -6,6 +6,8 @@ import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamilyMember;
 import ca.fxco.pistonlib.base.ModTags;
 import ca.fxco.pistonlib.pistonLogic.controller.VanillaPistonController;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
@@ -19,7 +21,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
 
 /*
  * In this mixin we basically change all the !state.is(PISTON) and regular piston to instead check against the
@@ -50,7 +51,7 @@ public class PistonBaseBlockMixin implements PLPistonController, PistonFamilyMem
         this.pl$getPistonController().setFamily(family);
     }
 
-    @Redirect(
+    @WrapOperation(
             method = "checkIfExtend(Lnet/minecraft/world/level/Level;" +
                     "Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)V",
             at = @At(
@@ -59,11 +60,12 @@ public class PistonBaseBlockMixin implements PLPistonController, PistonFamilyMem
             )
     )
     private PistonStructureResolver pl$customStructureResolver1(Level level, BlockPos pos,
-                                                                Direction facing, boolean extend) {
+                                                                Direction facing, boolean extend,
+                                                                Operation<PistonStructureResolver> original) {
         return pl$newStructureResolver(level, pos, facing, extend);
     }
 
-    @Redirect(
+    @WrapOperation(
         method = "triggerEvent(Lnet/minecraft/world/level/block/state/BlockState;" +
                  "Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;II)Z",
         at = @At(
@@ -74,12 +76,12 @@ public class PistonBaseBlockMixin implements PLPistonController, PistonFamilyMem
                      "Lnet/minecraft/core/Direction;ZLnet/minecraft/core/Direction;)Z"
         )
     )
-    private boolean pl$modifyIsMovable(BlockState state, Level level, BlockPos pos,
-                                       Direction moveDir, boolean allowDestroy, Direction pistonFacing) {
+    private boolean pl$modifyIsMovable(BlockState state, Level level, BlockPos pos, Direction moveDir,
+                                       boolean allowDestroy, Direction pistonFacing, Operation<Boolean> original) {
         return pl$getPistonController().canMoveBlock(state, level, pos, moveDir, allowDestroy, pistonFacing);
     }
 
-    @Redirect(
+    @WrapOperation(
         method = "triggerEvent(Lnet/minecraft/world/level/block/state/BlockState;" +
                  "Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;II)Z",
         at = @At(
@@ -88,11 +90,11 @@ public class PistonBaseBlockMixin implements PLPistonController, PistonFamilyMem
             ordinal = 1
         )
     )
-    private boolean pl$allPistons(BlockState state, Block block) {
-        return state.is(ModTags.PISTONS);
+    private boolean pl$allPistons(BlockState instance, Block block, Operation<Boolean> original) {
+        return instance.is(ModTags.PISTONS);
     }
 
-    @Redirect(
+    @WrapOperation(
         method = "triggerEvent(Lnet/minecraft/world/level/block/state/BlockState;" +
                  "Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;II)Z",
         at = @At(
@@ -101,11 +103,11 @@ public class PistonBaseBlockMixin implements PLPistonController, PistonFamilyMem
             ordinal = 2
         )
     )
-    private boolean pl$skipIsPistonCheck(BlockState state, Block block) {
+    private boolean pl$skipIsPistonCheck(BlockState instance, Block block, Operation<Boolean> original) {
         return false;
     }
 
-    @Redirect(
+    @WrapOperation(
         method = "moveBlocks(Lnet/minecraft/world/level/Level;" +
                 "Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;Z)Z",
         at = @At(
@@ -114,7 +116,8 @@ public class PistonBaseBlockMixin implements PLPistonController, PistonFamilyMem
         )
     )
     private PistonStructureResolver pl$customStructureResolver2(Level level, BlockPos pos,
-                                                                Direction facing, boolean extend) {
+                                                                Direction facing, boolean extend,
+                                                                Operation<PistonStructureResolver> original) {
         return pl$newStructureResolver(level, pos, facing, extend);
     }
 

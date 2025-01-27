@@ -1,6 +1,8 @@
 package ca.fxco.pistonlib.mixin.entity;
 
 import ca.fxco.pistonlib.helpers.BlockPosUtils;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MoverType;
@@ -10,7 +12,6 @@ import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(Entity.class)
 public class Entity_pushIntoMixin {
@@ -18,7 +19,7 @@ public class Entity_pushIntoMixin {
     @Shadow
     private Vec3 collide(Vec3 vec3) { return null; }
 
-    @Redirect(
+    @WrapOperation(
             method = "move",
             at = @At(
                     value = "INVOKE",
@@ -26,7 +27,7 @@ public class Entity_pushIntoMixin {
                             "Lnet/minecraft/world/phys/Vec3;"
             )
     )
-    private Vec3 checkPushInto(Entity instance, Vec3 vec3, MoverType moverType) {
+    private Vec3 checkPushInto(Entity instance, Vec3 vec3, Operation<Vec3> original, MoverType moverType) {
         if (moverType == MoverType.PISTON && !instance.level().isClientSide) {
             // This looks kinda scary, although it only checks max 25 blocks.
             // Honestly it's not very expensive compared to a lot of the other movement logic which runs every tick
@@ -45,6 +46,6 @@ public class Entity_pushIntoMixin {
                 }
             }
         }
-        return this.collide(vec3);
+        return original.call(instance, vec3);
     }
 }

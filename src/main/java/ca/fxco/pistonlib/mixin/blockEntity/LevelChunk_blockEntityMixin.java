@@ -1,7 +1,7 @@
 package ca.fxco.pistonlib.mixin.blockEntity;
 
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
-import com.llamalad7.mixinextras.injector.WrapWithCondition;
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
