@@ -5,36 +5,5 @@
   "name": "PistonLibApi",
   "description": "This description should never be seen outside of this file",
   "license": "MIT",
-  "environment": "*",
-  "custom": {
-    "loom:injected_interfaces": {
-      "net/minecraft/class_4970": [
-        "ca/fxco/pistonlib/api/block/PLBlockBehaviour"
-      ],
-      "net/minecraft/class_2665": [
-        "ca/fxco/pistonlib/api/block/PLPistonController"
-      ],
-      "net/minecraft/class_4970\u0024class_4971": [
-        "ca/fxco/pistonlib/api/block/state/PLBlockStateBase"
-      ],
-      "net/minecraft/class_4970\u0024class_2251": [
-        "ca/fxco/pistonlib/api/block/PLBlockProperties"
-      ],
-      "net/minecraft/class_2586": [
-        "ca/fxco/pistonlib/api/blockEntity/PLBlockEntity"
-      ],
-      "net/minecraft/class_1792": [
-        "ca/fxco/pistonlib/api/item/PLItem"
-      ],
-      "net/minecraft/class_1792\u0024class_1793": [
-        "ca/fxco/pistonlib/api/item/PLItemProperties"
-      ],
-      "net/minecraft/class_1937": [
-        "ca/fxco/pistonlib/api/level/PLLevel"
-      ],
-      "net/minecraft/class_8235": [
-        "ca/fxco/pistonlib/api/level/PLLevel"
-      ]
-    }
-  }
+  "environment": "*"
 }
