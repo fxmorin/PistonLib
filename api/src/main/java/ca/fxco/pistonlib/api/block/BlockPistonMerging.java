@@ -26,7 +26,9 @@ public interface BlockPistonMerging {
      * @return {@code true} if it should use configurable piston merging, otherwise {@code false}
      * @since 1.0.4
      */
-    boolean pl$usesConfigurablePistonMerging();
+    default boolean pl$usesConfigurablePistonMerging() {
+        return false;
+    }
 
     /**
      * Checks if this block can be merged.
@@ -39,7 +41,10 @@ public interface BlockPistonMerging {
      * @return {@code true} if it's able to merge both states together, otherwise {@code false}
      * @since 1.0.4
      */
-    boolean pl$canMerge(BlockState state, BlockGetter level, BlockPos pos, BlockState mergingIntoState, Direction dir);
+    default boolean pl$canMerge(BlockState state, BlockGetter level, BlockPos pos,
+                                BlockState mergingIntoState, Direction dir) {
+        return true;
+    }
 
     /**
      * Checks if this block can be merged from a specific side.
@@ -53,7 +58,9 @@ public interface BlockPistonMerging {
      *  otherwise {@code false}
      * @since 1.0.4
      */
-    boolean pl$canMergeFromSide(BlockState state, BlockGetter level, BlockPos pos, Direction pushDir);
+    default boolean pl$canMergeFromSide(BlockState state, BlockGetter level, BlockPos pos, Direction pushDir) {
+        return true;
+    }
 
     /**
      * Merges two states together.
@@ -66,8 +73,10 @@ public interface BlockPistonMerging {
      * @return the merged state
      * @since 1.0.4
      */
-    BlockState pl$doMerge(BlockState state, BlockGetter level, BlockPos pos,
-                          BlockState mergingIntoState, Direction dir);
+    default BlockState pl$doMerge(BlockState state, BlockGetter level, BlockPos pos,
+                                  BlockState mergingIntoState, Direction dir) {
+        return mergingIntoState;
+    }
 
 
     /**
@@ -77,7 +86,9 @@ public interface BlockPistonMerging {
      * @return {@code true} if it can multi merge, otherwise {@code false}
      * @since 1.0.4
      */
-    boolean pl$canMultiMerge();
+    default boolean pl$canMultiMerge() {
+        return false;
+    }
 
     /**
      * While merging with a block, is this block state able to merge with other block states from other directions?
@@ -91,8 +102,10 @@ public interface BlockPistonMerging {
      * @return {@code true} if it can multi merge with blocks from other directions, otherwise {@code false}
      * @since 1.0.4
      */
-    boolean pl$canMultiMerge(BlockState state, BlockGetter level, BlockPos pos, BlockState mergingIntoState,
-                             Direction dir, Map<Direction, PLMergeBlockEntity.MergeData> currentlyMerging);
+    default boolean pl$canMultiMerge(BlockState state, BlockGetter level, BlockPos pos, BlockState mergingIntoState,
+                                     Direction dir, Map<Direction, PLMergeBlockEntity.MergeData> currentlyMerging) {
+        return false;
+    }
 
     /**
      * Merge multiple states into one
@@ -104,8 +117,10 @@ public interface BlockPistonMerging {
      * @return the merged state
      * @since 1.0.4
      */
-    BlockState pl$doMultiMerge(BlockGetter level, BlockPos pos, Map<Direction, BlockState> states,
-                               BlockState mergingIntoState);
+    default BlockState pl$doMultiMerge(BlockGetter level, BlockPos pos, Map<Direction, BlockState> states,
+                                       BlockState mergingIntoState) {
+        return mergingIntoState;
+    }
 
     /**
      * Checks if this block can un-merge.
@@ -118,7 +133,10 @@ public interface BlockPistonMerging {
      * @return {@code true} if it's able to unmerge into two different states, otherwise {@code false}
      * @since 1.0.4
      */
-    boolean pl$canUnMerge(BlockState state, BlockGetter level, BlockPos pos, BlockState neighborState, Direction dir);
+    default boolean pl$canUnMerge(BlockState state, BlockGetter level, BlockPos pos,
+                                  BlockState neighborState, Direction dir) {
+        return false;
+    }
 
     /**
      * Un-merge this block into two different states.
@@ -131,8 +149,10 @@ public interface BlockPistonMerging {
      * @return the block states that it should unmerge into.
      * @since 1.0.4
      */
-    @Nullable Pair<BlockState, BlockState> pl$doUnMerge(BlockState state, BlockGetter level,
-                                                        BlockPos pos, Direction dir);
+    default @Nullable Pair<BlockState, BlockState> pl$doUnMerge(BlockState state, BlockGetter level,
+                                                                BlockPos pos, Direction dir) {
+        return null;
+    }
 
     /**
      * This method determines when the block entity should be used:
@@ -149,12 +169,22 @@ public interface BlockPistonMerging {
      * @return merge rule this block entity uses
      * @since 1.0.4
      */
-    MergeRule pl$getBlockEntityMergeRules();
+    default MergeRule pl$getBlockEntityMergeRules() {
+        return MergeRule.NEVER;
+    }
 
     enum MergeRule {
+
+        /** Block entity is skipped completely */
         NEVER(false, false),
+
+        /** Block entity is used to check merging conditions */
         MERGING(true, false),
+
+        /** Block entity is used to check unmerging conditions */
         UNMERGING(false, true),
+
+        /** Block entity is always checked */
         ALWAYS(true, true);
 
         private final boolean merging;

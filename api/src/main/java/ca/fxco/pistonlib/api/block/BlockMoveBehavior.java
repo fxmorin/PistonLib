@@ -16,14 +16,16 @@ public interface BlockMoveBehavior {
      * @return {@code true} if you can override this block's piston move behavior, otherwise {@code false}
      * @since 1.0.4
      */
-    boolean pl$canOverridePistonMoveBehavior();
+    default boolean pl$canOverridePistonMoveBehavior() {
+        return true;
+    }
 
     /**
      * Sets a blocks piston move behavior override.
      *
      * @since 1.0.4
      */
-    void pl$setPistonMoveBehaviorOverride(PistonMoveBehavior override);
+    default void pl$setPistonMoveBehaviorOverride(PistonMoveBehavior override) {}
 
     /**
      * Gets the current move behavior override used by this block.
@@ -31,6 +33,8 @@ public interface BlockMoveBehavior {
      * @return The piston move behavior override.
      * @since 1.0.4
      */
-    PistonMoveBehavior pl$getPistonMoveBehaviorOverride();
+    default PistonMoveBehavior pl$getPistonMoveBehaviorOverride() {
+        return PistonMoveBehavior.DEFAULT;
+    }
 
 }

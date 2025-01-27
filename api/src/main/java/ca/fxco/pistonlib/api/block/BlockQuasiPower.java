@@ -25,7 +25,9 @@ public interface BlockQuasiPower {
      * @return the power of quasi signal
      * @since 1.0.4
      */
-    int pl$getQuasiSignal(BlockState state, BlockGetter level, BlockPos pos, Direction dir, int dist);
+    default int pl$getQuasiSignal(BlockState state, BlockGetter level, BlockPos pos, Direction dir, int dist) {
+        return state.getSignal(level, pos, dir);
+    }
 
     /**
      * Get the direct quasi signal strength from a distance.
@@ -38,7 +40,9 @@ public interface BlockQuasiPower {
      * @return the power of direct quasi signal
      * @since 1.0.4
      */
-    int pl$getDirectQuasiSignal(BlockState state, BlockGetter level, BlockPos pos, Direction dir, int dist);
+    default int pl$getDirectQuasiSignal(BlockState state, BlockGetter level, BlockPos pos, Direction dir, int dist) {
+        return state.getDirectSignal(level, pos, dir);
+    }
 
     /**
      * Checks if this block is a quasi conductor.
@@ -49,6 +53,8 @@ public interface BlockQuasiPower {
      * @return {@code true} if block's neighbor is quasi conductor, otherwise {@code false}
      * @since 1.0.4
      */
-    boolean pl$isQuasiConductor(BlockState state, BlockGetter level, BlockPos pos);
+    default boolean pl$isQuasiConductor(BlockState state, BlockGetter level, BlockPos pos) {
+        return state.isRedstoneConductor(level, pos);
+    }
 
 }

@@ -23,7 +23,9 @@ public interface BlockPistonBehavior {
      * @return the weight of the block
      * @since 1.0.4
      */
-    int pl$getWeight(BlockState state);
+    default int pl$getWeight(BlockState state) {
+        return 1;
+    }
 
     /**
      * This must return true in order for the configurable piston behavior to be used!
@@ -31,7 +33,9 @@ public interface BlockPistonBehavior {
      * @return {@code true} if block uses configurable piston behavior, otherwise {@code false}
      * @since 1.0.4
      */
-    boolean pl$usesConfigurablePistonBehavior();
+    default boolean pl$usesConfigurablePistonBehavior() {
+        return false;
+    }
 
     /** If the block state is currently movable. Allows for quick checks to boost performance by skipping more
      * intensive checks early. However, this isn't always checked first in some instances,
@@ -43,7 +47,9 @@ public interface BlockPistonBehavior {
      * @return {@code true} if block state is movable, otherwise {@code false}
      * @since 1.0.4
      */
-    boolean pl$isMovable(Level level, BlockPos pos, BlockState state);
+    default boolean pl$isMovable(Level level, BlockPos pos, BlockState state) {
+        return true;
+    }
 
     /**
      * Checks if a piston can push this block.
@@ -55,7 +61,9 @@ public interface BlockPistonBehavior {
      * @return {@code true} if piston can push block state, otherwise {@code false}
      * @since 1.0.4
      */
-    boolean pl$canPistonPush(Level level, BlockPos pos, BlockState state, Direction dir);
+    default boolean pl$canPistonPush(Level level, BlockPos pos, BlockState state, Direction dir) {
+        return true;
+    }
 
     /**
      * Checks if a piston can pull at a given location and direction.
@@ -67,7 +75,9 @@ public interface BlockPistonBehavior {
      * @return {@code true} if piston can pull block state, otherwise {@code false}
      * @since 1.0.4
      */
-    boolean pl$canPistonPull(Level level, BlockPos pos, BlockState state, Direction dir);
+    default boolean pl$canPistonPull(Level level, BlockPos pos, BlockState state, Direction dir) {
+        return true;
+    }
 
     /**
      * Checks if this state is able to bypass the {@link StickyType#FUSED} sticky type.
@@ -76,7 +86,9 @@ public interface BlockPistonBehavior {
      * @return {@code true} if block state can bypass fused, otherwise {@code false}
      * @since 1.0.4
      */
-    boolean pl$canBypassFused(BlockState state);
+    default boolean pl$canBypassFused(BlockState state) {
+        return false;
+    }
 
     /**
      * Checks if this state can be destroyed at this position.
@@ -87,7 +99,9 @@ public interface BlockPistonBehavior {
      * @return {@code true} if piston can destroy block state, otherwise {@code false}
      * @since 1.0.4
      */
-    boolean pl$canDestroy(Level level, BlockPos pos, BlockState state);
+    default boolean pl$canDestroy(Level level, BlockPos pos, BlockState state) {
+        return false;
+    }
 
     /**
      * This is called whenever an entity is pushed into a block by a piston.
@@ -98,6 +112,6 @@ public interface BlockPistonBehavior {
      * @param entity pushed into the block state
      * @since 1.0.4
      */
-    void pl$onPushEntityInto(Level level, BlockPos pos, BlockState state, Entity entity);
+    default void pl$onPushEntityInto(Level level, BlockPos pos, BlockState state, Entity entity) {}
 
 }

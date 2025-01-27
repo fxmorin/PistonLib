@@ -25,7 +25,9 @@ public interface BlockPistonStickiness {
      * @return sticky group of the blocks
      * @since 1.0.4
      */
-    @Nullable StickyGroup pl$getStickyGroup(BlockState state);
+    default @Nullable StickyGroup pl$getStickyGroup(BlockState state) {
+        return null;
+    }
 
 
     /**
@@ -49,7 +51,9 @@ public interface BlockPistonStickiness {
      * @return {@code true} if piston uses configurable piston stickiness, otherwise {@code false}
      * @since 1.0.4
      */
-    boolean pl$usesConfigurablePistonStickiness() ;
+    default boolean pl$usesConfigurablePistonStickiness() {
+        return false;
+    }
 
     /**
      * If the block is currently sticky for any side, for quick checks to boost performance by
@@ -59,7 +63,9 @@ public interface BlockPistonStickiness {
      * @return {@code true} if the block is sticky, otherwise {@code false}
      * @since 1.0.4
      */
-    boolean pl$isSticky(BlockState state);
+    default boolean pl$isSticky(BlockState state) {
+        return true;
+    }
 
     /**
      * Gets the map of sticky sides for this state.
@@ -68,7 +74,9 @@ public interface BlockPistonStickiness {
      * @return a map of directions that are sticky and their stickyType.
      * @since 1.0.4
      */
-    Map<Direction, StickyType> pl$stickySides(BlockState state);
+    default Map<Direction, StickyType> pl$stickySides(BlockState state) {
+        return Map.of();
+    }
 
     /**
      * Checks the stickiness of a side for the state.
@@ -78,7 +86,9 @@ public interface BlockPistonStickiness {
      * @return stickyType of the side.
      * @since 1.0.4
      */
-    StickyType pl$sideStickiness(BlockState state, Direction dir);
+    default StickyType pl$sideStickiness(BlockState state, Direction dir) {
+        return StickyType.DEFAULT;
+    }
 
     /**
      * This only gets used if the sticky type is {@link StickyType#CONDITIONAL}.
@@ -89,6 +99,8 @@ public interface BlockPistonStickiness {
      * @return {@code true} if matches sticky conditions, otherwise {@code false}
      * @since 1.0.4
      */
-    boolean pl$matchesStickyConditions(BlockState state, BlockState neighborState, Direction dir);
+    default boolean pl$matchesStickyConditions(BlockState state, BlockState neighborState, Direction dir) {
+        return true;
+    }
 
 }
