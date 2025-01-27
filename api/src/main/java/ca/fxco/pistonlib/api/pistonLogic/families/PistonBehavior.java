@@ -155,22 +155,85 @@ public interface PistonBehavior {
          */
         Builder pushLimit(int limit);
 
+        /**
+         * Sets both the extending and retracting speed for this piston
+         *
+         * @param generalSpeed the extending and retracting speed
+         * @return The builder
+         * @since 1.2.0
+         */
         Builder speed(float generalSpeed);
 
+        /**
+         * Sets the extending and retracting speed for this piston
+         *
+         * @param extendingSpeed  the extending speed
+         * @param retractingSpeed the retracting speed
+         * @return The builder
+         * @since 1.2.0
+         */
         Builder speed(float extendingSpeed, float retractingSpeed);
 
+        /**
+         * Sets the extending speed for this piston
+         *
+         * @param extendingSpeed the extending speed
+         * @return The builder
+         * @since 1.2.0
+         */
         Builder extendingSpeed(float extendingSpeed);
 
+        /**
+         * Sets the retracting speed for this piston
+         *
+         * @param retractingSpeed the retracting speed
+         * @return The builder
+         * @since 1.2.0
+         */
         Builder retractingSpeed(float retractingSpeed);
 
+        /**
+         * Sets if the piston should be able to retract while extending
+         *
+         * @param retractOnExtending if you can retract while extending
+         * @return The builder
+         * @since 1.2.0
+         */
         Builder retractOnExtending(boolean retractOnExtending);
 
+        /**
+         * Sets if the piston should be able to extend while retracting
+         *
+         * @param extendOnRetracting if you can extend while retracting
+         * @return The builder
+         * @since 1.2.0
+         */
         Builder extendOnRetracting(boolean extendOnRetracting);
 
+        /**
+         * Sets the max length of this piston
+         *
+         * @param maxLength the max length
+         * @return The builder
+         * @since 1.2.0
+         */
         Builder maxLength(int maxLength);
 
+        /**
+         * Sets the min length of this piston
+         *
+         * @param minLength the min length
+         * @return The builder
+         * @since 1.2.0
+         */
         Builder minLength(int minLength);
 
+        /**
+         * Builds a {@link PistonBehavior}
+         *
+         * @return The new piston behavior
+         * @since 1.2.0
+         */
         PistonBehavior build();
     }
 }

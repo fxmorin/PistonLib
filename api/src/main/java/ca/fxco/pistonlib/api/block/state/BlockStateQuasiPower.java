@@ -21,7 +21,7 @@ public interface BlockStateQuasiPower {
      * @param level of the block
      * @param pos   block position of the block where the check happens
      * @param dir   direction of the neighbor from the block
-     * @param dist  distance to check above block
+     * @param dist  distance to check above the block
      * @return the power of quasi signal
      * @since 1.0.4
      */
@@ -33,7 +33,7 @@ public interface BlockStateQuasiPower {
      * @param level of the block
      * @param pos block position of the block where the check happens
      * @param dir direction of the neighbor from the block
-     * @param dist distance to check above block
+     * @param dist distance to check above the block
      * @return the power of direct quasi signal
      * @since 1.0.4
      */
@@ -44,7 +44,7 @@ public interface BlockStateQuasiPower {
      *
      * @param level of the block
      * @param pos block position of the block where the check happens
-     * @return {@code true} if block's neighbour is quasi conductor, otherwise {@code false}
+     * @return {@code true} if block's neighbor is quasi conductor, otherwise {@code false}
      * @since 1.0.4
      */
     boolean pl$isQuasiConductor(BlockGetter level, BlockPos pos);

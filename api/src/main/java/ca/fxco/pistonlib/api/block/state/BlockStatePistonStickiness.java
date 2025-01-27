@@ -24,7 +24,7 @@ public interface BlockStatePistonStickiness {
      * Only use this on sticky blocks.
      *
      * @return sticky group of the block, {@code null} if this block isn't sticky,
-     *  or you are using the configurable stickiness.
+     *  or you're using the configurable stickiness.
      * @since 1.0.4
      */
     @Nullable StickyGroup pl$getStickyGroup();
@@ -52,7 +52,7 @@ public interface BlockStatePistonStickiness {
 
     /**
      * If the block is currently sticky for any side, for quick checks to boost performance by
-     * skipping more intensive checks early. For some checks it might just be faster to set this to true!
+     * skipping more intensive checks early. For some checks, it might just be faster to set this to true!
      *
      * @return {@code true} if the block is sticky, otherwise {@code false}
      * @since 1.0.4
@@ -62,13 +62,13 @@ public interface BlockStatePistonStickiness {
     /**
      * Gets a map of the sticky sides of this state.
      *
-     * @return a map of directions that are sticky, and their stickyType.
+     * @return a map of directions that are sticky and their stickyType.
      * @since 1.0.4
      */
     Map<Direction, StickyType> pl$stickySides();
 
     /**
-     * Checks the stickiness of a side of the state.
+     * Checks the stickiness of a side for the state.
      *
      * @param dir direction to get stickyType for
      * @return stickyType of the side.

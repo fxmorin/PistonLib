@@ -33,7 +33,7 @@ public interface BlockStatePistonBehavior {
     boolean pl$usesConfigurablePistonBehavior();
 
     /** If the block state is currently movable. Allows for quick checks to boost performance by skipping more
-     * intensive checks early. However, this is not always checked first in some instances,
+     * intensive checks early. However, this isn't always checked first in some instances,
      * so make sure to account for that!
      *
      * @param level of the block
@@ -49,7 +49,7 @@ public interface BlockStatePistonBehavior {
      * @param level of the block state
      * @param pos   block position of the block state
      * @param dir   direction to move in
-     * @return {@code true} if block state can be pushed by piston, otherwise {@code false}
+     * @return {@code true} if piston can push block state, otherwise {@code false}
      * @since 1.0.4
      */
     boolean pl$canPistonPush(Level level, BlockPos pos, Direction dir);
@@ -60,7 +60,7 @@ public interface BlockStatePistonBehavior {
      * @param level of the block state
      * @param pos   block position of the block state
      * @param dir   direction to move in
-     * @return {@code true} if block state can be pulled by piston, otherwise {@code false}
+     * @return {@code true} if piston can pull block state, otherwise {@code false}
      * @since 1.0.4
      */
     boolean pl$canPistonPull(Level level, BlockPos pos, Direction dir);
@@ -78,7 +78,7 @@ public interface BlockStatePistonBehavior {
      *
      * @param level of the block state
      * @param pos   block position of the block state
-     * @return {@code true} if block state can be destroyed by piston, otherwise {@code false}
+     * @return {@code true} if piston can destroy block state, otherwise {@code false}
      * @since 1.0.4
      */
     boolean pl$canDestroy(Level level, BlockPos pos);

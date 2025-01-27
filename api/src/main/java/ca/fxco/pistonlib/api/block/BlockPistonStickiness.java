@@ -10,7 +10,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * Allow to get stickiness of the block.
+ * Allow getting stickiness of the block.
  * This allows for more configurable and conditional piston stickiness
  *
  * @author FX
@@ -20,14 +20,18 @@ public interface BlockPistonStickiness {
 
     /**
      * Defines if this block can stick to the adjacent block. Only use this on sticky blocks
-     * @return sticky group of the block
+     *
+     * @param state the block state to get the sticky group of
+     * @return sticky group of the blocks
      * @since 1.0.4
      */
     @Nullable StickyGroup pl$getStickyGroup(BlockState state);
 
 
     /**
-     * @return true if block has sticky group
+     * Checks if this block uses a {@link StickyGroup}.
+     *
+     * @return true if block has a sticky group
      * @since 1.0.4
      */
     default boolean pl$hasStickyGroup(BlockState state) {
@@ -49,7 +53,7 @@ public interface BlockPistonStickiness {
 
     /**
      * If the block is currently sticky for any side, for quick checks to boost performance by
-     * skipping more intensive checks early. For some checks it might just be faster to set this to true!
+     * skipping more intensive checks early. For some checks, it might just be faster to set this to true!
      *
      * @param state block state of the block
      * @return {@code true} if the block is sticky, otherwise {@code false}
@@ -58,16 +62,16 @@ public interface BlockPistonStickiness {
     boolean pl$isSticky(BlockState state);
 
     /**
-     * Gets a map of the sticky sides of this block.
+     * Gets the map of sticky sides for this state.
      *
      * @param state block state of the block
-     * @return a map of directions that are sticky, and their stickyType.
+     * @return a map of directions that are sticky and their stickyType.
      * @since 1.0.4
      */
     Map<Direction, StickyType> pl$stickySides(BlockState state);
 
     /**
-     * Checks the stickiness of a side of the state.
+     * Checks the stickiness of a side for the state.
      *
      * @param state block state of the block
      * @param dir   direction to get stickyType for

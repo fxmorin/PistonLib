@@ -8,7 +8,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * Allows to get block's piston behavior.
+ * Allows getting block's piston behavior.
  * These methods are only used if {@link  #pl$usesConfigurablePistonBehavior} returns {@code true}.
  * This allows for more configurable and conditional piston behavior
  *
@@ -34,7 +34,7 @@ public interface BlockPistonBehavior {
     boolean pl$usesConfigurablePistonBehavior();
 
     /** If the block state is currently movable. Allows for quick checks to boost performance by skipping more
-     * intensive checks early. However, this is not always checked first in some instances,
+     * intensive checks early. However, this isn't always checked first in some instances,
      * so make sure to account for that!
      *
      * @param level of the block
@@ -52,7 +52,7 @@ public interface BlockPistonBehavior {
      * @param pos   block position of the block state
      * @param state block state of the block
      * @param dir   direction to move in
-     * @return {@code true} if block state can be pushed by piston, otherwise {@code false}
+     * @return {@code true} if piston can push block state, otherwise {@code false}
      * @since 1.0.4
      */
     boolean pl$canPistonPush(Level level, BlockPos pos, BlockState state, Direction dir);
@@ -64,7 +64,7 @@ public interface BlockPistonBehavior {
      * @param pos   block position of the block state
      * @param state block state of the block
      * @param dir   direction to move in
-     * @return {@code true} if block state can be pulled by piston, otherwise {@code false}
+     * @return {@code true} if piston can pull block state, otherwise {@code false}
      * @since 1.0.4
      */
     boolean pl$canPistonPull(Level level, BlockPos pos, BlockState state, Direction dir);
@@ -84,7 +84,7 @@ public interface BlockPistonBehavior {
      * @param level of the block state
      * @param pos   block position of the block state
      * @param state block state of the block
-     * @return {@code true} if block state can be destroyed by piston, otherwise {@code false}
+     * @return {@code true} if piston can destroy block state, otherwise {@code false}
      * @since 1.0.4
      */
     boolean pl$canDestroy(Level level, BlockPos pos, BlockState state);

@@ -23,10 +23,10 @@ public interface MovingTickable {
      * @param level    level of the block
      * @param state    block state of the block
      * @param toPos    block position its moving to
-     * @param dir      direction it's moving in
+     * @param dir      the direction it's moving in
      * @param progress of the move
      * @param speed    of the move
-     * @param merging  is it merging
+     * @param merging  if it's merging
      * @since 1.0.4
      */
     void pl$movingTick(Level level, BlockState state, BlockPos toPos, Direction dir, float progress,

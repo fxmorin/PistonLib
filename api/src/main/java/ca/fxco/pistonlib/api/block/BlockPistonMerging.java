@@ -35,8 +35,8 @@ public interface BlockPistonMerging {
      * @param level            of the block state
      * @param pos              block position of the block state
      * @param mergingIntoState block state to merge into
-     * @param dir              direction  being pushed
-     * @return {@code true} if it will be able to merge both states together, otherwise {@code false}
+     * @param dir              direction being pushed
+     * @return {@code true} if it's able to merge both states together, otherwise {@code false}
      * @since 1.0.4
      */
     boolean pl$canMerge(BlockState state, BlockGetter level, BlockPos pos, BlockState mergingIntoState, Direction dir);
@@ -87,7 +87,7 @@ public interface BlockPistonMerging {
      * @param pos              block position of the block
      * @param mergingIntoState block state to merge into
      * @param dir              direction it being pushed
-     * @param currentlyMerging sides which is currently merging
+     * @param currentlyMerging sides that are currently merging
      * @return {@code true} if it can multi merge with blocks from other directions, otherwise {@code false}
      * @since 1.0.4
      */
@@ -115,14 +115,14 @@ public interface BlockPistonMerging {
      * @param pos           block position of the block state
      * @param neighborState block state of block state's neighbor
      * @param dir           direction it being pulled
-     * @return {@code true} if it will be able to unmerge into two different states, otherwise {@code false}
+     * @return {@code true} if it's able to unmerge into two different states, otherwise {@code false}
      * @since 1.0.4
      */
     boolean pl$canUnMerge(BlockState state, BlockGetter level, BlockPos pos, BlockState neighborState, Direction dir);
 
     /**
      * Un-merge this block into two different states.
-     * The first block state in the pair is the block state that will be pulled out.
+     * The first block state in the pair is the block state that is pulled out.
      *
      * @param state block state of the block
      * @param level of the block state
@@ -136,12 +136,12 @@ public interface BlockPistonMerging {
 
     /**
      * This method determines when the block entity should be used:
-     * -     NEVER = Block entity will be skipped completely
-     * -   MERGING = Block entity will be used to check merging conditions
-     * - UNMERGING = Block entity will be used to check unmerging conditions
-     * -    ALWAYS = Block entity will always be checked
+     * -     NEVER = Block entity is skipped completely
+     * -   MERGING = Block entity is used to check merging conditions
+     * - UNMERGING = Block entity is used to check unmerging conditions
+     * -    ALWAYS = Block entity is always checked
      * </br>
-     * State checks will always happen before block entity checks.
+     * State checks always happen before block entity checks.
      * Skipping won't get the block entity at all, this is done for performance reasons.
      * It allows us to quickly know if the block entity should be loaded and checked against.
      *
