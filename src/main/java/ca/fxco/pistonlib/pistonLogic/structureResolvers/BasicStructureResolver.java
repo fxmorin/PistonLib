@@ -128,6 +128,10 @@ public class BasicStructureResolver extends PistonStructureResolver implements S
     	return false;
     }
 
+    protected static boolean canStick(BlockState state, BlockState adjState, Direction dir) {
+        return state.pl$matchesStickyConditions(adjState, dir);
+    }
+
     // Stickiness checks
     protected static boolean canAdjacentBlockStick(Direction dir, BlockState state, BlockState adjState) {
         return canAdjacentBlockStick(dir, state, adjState, true);
@@ -143,7 +147,7 @@ public class BasicStructureResolver extends PistonStructureResolver implements S
             Direction oppositeDir = dir.getOpposite();
             StickyType type = adjState.pl$sideStickiness(oppositeDir);
             if (type == StickyType.CONDITIONAL) {
-                if (type.canStick(state, adjState, dir)) {
+                if (canStick(state, adjState, dir)) {
                     return true;
                 }
                 return attemptIndirect && canIndirectBlockStick(dir, state, adjState);
@@ -219,7 +223,7 @@ public class BasicStructureResolver extends PistonStructureResolver implements S
         if (stickyType != StickyType.NO_STICK && dir.getAxis() != this.pushDirection.getAxis()) {
             BlockPos adjPos = pos.relative(dir);
             BlockState adjState = this.level.getBlockState(adjPos);
-            if (stickyType == StickyType.CONDITIONAL && !stickyType.canStick(state, adjState, dir)) {
+            if (stickyType == StickyType.CONDITIONAL && !canStick(state, adjState, dir)) {
                 return false;
             }
             return canMoveAdjacentBlock(dir, state, adjState) && attemptMoveLine(adjState, adjPos, dir);
@@ -232,7 +236,7 @@ public class BasicStructureResolver extends PistonStructureResolver implements S
             StickyType stickyType = state.pl$sideStickiness(dir);
             if (stickyType == StickyType.NO_STICK) {
                 return false;
-            } else if (stickyType == StickyType.CONDITIONAL && stickyType.canStick(state, adjState, dir)) {
+            } else if (stickyType == StickyType.CONDITIONAL && canStick(state, adjState, dir)) {
                 return true;
             }
         }
@@ -255,7 +259,7 @@ public class BasicStructureResolver extends PistonStructureResolver implements S
             if (state.pl$isSticky()) {
                 StickyType type = state.pl$sideStickiness(dir);
                 if (type == StickyType.CONDITIONAL) {
-                    return type.canStick(state, adjState, dir);
+                    return canStick(state, adjState, dir);
                 }
                 return type.ordinal() >= StickyType.STICKY.ordinal();
             }

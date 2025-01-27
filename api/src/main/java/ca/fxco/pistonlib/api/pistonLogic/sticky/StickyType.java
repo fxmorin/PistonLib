@@ -1,8 +1,5 @@
 package ca.fxco.pistonlib.api.pistonLogic.sticky;
 
-import net.minecraft.core.Direction;
-import net.minecraft.world.level.block.state.BlockState;
-
 /**
  * The sticky type defines behavior when a sticky block is moved by a piston.
  */
@@ -40,13 +37,5 @@ public enum StickyType {
     /**
      * Strong except it bypasses the ConfigurablePistonBehavior checks, use `canBypassFused()` to prevent this - W.I.P.
      */
-    FUSED;
-
-
-    /**
-     * Should only be called if CONDITIONAL
-     */
-    public boolean canStick(BlockState state, BlockState adjState, Direction dir) {
-        return state.pl$matchesStickyConditions(adjState, dir);
-    }
+    FUSED
 }
