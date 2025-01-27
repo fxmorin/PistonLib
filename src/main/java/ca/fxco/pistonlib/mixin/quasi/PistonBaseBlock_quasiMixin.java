@@ -19,7 +19,8 @@ public class PistonBaseBlock_quasiMixin {
      */
     @Inject(
             method = "getNeighborSignal",
-            at = @At("HEAD")
+            at = @At("HEAD"),
+            cancellable = true
     )
     private void pl$getNeighborSignal(SignalGetter signalGetter, BlockPos pos, Direction facing,
                                       CallbackInfoReturnable<Boolean> cir) {
