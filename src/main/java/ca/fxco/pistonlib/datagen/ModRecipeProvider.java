@@ -81,12 +81,8 @@ public class ModRecipeProvider extends FabricRecipeProvider {
 				offerCrushingCrackedRecipe(exporter, Blocks.STONE_BRICKS, Items.CRACKED_STONE_BRICKS.getDefaultInstance());
 
 				PairCrushingRecipeBuilder.crushing(Ingredient.of(Blocks.OAK_PLANKS), Ingredient.of(Blocks.OAK_PLANKS), Items.STICK.getDefaultInstance()).save(exporter);
-				PairCrushingRecipeBuilder.crushing(Ingredient.of(Blocks.COAL_BLOCK), Ingredient.of(Items.COAL), Items.DIAMOND.getDefaultInstance()).save(exporter);
-				PairCrushingRecipeBuilder.crushing(Ingredient.of(Blocks.DIAMOND_BLOCK), Ingredient.of(Items.DIAMOND), Items.DIAMOND_CHESTPLATE.getDefaultInstance()).save(exporter);
 
-				ItemStack result = Blocks.DIORITE.asItem().getDefaultInstance();
-				result.setCount(3);
-				MultiCrushingRecipeBuilder.crushing(List.of(Ingredient.of(Blocks.STONE), Ingredient.of(Items.QUARTZ), Ingredient.of(Blocks.ANDESITE)), result).save(exporter);
+				MultiCrushingRecipeBuilder.crushing(List.of(Ingredient.of(Blocks.STONE), Ingredient.of(Items.QUARTZ), Ingredient.of(Blocks.ANDESITE)), Blocks.DIORITE.asItem().getDefaultInstance()).save(exporter);
 
 				LOGGER.info("Finished generating recipes!");
 			}

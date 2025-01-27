@@ -23,13 +23,18 @@ public class MultiCrushingRecipeBuilder implements RecipeBuilder {
     @Nullable
     protected String group;
 
-    public MultiCrushingRecipeBuilder(List<Ingredient> ingredients, ItemStack result) {
+    public MultiCrushingRecipeBuilder(List<Ingredient> ingredients, ItemStack result, int count) {
         this.ingredients = ingredients;
+        result.setCount(count);
         this.result = result;
     }
 
     public static MultiCrushingRecipeBuilder crushing(List<Ingredient> ingredients, ItemStack result) {
-        return new MultiCrushingRecipeBuilder(ingredients, result);
+        return crushing(ingredients, result, 1);
+    }
+
+    public static MultiCrushingRecipeBuilder crushing(List<Ingredient> ingredients, ItemStack result, int count) {
+        return new MultiCrushingRecipeBuilder(ingredients, result, count);
     }
 
     @Override
