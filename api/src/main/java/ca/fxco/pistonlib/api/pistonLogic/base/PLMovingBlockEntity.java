@@ -2,7 +2,7 @@ package ca.fxco.pistonlib.api.pistonLogic.base;
 
 import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.api.pistonLogic.sticky.StickyType;
-import ca.fxco.pistonlib.api.pistonLogic.structureGroups.StructureGroup;
+import ca.fxco.pistonlib.api.pistonLogic.structure.StructureGroup;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;

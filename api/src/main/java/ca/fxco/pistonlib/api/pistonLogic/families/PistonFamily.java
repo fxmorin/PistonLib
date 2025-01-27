@@ -3,7 +3,7 @@ package ca.fxco.pistonlib.api.pistonLogic.families;
 import java.util.Map;
 import java.util.function.BiFunction;
 
-import ca.fxco.pistonlib.api.pistonLogic.structureGroups.StructureGroup;
+import ca.fxco.pistonlib.api.pistonLogic.structure.StructureGroup;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.world.level.block.piston.PistonMovingBlockEntity;

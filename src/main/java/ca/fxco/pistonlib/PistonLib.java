@@ -10,6 +10,9 @@ import ca.fxco.pistonlib.api.PistonLibSupplier;
 import ca.fxco.pistonlib.api.config.ConfigFieldEntrypoint;
 import ca.fxco.pistonlib.api.config.ConfigManager;
 import ca.fxco.pistonlib.api.config.ConfigManagerEntrypoint;
+import ca.fxco.pistonlib.pistonLogic.structureGroups.ClientStructureGroup;
+import ca.fxco.pistonlib.pistonLogic.structureGroups.ServerStructureGroup;
+import ca.fxco.pistonlib.api.pistonLogic.structure.StructureGroup;
 import ca.fxco.pistonlib.base.*;
 import ca.fxco.pistonlib.config.ConfigManagerImpl;
 import ca.fxco.pistonlib.helpers.PistonLibBehaviorManager;
@@ -25,6 +28,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.flag.FeatureFlag;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.flag.FeatureFlagUniverse;
+import net.minecraft.world.level.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +56,7 @@ public class PistonLib implements ModInitializer, PistonLibInitializer, PistonLi
     public void onInitialize() {
         PistonLibApi.setSupplier(this);
 
-        initialize(p -> p.initialize());
+        initialize(PistonLibInitializer::initialize);
         initialize(PistonLibInitializer::bootstrap);
         initialize(PistonLibInitializer::registerPistonFamilies);
         initialize(PistonLibInitializer::registerStickyGroups);
@@ -123,6 +127,11 @@ public class PistonLib implements ModInitializer, PistonLibInitializer, PistonLi
     @Override
     public ConfigManager createSimpleConfigManager(String modId, Class<?> configClass) {
         return new ConfigManagerImpl(modId, configClass);
+    }
+
+    @Override
+    public StructureGroup createStructureGroup(boolean clientSide) {
+        return clientSide ? new ClientStructureGroup() : new ServerStructureGroup();
     }
 
     public static ResourceLocation id(String path) {

@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
-import ca.fxco.pistonlib.api.pistonLogic.structureGroups.StructureGroup;
+import ca.fxco.pistonlib.api.pistonLogic.structure.StructureGroup;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonHeadBlock;

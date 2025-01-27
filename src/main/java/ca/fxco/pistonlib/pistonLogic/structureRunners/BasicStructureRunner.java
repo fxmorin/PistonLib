@@ -1,8 +1,9 @@
 package ca.fxco.pistonlib.pistonLogic.structureRunners;
 
 import ca.fxco.pistonlib.PistonLibConfig;
+import ca.fxco.pistonlib.api.PistonLibApi;
 import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
-import ca.fxco.pistonlib.api.pistonLogic.structureGroups.StructureGroup;
+import ca.fxco.pistonlib.api.pistonLogic.structure.StructureGroup;
 import ca.fxco.pistonlib.api.pistonLogic.structure.StructureResolver;
 import ca.fxco.pistonlib.api.pistonLogic.structure.StructureRunner;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlock;
@@ -186,7 +187,7 @@ public class BasicStructureRunner implements StructureRunner {
         if (moveSize > 0) {
             StructureGroup structureGroup = null;
             if (PistonLibConfig.pistonStructureGrouping && moveSize > 1) { // Only use Structure group if there are more than 1 block entities in the group
-                structureGroup = StructureGroup.create(level);
+                structureGroup = PistonLibApi.getSupplier().createStructureGroup(level.isClientSide);
             }
             for (int i = moveSize - 1; i >= 0; i--) {
                 BlockPos posToMove = toMove.get(i);

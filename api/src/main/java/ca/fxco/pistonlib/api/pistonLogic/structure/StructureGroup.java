@@ -1,4 +1,4 @@
-package ca.fxco.pistonlib.api.pistonLogic.structureGroups;
+package ca.fxco.pistonlib.api.pistonLogic.structure;
 
 import ca.fxco.pistonlib.api.pistonLogic.base.PLMovingBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -135,18 +135,4 @@ public interface StructureGroup {
      * @since 1.0.4
      */
     void saveAdditional(CompoundTag nbt);
-
-    /**
-     * Creates a Structure Group based on the environment.
-     *
-     * @param level the level used to check the environment
-     * @return If on the client, a {@link ClientStructureGroup}, otherwise a {@link ServerStructureGroup}
-     * @since 1.2.0
-     */
-    static StructureGroup create(Level level) { // TODO-API: Move out of here...
-        if (level.isClientSide) {
-            return new ClientStructureGroup(); // Holds rendering cache
-        }
-        return new ServerStructureGroup();
-    }
 }

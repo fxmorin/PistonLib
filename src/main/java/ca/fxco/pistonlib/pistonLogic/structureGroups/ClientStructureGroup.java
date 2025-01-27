@@ -1,4 +1,4 @@
-package ca.fxco.pistonlib.api.pistonLogic.structureGroups;
+package ca.fxco.pistonlib.pistonLogic.structureGroups;
 
 import ca.fxco.pistonlib.api.pistonLogic.base.PLMovingBlockEntity;
 import net.minecraft.core.BlockPos;
