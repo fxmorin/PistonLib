@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "id": "pistonlibapi",
+  "version": "1.0.0",
+  "name": "PistonLibApi",
+  "description": "This description should never be seen outside of this file",
+  "license": "MIT",
+  "environment": "*"
+}

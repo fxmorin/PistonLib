@@ -2,18 +2,17 @@ package ca.fxco.pistonlib.blocks.halfBlocks;
 
 import java.util.Map;
 
+import ca.fxco.pistonlib.base.ModStickyGroups;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import org.jetbrains.annotations.Nullable;
 
 import ca.fxco.pistonlib.api.pistonLogic.sticky.StickRules;
 import ca.fxco.pistonlib.api.pistonLogic.sticky.StickyGroup;
-import ca.fxco.pistonlib.api.pistonLogic.sticky.StickyGroups;
 import ca.fxco.pistonlib.api.pistonLogic.sticky.StickyType;
 import ca.fxco.pistonlib.helpers.HalfBlockUtils;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -106,7 +105,7 @@ public class HalfSlimeBlock extends Block {
 
     @Override
     public @Nullable StickyGroup pl$getStickyGroup(BlockState state) {
-        return StickyGroups.SLIME;
+        return ModStickyGroups.SLIME;
     }
 
     @Override
@@ -135,7 +134,7 @@ public class HalfSlimeBlock extends Block {
         }
         StickyGroup group = neighborState.pl$getStickyGroup();
         if (group != null) {
-            return StickRules.test(StickyGroups.SLIME, group);
+            return StickRules.test(ModStickyGroups.SLIME, group);
         }
         return true;
     }

@@ -1,6 +1,7 @@
 package ca.fxco.pistonlib.blocks.autoCraftingBlock;
 
 import ca.fxco.pistonlib.PistonLibConfig;
+import ca.fxco.pistonlib.api.pistonLogic.base.PLMergeBlockEntity;
 import ca.fxco.pistonlib.base.ModBlockEntities;
 import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlockEntity;
 import ca.fxco.pistonlib.helpers.NbtUtils;
@@ -68,7 +69,7 @@ public class AutoCraftingBlockEntity extends BaseContainerBlockEntity implements
 
     @Override
     public boolean pl$canMultiMerge(BlockState state, BlockState mergingIntoState, Direction dir,
-                                 Map<Direction, MergeBlockEntity.MergeData> currentlyMerging) {
+                                    Map<Direction, PLMergeBlockEntity.MergeData> currentlyMerging) {
         return getRemainingSlotCount() - currentlyMerging.size() > 0; // are any spaces left?
     }
 
@@ -115,8 +116,9 @@ public class AutoCraftingBlockEntity extends BaseContainerBlockEntity implements
     }
 
     @Override
-    public void pl$afterInitialFinalMerge(BlockState finalState, Map<Direction, MergeBlockEntity.MergeData> mergedData) {
-        for (MergeBlockEntity.MergeData data : mergedData.values()) {
+    public void pl$afterInitialFinalMerge(BlockState finalState,
+                                          Map<Direction, PLMergeBlockEntity.MergeData> mergedData) {
+        for (PLMergeBlockEntity.MergeData data : mergedData.values()) {
             setItem(getNextSlot(), data.getState().getBlock().asItem().getDefaultInstance());
         }
     }

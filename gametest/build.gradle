@@ -57,6 +57,7 @@ dependencies {
     // Lombok
     compileOnly(annotationProcessor("org.projectlombok:lombok:${project.lombok_version}"))
 
+    implementation project(path: ":api", configuration: "namedElements")
     implementation project(path: ":", configuration: "namedElements")
 
     // GameTestLib

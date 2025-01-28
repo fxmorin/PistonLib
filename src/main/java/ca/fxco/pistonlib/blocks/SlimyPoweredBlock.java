@@ -1,7 +1,7 @@
 package ca.fxco.pistonlib.blocks;
 
 import ca.fxco.pistonlib.api.pistonLogic.sticky.StickyGroup;
-import ca.fxco.pistonlib.api.pistonLogic.sticky.StickyGroups;
+import ca.fxco.pistonlib.base.ModStickyGroups;
 import net.minecraft.world.level.block.PoweredBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -13,6 +13,6 @@ public class SlimyPoweredBlock extends PoweredBlock {
 
     @Override
     public StickyGroup pl$getStickyGroup(BlockState state) {
-        return StickyGroups.SLIME;
+        return ModStickyGroups.SLIME;
     }
 }

@@ -1,7 +1,7 @@
 package ca.fxco.pistonlib.blocks.slipperyBlocks;
 
 import ca.fxco.pistonlib.api.pistonLogic.sticky.StickyGroup;
-import ca.fxco.pistonlib.api.pistonLogic.sticky.StickyGroups;
+import ca.fxco.pistonlib.base.ModStickyGroups;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class SlipperySlimeBlock extends BaseSlipperyBlock {
@@ -12,6 +12,6 @@ public class SlipperySlimeBlock extends BaseSlipperyBlock {
 
     @Override
     public StickyGroup pl$getStickyGroup(BlockState state) {
-        return StickyGroups.SLIME;
+        return ModStickyGroups.SLIME;
     }
 }

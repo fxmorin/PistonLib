@@ -5,6 +5,12 @@ plugins {
     id 'maven-publish'
 }
 
+configurations {
+    commonJava{
+        canBeResolved = true
+    }
+}
+
 version = project.mod_version
 group = project.maven_group
 
@@ -40,7 +46,7 @@ repositories {
 sourceSets {
     main {
         resources {
-            srcDir "src/generated/resources"
+            srcDir "src/main/generated/resources"
         }
     }
 }
@@ -60,6 +66,9 @@ dependencies {
 
     // Lombok
     compileOnly(annotationProcessor("org.projectlombok:lombok:${project.lombok_version}"))
+
+    implementation project(path: ":api", configuration: "namedElements")
+    commonJava project(path: ':api', configuration: 'commonJava')
 }
 
 processResources {
@@ -116,4 +125,9 @@ publishing {
 
     // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
     repositories {}
+}
+
+tasks.named('compileJava', JavaCompile) {
+    dependsOn(configurations.commonJava)
+    source(configurations.commonJava)
 }

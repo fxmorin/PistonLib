@@ -1,29 +1,32 @@
 package ca.fxco.pistonlib.pistonLogic.structureGroups;
 
-import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
-import lombok.NoArgsConstructor;
+import ca.fxco.pistonlib.api.pistonLogic.base.PLMovingBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.piston.PistonMovingBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@NoArgsConstructor
 public class ClientStructureGroup extends ServerStructureGroup {
 
     private final Map<BlockPos, BlockState> fastStateLookup = new HashMap<>();
 
+    public ClientStructureGroup() {}
+
     @Override
-    public void add(BasicMovingBlockEntity blockEntity) {
+    public <P extends PistonMovingBlockEntity & PLMovingBlockEntity> void add(P blockEntity) {
         super.add(blockEntity);
-        fastStateLookup.put(blockEntity.getBlockPos().relative(blockEntity.getMovementDirection().getOpposite()), blockEntity.getMovedState());
+        fastStateLookup.put(blockEntity.getBlockPos()
+                .relative(blockEntity.getMovementDirection().getOpposite()), blockEntity.getMovedState());
     }
 
     @Override
-    public void add(int index, BasicMovingBlockEntity blockEntity) {
+    public <P extends PistonMovingBlockEntity & PLMovingBlockEntity> void add(int index, P blockEntity) {
         super.add(index, blockEntity);
-        fastStateLookup.put(blockEntity.getBlockPos().relative(blockEntity.getMovementDirection().getOpposite()), blockEntity.getMovedState());
+        fastStateLookup.put(blockEntity.getBlockPos()
+                .relative(blockEntity.getMovementDirection().getOpposite()), blockEntity.getMovedState());
     }
 
     @Override

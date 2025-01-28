@@ -1,10 +1,10 @@
 package ca.fxco.pistonlib.mixin;
 
+import ca.fxco.pistonlib.api.block.PLPistonController;
 import ca.fxco.pistonlib.api.pistonLogic.controller.PistonController;
 import ca.fxco.pistonlib.api.pistonLogic.structure.StructureRunner;
 import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.base.ModTags;
-import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.helpers.PistonEventData;
 import ca.fxco.pistonlib.network.PLServerNetwork;
 import ca.fxco.pistonlib.network.packets.PistonEventS2CPayload;
@@ -15,6 +15,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.BlockEventData;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.storage.WritableLevelData;
 import org.spongepowered.asm.mixin.Mixin;
@@ -39,11 +40,12 @@ public abstract class ServerLevelMixin extends Level {
     }
 
     @Unique
-    private final Set<PistonEventData> pl$pistonEvents = new HashSet<>();
+    private final Set<PistonEventData<?>> pl$pistonEvents = new HashSet<>();
 
     @Override
-    public void pl$addPistonEvent(BasicPistonBaseBlock pistonBase, BlockPos pos, Direction dir, boolean extend) {
-        this.pl$pistonEvents.add(new PistonEventData(pistonBase, pos, dir, extend));
+    public <P extends Block & PLPistonController> void pl$addPistonEvent(P pistonBase, BlockPos pos,
+                                                                         Direction dir, boolean extend) {
+        this.pl$pistonEvents.add(new PistonEventData<>(pistonBase, pos, dir, extend));
     }
 
     @Inject(
@@ -59,10 +61,10 @@ public abstract class ServerLevelMixin extends Level {
 
     @Unique
     private void pl$runPistonEvents() {
-        Set<PistonEventData> runningPistonEvents = new HashSet<>(this.pl$pistonEvents);
+        Set<PistonEventData<?>> runningPistonEvents = new HashSet<>(this.pl$pistonEvents);
         this.pl$pistonEvents.clear();
-        for (PistonEventData pistonEvent : runningPistonEvents) {
-            BasicPistonBaseBlock pistonBase = pistonEvent.pistonBlock();
+        for (PistonEventData<?> pistonEvent : runningPistonEvents) {
+            PLPistonController pistonBase = pistonEvent.pistonBlock();
             PistonController controller = pistonBase.pl$getPistonController();
             StructureRunner structureRunner = new DecoupledStructureRunner(controller.newStructureRunner(
                     this,

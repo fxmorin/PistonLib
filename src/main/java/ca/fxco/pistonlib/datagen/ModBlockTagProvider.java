@@ -2,12 +2,11 @@ package ca.fxco.pistonlib.datagen;
 
 import java.util.concurrent.CompletableFuture;
 
-import ca.fxco.pistonlib.base.ModPistonFamilies;
+import ca.fxco.pistonlib.api.PistonLibRegistries;
 import org.slf4j.Logger;
 
 import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.pistonlib.base.ModBlocks;
-import ca.fxco.pistonlib.base.ModRegistries;
 import ca.fxco.pistonlib.base.ModTags;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -32,7 +31,7 @@ public class ModBlockTagProvider extends FabricTagProvider.BlockTagProvider {
 		FabricTagBuilder pistonsTag = getOrCreateTagBuilder(ModTags.PISTONS);
 		FabricTagBuilder movingPistonsTag = getOrCreateTagBuilder(ModTags.MOVING_PISTONS);
 
-		ModRegistries.PISTON_FAMILY.forEach(family -> {
+		PistonLibRegistries.PISTON_FAMILY.forEach(family -> {
 		    family.getBases().forEach((type, base) -> pistonsTag.add(base));
 		    movingPistonsTag.add(family.getMoving());
 		});
