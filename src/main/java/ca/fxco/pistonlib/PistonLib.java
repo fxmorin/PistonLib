@@ -122,6 +122,7 @@ public class PistonLib implements ModInitializer, PistonLibInitializer, PistonLi
             ModCreativeModeTabs.bootstrap();
             ModScreens.bootstrap();
         }
+        ModRecipeBookCategories.bootstrap();
         ModRecipeTypes.boostrap();
         ModRecipeSerializers.boostrap();
         ModArgumentTypes.bootstrap();

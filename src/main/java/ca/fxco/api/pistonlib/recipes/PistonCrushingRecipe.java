@@ -1,29 +1,25 @@
 package ca.fxco.api.pistonlib.recipes;
 
-import ca.fxco.pistonlib.base.ModRecipeTypes;
 import net.minecraft.world.item.crafting.*;
 
 /**
- * A recipe used to combine two items into a single item
+ * The piston crafting recipe interface.
+ * This is the interface used to define all piston crushing recipes.
+ *
+ * @author FX
+ * @since 1.2.0
  */
 public interface PistonCrushingRecipe extends Recipe<PistonCrushingInput> {
 
-    @Override
-    default RecipeType<? extends Recipe<PistonCrushingInput>> getType() {
-        return ModRecipeTypes.PISTON_CRUSHING;
-    }
-
+    /**
+     * The stack size of the returned item from the recipe.
+     *
+     * @return The stack size of the resulting item from the recipe.
+     */
     int getResultSize();
-
 
     @Override
     default boolean isSpecial() {
         return true;
     }
-
-    @Override
-    default RecipeBookCategory recipeBookCategory() {
-        return null;
-    }
-
 }
