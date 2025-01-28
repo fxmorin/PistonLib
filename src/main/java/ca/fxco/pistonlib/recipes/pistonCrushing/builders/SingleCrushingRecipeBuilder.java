@@ -28,34 +28,27 @@ public class SingleCrushingRecipeBuilder implements RecipeBuilder {
     @Nullable
     protected Either<Float, Either<Block, String>> data;
 
-    public SingleCrushingRecipeBuilder(Ingredient ingredient, ItemStack itemStack, int count) {
+    public SingleCrushingRecipeBuilder(Ingredient ingredient, ItemStack itemStack) {
         this.ingredient = ingredient;
         this.result = itemStack;
-        result.setCount(count);
     }
 
     public static SingleCrushingRecipeBuilder crushing(ItemLike itemLike, Item item) {
-        return crushing(itemLike, item, 1);
+        return crushing(itemLike, item.getDefaultInstance());
     }
 
     public static SingleCrushingRecipeBuilder crushing(ItemLike itemLike, Item item, int count) {
-        return crushing(itemLike, item.getDefaultInstance(), count);
+        ItemStack stack = item.getDefaultInstance();
+        stack.setCount(count);
+        return crushing(itemLike, stack);
     }
 
     public static SingleCrushingRecipeBuilder crushing(ItemLike itemLike, ItemStack itemStack) {
-        return crushing(itemLike, itemStack, 1);
-    }
-
-    public static SingleCrushingRecipeBuilder crushing(ItemLike itemLike, ItemStack itemStack, int count) {
-        return crushing(Ingredient.of(itemLike), itemStack, count);
+        return crushing(Ingredient.of(itemLike), itemStack);
     }
 
     public static SingleCrushingRecipeBuilder crushing(Ingredient ingredient, ItemStack itemStack) {
-        return crushing(ingredient, itemStack, 1);
-    }
-
-    public static SingleCrushingRecipeBuilder crushing(Ingredient ingredient, ItemStack itemStack, int count) {
-        return new SingleCrushingRecipeBuilder(ingredient, itemStack, count);
+        return new SingleCrushingRecipeBuilder(ingredient, itemStack);
     }
 
     public SingleCrushingRecipeBuilder mustBeAgainst(Block againstBlock) {
@@ -66,7 +59,8 @@ public class SingleCrushingRecipeBuilder implements RecipeBuilder {
         return this;
     }
 
-    public SingleCrushingRecipeBuilder hasConditional(SingleCrushingConditionalRecipe.Condition condition, Object data) {
+    public SingleCrushingRecipeBuilder hasConditional(SingleCrushingConditionalRecipe.Condition condition,
+                                                      Object data) {
         if (this.againstBlock != null) {
             throw new IllegalStateException("You can only use either `mustBeAgainst` or `hasConditional`");
         }
