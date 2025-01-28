@@ -19,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
 public class SingleCrushingRecipeBuilder implements RecipeBuilder {
     protected final ItemStack result;
     protected final Ingredient ingredient;
+    protected final int ingredientAmount;
     @Nullable
     protected String group;
     @Nullable
@@ -28,9 +29,10 @@ public class SingleCrushingRecipeBuilder implements RecipeBuilder {
     @Nullable
     protected Either<Float, Either<Block, String>> data;
 
-    public SingleCrushingRecipeBuilder(Ingredient ingredient, ItemStack itemStack) {
+    public SingleCrushingRecipeBuilder(Ingredient ingredient, ItemStack itemStack, int ingredientAmount) {
         this.ingredient = ingredient;
         this.result = itemStack;
+        this.ingredientAmount = ingredientAmount;
     }
 
     public static SingleCrushingRecipeBuilder crushing(ItemLike itemLike, Item item) {
@@ -47,8 +49,21 @@ public class SingleCrushingRecipeBuilder implements RecipeBuilder {
         return crushing(Ingredient.of(itemLike), itemStack);
     }
 
+    public static SingleCrushingRecipeBuilder crushing(ItemLike itemLike, ItemStack itemStack, int ingredientCount) {
+        return crushing(Ingredient.of(itemLike), itemStack, ingredientCount);
+    }
+
+    public static SingleCrushingRecipeBuilder crushing(ItemStack inputStack, ItemStack itemStack) {
+        return crushing(Ingredient.of(inputStack.getItem()), itemStack, inputStack.getCount());
+    }
+
     public static SingleCrushingRecipeBuilder crushing(Ingredient ingredient, ItemStack itemStack) {
-        return new SingleCrushingRecipeBuilder(ingredient, itemStack);
+        return crushing(ingredient, itemStack, 1);
+    }
+
+    public static SingleCrushingRecipeBuilder crushing(Ingredient ingredient, ItemStack itemStack,
+                                                       int ingredientCount) {
+        return new SingleCrushingRecipeBuilder(ingredient, itemStack, ingredientCount);
     }
 
     public SingleCrushingRecipeBuilder mustBeAgainst(Block againstBlock) {
@@ -93,11 +108,26 @@ public class SingleCrushingRecipeBuilder implements RecipeBuilder {
     @Override
     public void save(RecipeOutput output, ResourceKey<Recipe<?>> key) {
         if (this.againstBlock != null) {
-            output.accept(key, new SingleCrushingAgainstRecipe(this.ingredient, this.result, this.againstBlock), null);
+            output.accept(key, new SingleCrushingAgainstRecipe(
+                    this.ingredient,
+                    this.ingredientAmount,
+                    this.result,
+                    this.againstBlock
+            ), null);
         } else if (this.condition != null) {
-            output.accept(key, new SingleCrushingConditionalRecipe(this.ingredient, this.result, this.condition, this.data), null);
+            output.accept(key, new SingleCrushingConditionalRecipe(
+                    this.ingredient,
+                    this.ingredientAmount,
+                    this.result,
+                    this.condition,
+                    this.data
+            ), null);
         } else {
-            output.accept(key, new SingleCrushingRecipe(this.ingredient, this.result), null);
+            output.accept(key, new SingleCrushingRecipe(
+                    this.ingredient,
+                    this.ingredientAmount,
+                    this.result
+            ), null);
         }
     }
 }

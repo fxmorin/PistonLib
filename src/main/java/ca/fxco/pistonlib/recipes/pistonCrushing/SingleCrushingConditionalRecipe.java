@@ -30,8 +30,9 @@ public class SingleCrushingConditionalRecipe extends SingleCrushingRecipe {
     protected final Condition condition;
     protected final Either<Float, Either<Block, String>> data;
 
-    public SingleCrushingConditionalRecipe(Ingredient ingredient, ItemStack result, Condition condition, Either<Float, Either<Block, String>> data) {
-        super(ingredient, result);
+    public SingleCrushingConditionalRecipe(Ingredient ingredient, int ingredientAmount, ItemStack result,
+                                           Condition condition, Either<Float, Either<Block, String>> data) {
+        super(ingredient, ingredientAmount, result);
         this.condition = condition;
         this.data = data;
     }
@@ -66,6 +67,7 @@ public class SingleCrushingConditionalRecipe extends SingleCrushingRecipe {
     public static class Serializer implements RecipeSerializer<SingleCrushingConditionalRecipe> {
         public static final MapCodec<SingleCrushingConditionalRecipe> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
                 Ingredient.CODEC.fieldOf("ingredient").forGetter(SingleCrushingConditionalRecipe::getIngredient),
+                Codec.INT.optionalFieldOf("ingredientAmount", 1).forGetter(SingleCrushingRecipe::getIngredientAmount),
                 ItemStack.CODEC.fieldOf("result").forGetter(SingleCrushingConditionalRecipe::getResult),
                 Condition.CODEC.fieldOf("condition").forGetter(SingleCrushingConditionalRecipe::getCondition),
                 Codec.either(Codec.FLOAT, Codec.either(SingleCrushingAgainstRecipe.Serializer.BLOCK_CODEC, Codec.STRING)).fieldOf("data")
@@ -75,6 +77,7 @@ public class SingleCrushingConditionalRecipe extends SingleCrushingRecipe {
                 StreamCodec.composite(
                         Ingredient.CONTENTS_STREAM_CODEC,
                         SingleCrushingConditionalRecipe::getIngredient,
+                        ByteBufCodecs.INT, SingleCrushingRecipe::getIngredientAmount,
                         ItemStack.STREAM_CODEC,
                         SingleCrushingConditionalRecipe::getResult,
                         ByteBufCodecs.idMapper(Condition.BY_ID, Condition::getId),

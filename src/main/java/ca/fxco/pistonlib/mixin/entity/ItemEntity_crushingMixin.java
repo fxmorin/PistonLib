@@ -40,7 +40,8 @@ public abstract class ItemEntity_crushingMixin extends Entity implements EntityP
             return;
         }
 
-        List<ItemEntity> itemEntities = this.level().getEntities(
+        Level level = this.level();
+        List<ItemEntity> itemEntities = level.getEntities(
                 EntityTypeTest.forClass(ItemEntity.class), new AABB(this.blockPosition()), ItemEntity::isAlive);
 
         if (itemEntities.isEmpty()) {
@@ -55,8 +56,8 @@ public abstract class ItemEntity_crushingMixin extends Entity implements EntityP
 
         PistonCrushingInput input = new PistonCrushingInput(itemsToMerge, crushedAgainst);
 
-        Optional<? extends RecipeHolder<? extends PistonCrushingRecipe>> optionalRecipe = this.level().getServer().getRecipeManager()
-                .getRecipeFor(ModRecipeTypes.PISTON_CRUSHING, input, this.level());
+        Optional<? extends RecipeHolder<? extends PistonCrushingRecipe>> optionalRecipe = level.getServer().getRecipeManager()
+                .getRecipeFor(ModRecipeTypes.PISTON_CRUSHING, input, level);
         if (optionalRecipe.isEmpty()) {
             return;
         }
@@ -69,26 +70,33 @@ public abstract class ItemEntity_crushingMixin extends Entity implements EntityP
                 ingredientAmount = Math.min(itemStack.getCount(), ingredientAmount);
             }
         }
+
+        // Round down to the input count
+        int inputCount = crushingRecipe.getInputCount();
+        ingredientAmount -= (ingredientAmount % inputCount);
+
         for (ItemStack itemStack : input.getItems()) {
             itemStack.shrink(ingredientAmount);
         }
 
-        ingredientAmount = ingredientAmount * crushingRecipe.getResultSize();
-        ItemStack resultItem;
-        while (true) {
-            resultItem = crushingRecipe.assemble(input, level().registryAccess());
-            if (ingredientAmount > resultItem.getMaxStackSize()) {
-                ingredientAmount -= resultItem.getMaxStackSize();
-                resultItem.setCount(resultItem.getMaxStackSize());
-            } else {
-                resultItem.setCount(ingredientAmount);
+        int amount = ingredientAmount / inputCount; // How many times to do the crafting recipe
 
-                this.level().addFreshEntity(
-                        new ItemEntity(this.level(), this.getX(), this.getY(), this.getZ(), resultItem));
-                break;
+        var registryAccess = level.registryAccess();
+        while (amount > 0) {
+            amount--;
+            ItemStack resultItem = crushingRecipe.assemble(input, registryAccess);
+            while (resultItem.getCount() > resultItem.getMaxStackSize()) { // Split into stacks of max size
+                level.addFreshEntity(new ItemEntity(
+                        level,
+                        this.getX(), this.getY(), this.getZ(),
+                        resultItem.split(resultItem.getMaxStackSize())
+                ));
             }
-            this.level().addFreshEntity(
-                    new ItemEntity(this.level(), this.getX(), this.getY(), this.getZ(), resultItem));
+            level.addFreshEntity(new ItemEntity(
+                    level,
+                    this.getX(), this.getY(), this.getZ(),
+                    resultItem
+            ));
         }
     }
 }

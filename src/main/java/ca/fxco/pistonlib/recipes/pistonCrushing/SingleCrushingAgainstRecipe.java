@@ -9,6 +9,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import lombok.Getter;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -27,8 +28,9 @@ public class SingleCrushingAgainstRecipe extends SingleCrushingRecipe {
 
     protected final @NotNull Block againstBlock;
 
-    public SingleCrushingAgainstRecipe(Ingredient ingredient, ItemStack result, @NotNull Block againstBlock) {
-        super(ingredient, result);
+    public SingleCrushingAgainstRecipe(Ingredient ingredient, int ingredientAmount, ItemStack result,
+                                       @NotNull Block againstBlock) {
+        super(ingredient, ingredientAmount, result);
         this.againstBlock = againstBlock;
     }
 
@@ -49,6 +51,7 @@ public class SingleCrushingAgainstRecipe extends SingleCrushingRecipe {
         public static final MapCodec<SingleCrushingAgainstRecipe> CODEC = RecordCodecBuilder.mapCodec(
                 inst -> inst.group(
                         Ingredient.CODEC.fieldOf("ingredient").forGetter(SingleCrushingAgainstRecipe::getIngredient),
+                        Codec.INT.optionalFieldOf("ingredientAmount", 1).forGetter(SingleCrushingRecipe::getIngredientAmount),
                         ItemStack.CODEC.fieldOf("result").forGetter(SingleCrushingAgainstRecipe::getResult),
                         BLOCK_CODEC.fieldOf("against_block").forGetter(SingleCrushingAgainstRecipe::getAgainstBlock)
                 ).apply(inst, SingleCrushingAgainstRecipe::new));
@@ -56,6 +59,7 @@ public class SingleCrushingAgainstRecipe extends SingleCrushingRecipe {
                 StreamCodec.composite(
                         Ingredient.CONTENTS_STREAM_CODEC,
                         SingleCrushingAgainstRecipe::getIngredient,
+                        ByteBufCodecs.INT, SingleCrushingRecipe::getIngredientAmount,
                         ItemStack.STREAM_CODEC,
                         SingleCrushingAgainstRecipe::getResult,
                         PLServerNetwork.BLOCK_STREAM_CODEC,

@@ -29,11 +29,6 @@ public abstract class AbstractCrushingRecipe implements PistonCrushingRecipe {
     }
 
     @Override
-    public int getResultSize() {
-        return result.getCount();
-    }
-
-    @Override
     public @NotNull RecipeType<? extends Recipe<PistonCrushingInput>> getType() {
         return ModRecipeTypes.PISTON_CRUSHING;
     }

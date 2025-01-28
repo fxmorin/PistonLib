@@ -20,6 +20,7 @@ import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.PistonType;
@@ -118,6 +119,9 @@ public class ModRecipeProvider extends FabricRecipeProvider {
 
 				ItemStack sticks = new ItemStack(Items.STICK, 4);
 				PairCrushingRecipeBuilder.crushing(Blocks.OAK_PLANKS, Blocks.OAK_PLANKS, sticks).save(exporter);
+
+				ItemStack planks = new ItemStack(Items.OAK_PLANKS, 2);
+				SingleCrushingRecipeBuilder.crushing(planks, sticks).save(exporter, "pistonlib:stick_2");
 
 				MultiCrushingRecipeBuilder.crushingItems(
 						List.of(Blocks.STONE, Items.QUARTZ, Blocks.ANDESITE),

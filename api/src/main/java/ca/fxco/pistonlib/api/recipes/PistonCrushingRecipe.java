@@ -12,12 +12,14 @@ import net.minecraft.world.item.crafting.*;
 public interface PistonCrushingRecipe extends Recipe<PistonCrushingInput> {
 
     /**
-     * The stack size of the returned item from the recipe.
+     * The number of input ingredients needed for the recipe.
      *
-     * @return The stack size of the resulting item from the recipe.
+     * @return The number of input ingredients needed
      * @since 1.2.0
      */
-    int getResultSize();
+    default int getInputCount() {
+        return 1;
+    }
 
     @Override
     default boolean isSpecial() {
