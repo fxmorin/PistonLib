@@ -111,11 +111,6 @@ public class PistonLib implements ModInitializer, PistonLibInitializer, PistonLi
         ModBlockEntities.bootstrap();
         ModItems.bootstrap();
         ModDataComponents.bootstrap();
-        ModMenus.bootstrap();
-        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
-            ModCreativeModeTabs.bootstrap();
-            ModScreens.bootstrap();
-        }
         ModRecipeBookCategories.bootstrap();
         ModRecipeTypes.boostrap();
         ModRecipeSerializers.boostrap();

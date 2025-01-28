@@ -1,36 +1,30 @@
 package ca.fxco.pistonlib.datagen;
 
-import java.util.Optional;
-
-import ca.fxco.pistonlib.api.PistonLibRegistries;
-import ca.fxco.pistonlib.base.ModItems;
-import ca.fxco.pistonlib.base.ModPistonFamilies;
-import net.minecraft.client.data.models.model.*;
-import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-
 import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
-import ca.fxco.pistonlib.base.ModBlocks;
-
+import ca.fxco.pistonlib.base.ModPistonFamilies;
 import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import net.minecraft.core.Direction;
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.client.data.models.blockstates.PropertyDispatch;
 import net.minecraft.client.data.models.blockstates.Variant;
 import net.minecraft.client.data.models.blockstates.VariantProperties;
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.client.data.models.model.*;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.PistonType;
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
 
-import static net.minecraft.client.data.models.BlockModelGenerators.*;
+import java.util.Optional;
+
+import static net.minecraft.client.data.models.BlockModelGenerators.createSlab;
 
 public class ModModelProvider extends FabricModelProvider {
 
@@ -50,82 +44,22 @@ public class ModModelProvider extends FabricModelProvider {
 	public void generateBlockStateModels(BlockModelGenerators generator) {
 		LOGGER.info("Generating blockstate definitions and models...");
 
-		for (var entry : PistonLibRegistries.PISTON_FAMILY.entrySet()) {
-            ResourceKey<PistonFamily> key = entry.getKey();
-            PistonFamily family = entry.getValue();
+		registerPistonFamily(generator, ModPistonFamilies.BASIC);
 
-			if (family == ModPistonFamilies.VANILLA) {
-				continue;
-			}
-
-            LOGGER.info("Generating blockstate definitions and models for piston family " + key.location()+"...");
-
-            registerPistonFamily(generator, family);
-        }
-
-		LOGGER.info("Finished generating blockstate definitions and models for pistons, generating for other blocks...");
-
-		registerHalfBlock(generator, ModBlocks.HALF_OBSIDIAN_BLOCK, Blocks.OBSIDIAN);
-		registerHalfBlock(generator, ModBlocks.HALF_REDSTONE_BLOCK, Blocks.REDSTONE_BLOCK);
-		registerBlockWithCustomModel(generator, ModBlocks.HALF_HONEY_BLOCK);
-		registerBlockWithCustomModel(generator, ModBlocks.HALF_SLIME_BLOCK);
-
-		registerBlockWithCustomStates(generator, ModBlocks.HALF_REDSTONE_LAMP_BLOCK,
-				createLitFacingBlockState(
-						ModelLocationUtils.getModelLocation(ModBlocks.HALF_REDSTONE_LAMP_BLOCK),
-						ModelLocationUtils.getModelLocation(ModBlocks.HALF_REDSTONE_LAMP_BLOCK, "_on")));
-		registerHalfBlockTextureMap(generator, ModBlocks.HALF_REDSTONE_LAMP_BLOCK, ModelLocationUtils.getModelLocation(Blocks.REDSTONE_LAMP));
-		registerHalfBlockTextureMap(generator, ModBlocks.HALF_REDSTONE_LAMP_BLOCK, ModelLocationUtils.getModelLocation(Blocks.REDSTONE_LAMP, "_on"), "_on");
-
-		generator.createRotatedPillarWithHorizontalVariant(ModBlocks.AXIS_LOCKED_BLOCK, TexturedModel.COLUMN_ALT, TexturedModel.COLUMN_HORIZONTAL_ALT);
-        generator.createTrivialCube(ModBlocks.DRAG_BLOCK);
-        generator.createTrivialCube(ModBlocks.STICKYLESS_BLOCK);
-        generator.createTrivialCube(ModBlocks.GLUE_BLOCK);
-        generator.createTrivialCube(ModBlocks.SLIPPERY_REDSTONE_BLOCK);
-        generator.createTrivialCube(ModBlocks.SLIPPERY_STONE_BLOCK);
-        generator.createTrivialCube(ModBlocks.MOVE_COUNTING_BLOCK);
-		generator.createTrivialCube(ModBlocks.WEAK_REDSTONE_BLOCK);
-		generator.createTrivialCube(ModBlocks.AUTO_CRAFTING_BLOCK);
-		generator.createTrivialCube(ModBlocks.QUASI_BLOCK);
-		generator.createTrivialCube(ModBlocks.ERASE_BLOCK);
-		generator.createTrivialCube(ModBlocks.HEAVY_BLOCK);
-
-		registerSlab(generator, Blocks.OBSIDIAN, ModBlocks.OBSIDIAN_SLAB_BLOCK);
-		registerStair(generator, Blocks.OBSIDIAN, ModBlocks.OBSIDIAN_STAIR_BLOCK);
-
-		createTrivialBlock(ModBlocks.STICKY_TOP_BLOCK, new TextureMapping().put(TextureSlot.SIDE, TextureMapping.getBlockTexture(Blocks.DEEPSLATE_BRICKS)).put(TextureSlot.TOP, TextureMapping.getBlockTexture(ModBlocks.STICKY_TOP_BLOCK)), ModelTemplates.CUBE_TOP, generator);
-
-		generator.blockStateOutput.accept(createSimpleBlock(ModBlocks.SLIMY_REDSTONE_BLOCK, ModelLocationUtils.getModelLocation(ModBlocks.SLIMY_REDSTONE_BLOCK)));
-		generator.blockStateOutput.accept(createSimpleBlock(ModBlocks.SLIPPERY_SLIME_BLOCK, ModelLocationUtils.getModelLocation(ModBlocks.SLIPPERY_SLIME_BLOCK)));
-
-		registerPoweredBlock(generator, ModBlocks.ALL_SIDED_OBSERVER);
-
-		generator.blockStateOutput.accept(MultiVariantGenerator.multiVariant(ModBlocks.POWERED_STICKY_BLOCK).with(
-				PropertyDispatch.property(BlockStateProperties.POWERED)
-						.select(false, Variant.variant().with(
-								VariantProperties.MODEL, ModelLocationUtils.getModelLocation(ModBlocks.POWERED_STICKY_BLOCK)))
-						.select(true, Variant.variant().with(
-								VariantProperties.MODEL, ModelLocationUtils.getModelLocation(ModBlocks.POWERED_STICKY_BLOCK, "_on")))
-		).with(BlockModelGenerators.createFacingDispatch()));
-
-		generator.blockStateOutput.accept(MultiVariantGenerator.multiVariant(ModBlocks.STICKY_CHAIN_BLOCK, Variant.variant().with(VariantProperties.MODEL, ModelLocationUtils.getModelLocation(ModBlocks.STICKY_CHAIN_BLOCK))).with(BlockModelGenerators.createRotatedPillar()));
-
-		TextureMapping particleOnlyTextureMap = new TextureMapping().put(TextureSlot.PARTICLE, TextureMapping.getBlockTexture(Blocks.PISTON, "_side")); //TODO
-		createTrivialBlock(ModBlocks.MERGE_BLOCK, particleOnlyTextureMap, TEMPLATE_PARTICLE_ONLY, generator);
+		TextureMapping particleOnlyTextureMap = new TextureMapping().put(TextureSlot.PARTICLE, TextureMapping.getBlockTexture(Blocks.PISTON, "_side"));
+		createTrivialBlock(ca.fxco.pistonlib.base.ModBlocks.MERGE_BLOCK, particleOnlyTextureMap, TEMPLATE_PARTICLE_ONLY, generator);
 
 		LOGGER.info("Finished generating blockstate definitions and models!");
+	}
+
+	@Override
+	public void generateItemModels(ItemModelGenerators itemModelGenerators) {
+
 	}
 
 	public static void createTrivialBlock(Block block, TextureMapping textureMapping, ModelTemplate modelTemplate, BlockModelGenerators generators) {
 		ResourceLocation resourceLocation = modelTemplate.create(block, textureMapping, generators.modelOutput);
 		generators.blockStateOutput.accept(BlockModelGenerators.createSimpleBlock(block, resourceLocation));
-	}
-
-	@Override
-	public void generateItemModels(ItemModelGenerators generator) {
-		generator.generateFlatItem(ModItems.PISTON_WAND, ModelTemplates.FLAT_ITEM);
-		generator.generateFlatItem(ModItems.PISTON_DEBUG_WAND, ModelTemplates.FLAT_ITEM);
-		generator.generateFlatItem(ModBlocks.STICKY_CHAIN_BLOCK.asItem(), ModelTemplates.FLAT_ITEM);
 	}
 
 	public static void registerCubeTextureMap(BlockModelGenerators generator, Block block,
@@ -139,27 +73,27 @@ public class ModModelProvider extends FabricModelProvider {
 	}
 
 	public static void registerHalfBlockTextureMap(BlockModelGenerators generator, Block halfBlock, ResourceLocation baseTexture) {
-        registerHalfBlockTextureMap(generator, halfBlock, baseTexture, null);
-    }
+		registerHalfBlockTextureMap(generator, halfBlock, baseTexture, null);
+	}
 
-    public static void registerHalfBlockTextureMap(BlockModelGenerators generator, Block halfBlock, ResourceLocation baseTexture, @Nullable String suffix) {
-        TextureMapping halfBlockTextureMap = new TextureMapping().put(TextureSlot.SIDE, baseTexture).put(TextureSlot.TOP, baseTexture);
-        if (suffix == null) {
-            TEMPLATE_HALF_BLOCK.create(halfBlock, halfBlockTextureMap, generator.modelOutput);
-        } else {
-            TEMPLATE_HALF_BLOCK.createWithSuffix(halfBlock, suffix, halfBlockTextureMap, generator.modelOutput);
-        }
-    }
+	public static void registerHalfBlockTextureMap(BlockModelGenerators generator, Block halfBlock, ResourceLocation baseTexture, @Nullable String suffix) {
+		TextureMapping halfBlockTextureMap = new TextureMapping().put(TextureSlot.SIDE, baseTexture).put(TextureSlot.TOP, baseTexture);
+		if (suffix == null) {
+			TEMPLATE_HALF_BLOCK.create(halfBlock, halfBlockTextureMap, generator.modelOutput);
+		} else {
+			TEMPLATE_HALF_BLOCK.createWithSuffix(halfBlock, suffix, halfBlockTextureMap, generator.modelOutput);
+		}
+	}
 
 	public static void registerBlockWithCustomModel(BlockModelGenerators generator, Block halfBlock) {
 		registerHalfBlock(generator, halfBlock, null);
 	}
 
 	public static void registerBlockWithCustomStates(BlockModelGenerators generator, Block halfBlock, PropertyDispatch customStates) {
-        generator.blockStateOutput.accept(MultiVariantGenerator.multiVariant(halfBlock, Variant.variant()
-                .with(VariantProperties.MODEL, ModelLocationUtils.getModelLocation(halfBlock))).with(customStates)
-        );
-    }
+		generator.blockStateOutput.accept(MultiVariantGenerator.multiVariant(halfBlock, Variant.variant()
+				.with(VariantProperties.MODEL, ModelLocationUtils.getModelLocation(halfBlock))).with(customStates)
+		);
+	}
 
 	private static void registerSlab(BlockModelGenerators generator, Block baseBlock, Block block) {
 		TextureMapping textureBase = TextureMapping.cube(baseBlock);
