@@ -11,14 +11,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(Entity.class)
 public abstract class Entity_pushIntoMixin implements EntityPistonMechanics {
-
-    @Shadow
-    private Vec3 collide(Vec3 vec3) { return null; }
 
     @WrapOperation(
             method = "move",
@@ -58,7 +54,7 @@ public abstract class Entity_pushIntoMixin implements EntityPistonMechanics {
                     }
                 }
             }
-            Vec3 afterCollide = this.collide(vec3);
+            Vec3 afterCollide = original.call(instance, vec3);
             if (vec3.lengthSqr() != 0 && vec3 != afterCollide) { // If entity is being crushed
                 pl$onPistonCrushing(crushedAgainst);
             }
