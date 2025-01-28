@@ -1,21 +1,21 @@
 package ca.fxco.pistonlib.mixin.blockEntity;
 
 import ca.fxco.pistonlib.PistonLibConfig;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.piston.PistonMovingBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.Property;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(PistonMovingBlockEntity.class)
 public class PistonMovingBlockEntity_waterloggedMixin {
 
-    @Redirect(
+    @WrapOperation(
             method = "finalTick",
             at = @At(
                     value = "INVOKE",
@@ -25,8 +25,9 @@ public class PistonMovingBlockEntity_waterloggedMixin {
                             "Lnet/minecraft/world/level/block/state/BlockState;"
             )
     )
-    private BlockState removeWaterloggedBlockState(BlockState state, LevelAccessor level, BlockPos pos) {
-        BlockState newState = Block.updateFromNeighbourShapes(state, level, pos);
+    private BlockState removeWaterloggedBlockState(BlockState state, LevelAccessor level,
+                                                   BlockPos pos, Operation<BlockState> original) {
+        BlockState newState = original.call(state, level, pos);
         if (PistonLibConfig.pistonsPushWaterloggedBlocks == PistonLibConfig.WaterloggedState.NONE &&
                 newState.hasProperty(BlockStateProperties.WATERLOGGED) &&
                 newState.getValue(BlockStateProperties.WATERLOGGED)) {
@@ -35,7 +36,7 @@ public class PistonMovingBlockEntity_waterloggedMixin {
         return newState;
     }
 
-    @Redirect(
+    @WrapOperation(
             method = "tick",
             at = @At(
                     value = "INVOKE",
@@ -43,10 +44,11 @@ public class PistonMovingBlockEntity_waterloggedMixin {
                             "hasProperty(Lnet/minecraft/world/level/block/state/properties/Property;)Z"
             )
     )
-    private static boolean allowWaterloggedBlockState(BlockState instance, Property<?> property) {
+    private static boolean allowWaterloggedBlockState(BlockState instance, Property<?> property,
+                                                      Operation<Boolean> original) {
         if (PistonLibConfig.pistonsPushWaterloggedBlocks == PistonLibConfig.WaterloggedState.ALL) {
             return false; // Prevents water from being removed
         }
-        return instance.hasProperty(property);
+        return original.call(instance, property);
     }
 }

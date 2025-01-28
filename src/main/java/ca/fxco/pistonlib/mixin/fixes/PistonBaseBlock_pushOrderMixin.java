@@ -2,12 +2,13 @@ package ca.fxco.pistonlib.mixin.fixes;
 
 import ca.fxco.pistonlib.PistonLibConfig;
 import com.google.common.collect.Maps;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.piston.PistonBaseBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.util.HashMap;
 
@@ -18,7 +19,7 @@ import java.util.HashMap;
 @Mixin(PistonBaseBlock.class)
 public class PistonBaseBlock_pushOrderMixin {
 
-    @Redirect(
+    @WrapOperation(
             method = "moveBlocks",
             at = @At(
                     value = "INVOKE",
@@ -26,7 +27,7 @@ public class PistonBaseBlock_pushOrderMixin {
                     remap = false
             )
     )
-    private HashMap<BlockPos, BlockState> fixLocationalHashmap() {
-        return PistonLibConfig.locationalUpdateOrderFix ? Maps.newLinkedHashMap() : Maps.newHashMap();
+    private HashMap<BlockPos, BlockState> fixLocationalHashmap(Operation<HashMap<BlockPos, BlockState>> original) {
+        return PistonLibConfig.locationalUpdateOrderFix ? Maps.newLinkedHashMap() : original.call();
     }
 }
