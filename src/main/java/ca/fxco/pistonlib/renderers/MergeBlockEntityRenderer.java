@@ -1,5 +1,6 @@
 package ca.fxco.pistonlib.renderers;
 
+import ca.fxco.pistonlib.api.pistonLogic.base.PLMergeBlockEntity;
 import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlockEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -40,8 +41,8 @@ public class MergeBlockEntityRenderer<T extends MergeBlockEntity> implements Blo
 
         this.renderBlock(pos, mbe.getInitialState(), stack, bufferSource, level, false, overlay);
 
-        for (Map.Entry<Direction, MergeBlockEntity.MergeData> entry : mbe.getMergingBlocks().entrySet()) {
-            MergeBlockEntity.MergeData data = entry.getValue();
+        for (Map.Entry<Direction, PLMergeBlockEntity.MergeData> entry : mbe.getMergingBlocks().entrySet()) {
+            PLMergeBlockEntity.MergeData data = entry.getValue();
             BlockState state = data.getState();
             if (state == null) {
                 float progress = data.getProgress();
@@ -65,13 +66,13 @@ public class MergeBlockEntityRenderer<T extends MergeBlockEntity> implements Blo
         }
     }
 
-    protected void renderBlock(BlockPos pos, BlockState state, PoseStack stack, MultiBufferSource bufferSource, Level level,
-                               boolean cull, int overlay) {
+    protected void renderBlock(BlockPos pos, BlockState state, PoseStack stack, MultiBufferSource bufferSource,
+                               Level level, boolean cull, int overlay) {
         RenderType type = ItemBlockRenderTypes.getMovingBlockRenderType(state);
         VertexConsumer consumer = bufferSource.getBuffer(type);
 
-        this.blockRenderer.getModelRenderer().tesselateBlock(level, this.blockRenderer.getBlockModel(state), state, pos, stack,
-            consumer, cull, RandomSource.create(), state.getSeed(pos), overlay);
+        this.blockRenderer.getModelRenderer().tesselateBlock(level, this.blockRenderer.getBlockModel(state), state,
+                pos, stack, consumer, cull, RandomSource.create(), state.getSeed(pos), overlay);
     }
 
     

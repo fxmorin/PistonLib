@@ -4,13 +4,16 @@ import java.lang.reflect.Field;
 import java.util.*;
 import java.util.function.Consumer;
 
-import ca.fxco.api.pistonlib.PistonLibInitializer;
-import ca.fxco.api.pistonlib.PistonLibSupplier;
-import ca.fxco.api.pistonlib.config.ConfigFieldEntrypoint;
-import ca.fxco.api.pistonlib.config.ConfigManager;
-import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyGroups;
+import ca.fxco.pistonlib.api.PistonLibApi;
+import ca.fxco.pistonlib.api.PistonLibInitializer;
+import ca.fxco.pistonlib.api.PistonLibSupplier;
+import ca.fxco.pistonlib.api.config.ConfigFieldEntrypoint;
+import ca.fxco.pistonlib.api.config.ConfigManager;
+import ca.fxco.pistonlib.api.config.ConfigManagerEntrypoint;
+import ca.fxco.pistonlib.pistonLogic.structureGroups.ClientStructureGroup;
+import ca.fxco.pistonlib.pistonLogic.structureGroups.ServerStructureGroup;
+import ca.fxco.pistonlib.api.pistonLogic.structure.StructureGroup;
 import ca.fxco.pistonlib.base.*;
-import ca.fxco.api.pistonlib.config.ConfigManagerEntrypoint;
 import ca.fxco.pistonlib.config.ConfigManagerImpl;
 import ca.fxco.pistonlib.helpers.PistonLibBehaviorManager;
 import ca.fxco.pistonlib.network.PLServerNetwork;
@@ -22,6 +25,10 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
 import net.minecraft.core.Direction;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.flag.FeatureFlag;
+import net.minecraft.world.flag.FeatureFlagSet;
+import net.minecraft.world.flag.FeatureFlagUniverse;
+import net.minecraft.world.level.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +42,9 @@ public class PistonLib implements ModInitializer, PistonLibInitializer, PistonLi
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     public static final boolean DATAGEN_ACTIVE = System.getProperty("fabric-api.datagen") != null;
     public static final Direction[] DIRECTIONS = Direction.values();
+    public static final FeatureFlagSet NEVER_ENABLED_SET = FeatureFlagSet.of(
+            new FeatureFlag(new FeatureFlagUniverse("fake_universe"), 64)
+    );
 
     @Getter
     private static final ConfigManager configManager = new ConfigManagerImpl(MOD_ID, PistonLibConfig.class);
@@ -42,18 +52,14 @@ public class PistonLib implements ModInitializer, PistonLibInitializer, PistonLi
     @Getter
     private static Optional<MinecraftServer> server = Optional.empty();
 
-    public static ResourceLocation id(String path) {
-        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
-    }
-
     @Override
     public void onInitialize() {
-        ModRegistries.bootstrap();
+        PistonLibApi.setSupplier(this);
 
-        initialize(p -> p.initialize(this));
+        initialize(PistonLibInitializer::initialize);
+        initialize(PistonLibInitializer::bootstrap);
         initialize(PistonLibInitializer::registerPistonFamilies);
         initialize(PistonLibInitializer::registerStickyGroups);
-        initialize(PistonLibInitializer::bootstrap);
 
         ModPistonFamilies.validate();
         ModStickyGroups.validate();
@@ -86,19 +92,8 @@ public class PistonLib implements ModInitializer, PistonLibInitializer, PistonLi
         });
     }
 
-    public static void onStartServer(MinecraftServer s) {
-        server = Optional.of(s);
-        PistonLib.getConfigManager().initializeConfig();
-        PistonLibBehaviorManager.load();
-    }
-
-    public static void onStopServer() {
-        PistonLibBehaviorManager.save(false);
-        server = Optional.empty();
-    }
-
     @Override
-    public void initialize(PistonLibSupplier supplier) {}
+    public void initialize() {}
 
     @Override
     public void registerPistonFamilies() {
@@ -108,7 +103,6 @@ public class PistonLib implements ModInitializer, PistonLibInitializer, PistonLi
     @Override
     public void registerStickyGroups() {
         ModStickyGroups.bootstrap();
-        StickyGroups.bootstrap();
     }
 
     @Override
@@ -136,5 +130,25 @@ public class PistonLib implements ModInitializer, PistonLibInitializer, PistonLi
     @Override
     public ConfigManager createSimpleConfigManager(String modId, Class<?> configClass) {
         return new ConfigManagerImpl(modId, configClass);
+    }
+
+    @Override
+    public StructureGroup createStructureGroup(boolean clientSide) {
+        return clientSide ? new ClientStructureGroup() : new ServerStructureGroup();
+    }
+
+    public static ResourceLocation id(String path) {
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+    }
+
+    public static void onStartServer(MinecraftServer s) {
+        server = Optional.of(s);
+        PistonLib.getConfigManager().initializeConfig();
+        PistonLibBehaviorManager.load();
+    }
+
+    public static void onStopServer() {
+        PistonLibBehaviorManager.save(false);
+        server = Optional.empty();
     }
 }

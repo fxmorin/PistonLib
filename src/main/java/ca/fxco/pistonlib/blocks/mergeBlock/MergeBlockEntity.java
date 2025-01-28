@@ -1,10 +1,12 @@
 package ca.fxco.pistonlib.blocks.mergeBlock;
 
 import ca.fxco.pistonlib.PistonLibConfig;
+import ca.fxco.pistonlib.api.block.MovingTickable;
+import ca.fxco.pistonlib.api.pistonLogic.base.PLMergeBlockEntity;
 import ca.fxco.pistonlib.base.ModBlockEntities;
 import ca.fxco.pistonlib.helpers.Utils;
-import ca.fxco.api.pistonlib.block.MovingTickable;
 import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderGetter;
@@ -30,6 +32,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -38,9 +41,9 @@ import static ca.fxco.pistonlib.PistonLib.DIRECTIONS;
 import static net.minecraft.world.level.block.piston.PistonMovingBlockEntity.*;
 
 @Getter
-public class MergeBlockEntity extends BlockEntity {
+public class MergeBlockEntity extends BlockEntity implements PLMergeBlockEntity {
 
-    protected final Map<Direction, MergeData> mergingBlocks = new HashMap<>();
+    protected final Map<Direction, PLMergeBlockEntity.MergeData> mergingBlocks = new HashMap<>();
     protected BlockState initialState;
     protected @Nullable BlockEntity initialBlockEntity;
 
@@ -59,11 +62,12 @@ public class MergeBlockEntity extends BlockEntity {
         this.initialBlockEntity = initialBlockEntity;
     }
 
-    // Should always be called before calling `canMerge()`
+    @Override
     public boolean canMergeFromSide(Direction pushDirection) {
         return !mergingBlocks.containsKey(pushDirection);
     }
 
+    @Override
     public boolean canMerge(BlockState state, Direction dir) {
         Block merge = initialState.getBlock();
         if (merge.pl$canMultiMerge() &&
@@ -74,17 +78,20 @@ public class MergeBlockEntity extends BlockEntity {
         return false;
     }
 
+    @Override
     public void doMerge(BlockState state, Direction dir) {
         mergingBlocks.put(dir, new MergeData(state));
     }
 
+    @Override
     public void doMerge(BlockState state, Direction dir, float speed) {
         MergeData data = new MergeData(state);
         data.setSpeed(speed);
         mergingBlocks.put(dir, data);
     }
 
-    public void doMerge(BlockState state, BlockEntity blockEntity, Direction dir, float speed) {
+    @Override
+    public void doMerge(BlockState state, @NotNull BlockEntity blockEntity, Direction dir, float speed) {
         MergeData data = new MergeData(blockEntity, state);
         data.setSpeed(speed);
         mergingBlocks.put(dir, data);
@@ -92,8 +99,8 @@ public class MergeBlockEntity extends BlockEntity {
 
     public static void tick(Level level, BlockPos blockPos, BlockState blockState, MergeBlockEntity mergeBlockEntity) {
         byte count = 0;
-        for (Map.Entry<Direction, MergeData> entry : mergeBlockEntity.mergingBlocks.entrySet()) {
-            MergeData data = entry.getValue();
+        for (Map.Entry<Direction, PLMergeBlockEntity.MergeData> entry : mergeBlockEntity.mergingBlocks.entrySet()) {
+            PLMergeBlockEntity.MergeData data = entry.getValue();
             data.setLastProgress(data.getProgress());
             float lastProgress = data.getLastProgress();
             if (lastProgress >= 1.0F) {
@@ -118,13 +125,14 @@ public class MergeBlockEntity extends BlockEntity {
             BlockState newState = null;
             if (count > 1) {
                 Map<Direction, BlockState> states = new HashMap<>();
-                for (Map.Entry<Direction, MergeData> entry : mergeBlockEntity.mergingBlocks.entrySet()) {
+                for (var entry : mergeBlockEntity.mergingBlocks.entrySet()) {
                     states.put(entry.getKey(), entry.getValue().getState());
                 }
                 newState = merge.pl$doMultiMerge(level, blockPos, states, initialState);
             } else {
-                for (Map.Entry<Direction, MergeData> entry : mergeBlockEntity.mergingBlocks.entrySet()) {
-                    newState = merge.pl$doMerge(entry.getValue().getState(), level, blockPos, initialState, entry.getKey());
+                for (var entry : mergeBlockEntity.mergingBlocks.entrySet()) {
+                    newState = merge.pl$doMerge(entry.getValue().getState(), level, blockPos,
+                            initialState, entry.getKey());
                     break;
                 }
             }
@@ -133,20 +141,36 @@ public class MergeBlockEntity extends BlockEntity {
             }
             BlockState blockState2 = Block.updateFromNeighbourShapes(newState, level, blockPos);
             if (blockState2.isAir()) {
-                level.setBlock(blockPos, newState, Block.UPDATE_MOVE_BY_PISTON | Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_CLIENTS);
+                level.setBlock(
+                        blockPos,
+                        newState,
+                        Block.UPDATE_MOVE_BY_PISTON | Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_CLIENTS
+                );
                 Block.updateOrDestroy(newState, blockState2, level, blockPos, Block.UPDATE_ALL);
             } else {
                 if (mergeBlockEntity.initialBlockEntity != null) {
                     mergeBlockEntity.initialBlockEntity.setLevel(level);
                     mergeBlockEntity.initialBlockEntity.setBlockState(blockState2);
-                    mergeBlockEntity.initialBlockEntity.pl$beforeInitialFinalMerge(blockState2, mergeBlockEntity.mergingBlocks);
-                    for (MergeData data : mergeBlockEntity.mergingBlocks.values()) {
+                    mergeBlockEntity.initialBlockEntity.pl$beforeInitialFinalMerge(
+                            blockState2,
+                            mergeBlockEntity.mergingBlocks
+                    );
+                    for (PLMergeBlockEntity.MergeData data : mergeBlockEntity.mergingBlocks.values()) {
                         if (data.hasBlockEntity()) {
                             data.getBlockEntity().pl$onAdvancedFinalMerge(mergeBlockEntity.initialBlockEntity);
                         }
                     }
-                    mergeBlockEntity.initialBlockEntity.pl$afterInitialFinalMerge(blockState2, mergeBlockEntity.mergingBlocks);
-                    Utils.setBlockWithEntity(level, blockPos, blockState2, mergeBlockEntity.initialBlockEntity, Block.UPDATE_MOVE_BY_PISTON | Block.UPDATE_ALL);
+                    mergeBlockEntity.initialBlockEntity.pl$afterInitialFinalMerge(
+                            blockState2,
+                            mergeBlockEntity.mergingBlocks
+                    );
+                    Utils.setBlockWithEntity(
+                            level,
+                            blockPos,
+                            blockState2,
+                            mergeBlockEntity.initialBlockEntity,
+                            Block.UPDATE_MOVE_BY_PISTON | Block.UPDATE_ALL
+                    );
                 } else {
                     level.setBlock(blockPos, blockState2, Block.UPDATE_MOVE_BY_PISTON | Block.UPDATE_ALL);
                 }
@@ -159,19 +183,19 @@ public class MergeBlockEntity extends BlockEntity {
         VoxelShape initialShape = this.initialState.getCollisionShape(this.level, this.worldPosition);
         List<AABB>[] blockAabbs = new ArrayList[6];
         double[] deltaProgresses = new double[6];
-        for (Map.Entry<Direction, MergeData> entry : this.mergingBlocks.entrySet()) {
-            MergeData data = entry.getValue();
+        for (Map.Entry<Direction, PLMergeBlockEntity.MergeData> entry : this.mergingBlocks.entrySet()) {
+            PLMergeBlockEntity.MergeData data = entry.getValue();
             Direction dir = entry.getKey();
 
             VoxelShape blockShape = data.getState().getCollisionShape(this.level, this.worldPosition);
             if (!blockShape.isEmpty()) {
-                double maxProgress = (double)1.0F - data.progress;
+                double maxProgress = (double)1.0F - data.getProgress();
                 blockShape.move(
                         (double)this.worldPosition.getX() + maxProgress * (double)dir.getStepX(),
                         (double)this.worldPosition.getY() + maxProgress * (double)dir.getStepY(),
                         (double)this.worldPosition.getZ() + maxProgress * (double)dir.getStepZ()
                 );
-                double deltaProgress = nextProgress - data.progress;
+                double deltaProgress = nextProgress - data.getProgress();
                 deltaProgresses[dir.ordinal()] = deltaProgress;
                 blockAabbs[dir.ordinal()] = blockShape.toAabbs();
                 initialShape = Shapes.join(initialShape, blockShape, BooleanOp.OR);
@@ -192,7 +216,7 @@ public class MergeBlockEntity extends BlockEntity {
 
             AABB entityAabb = entity.getBoundingBox();
 
-            for (Map.Entry<Direction, MergeData> entry : this.mergingBlocks.entrySet()) {
+            for (Map.Entry<Direction, PLMergeBlockEntity.MergeData> entry : this.mergingBlocks.entrySet()) {
                 Direction dir = entry.getKey();
                 double movement = 0.0D;
                 int ord = dir.ordinal();
@@ -244,24 +268,17 @@ public class MergeBlockEntity extends BlockEntity {
     }
 
     private static double getMovement(AABB aABB, Direction direction, AABB aABB2) {
-        switch (direction) {
-            case EAST:
-                return aABB.maxX - aABB2.minX;
-            case WEST:
-                return aABB2.maxX - aABB.minX;
-            case UP:
-            default:
-                return aABB.maxY - aABB2.minY;
-            case DOWN:
-                return aABB2.maxY - aABB.minY;
-            case SOUTH:
-                return aABB.maxZ - aABB2.minZ;
-            case NORTH:
-                return aABB2.maxZ - aABB.minZ;
-        }
+        return switch (direction) {
+            case EAST -> aABB.maxX - aABB2.minX;
+            case WEST -> aABB2.maxX - aABB.minX;
+            case DOWN -> aABB2.maxY - aABB.minY;
+            case SOUTH -> aABB.maxZ - aABB2.minZ;
+            case NORTH -> aABB2.maxZ - aABB.minZ;
+            default -> aABB.maxY - aABB2.minY;
+        };
     }
 
-    public float getProgress(float f, float progress, float lastProgress) {
+    protected float getProgress(float f, float progress, float lastProgress) {
         if (f > 1.0F) {
             f = 1.0F;
         }
@@ -269,16 +286,19 @@ public class MergeBlockEntity extends BlockEntity {
         return Mth.lerp(f, lastProgress, progress);
     }
 
-    public float getXOff(Direction dir, float f, float progress, float lastProgress) {
-        return (float)dir.getStepX() * (this.getProgress(f, progress, lastProgress) - 1);
+    @Override
+    public float getXOff(Direction dir, float partialTick, float progress, float lastProgress) {
+        return (float)dir.getStepX() * (this.getProgress(partialTick, progress, lastProgress) - 1);
     }
 
-    public float getYOff(Direction dir, float f, float progress, float lastProgress) {
-        return (float)dir.getStepY() * (this.getProgress(f, progress, lastProgress) - 1);
+    @Override
+    public float getYOff(Direction dir, float partialTick, float progress, float lastProgress) {
+        return (float)dir.getStepY() * (this.getProgress(partialTick, progress, lastProgress) - 1);
     }
 
-    public float getZOff(Direction dir, float f, float progress, float lastProgress) {
-        return (float)dir.getStepZ() * (this.getProgress(f, progress, lastProgress) - 1);
+    @Override
+    public float getZOff(Direction dir, float partialTick, float progress, float lastProgress) {
+        return (float)dir.getStepZ() * (this.getProgress(partialTick, progress, lastProgress) - 1);
     }
 
     @Override
@@ -306,15 +326,17 @@ public class MergeBlockEntity extends BlockEntity {
         if (this.initialBlockEntity != null) {
             compoundTag.put("be", this.initialBlockEntity.saveWithoutMetadata(lookup));
         }
-        for (Map.Entry<Direction, MergeData> entry : mergingBlocks.entrySet()) {
+        for (Map.Entry<Direction, PLMergeBlockEntity.MergeData> entry : mergingBlocks.entrySet()) {
             compoundTag.put("dir" + entry.getKey().ordinal(), MergeData.writeNbt(entry.getValue(), lookup));
         }
     }
 
-    public static class MergeData {
+    @Setter
+    @Getter
+    public static class MergeData implements PLMergeBlockEntity.MergeData {
 
         private final BlockState state;
-        private final @Nullable BlockEntity be;
+        private final @Nullable BlockEntity blockEntity;
         private float progress;
         private float lastProgress;
         private float speed = 1F;
@@ -325,59 +347,30 @@ public class MergeBlockEntity extends BlockEntity {
 
         public MergeData(@Nullable BlockEntity blockEntity, BlockState state) {
             this.state = state;
-            this.be = blockEntity;
+            this.blockEntity = blockEntity;
         }
 
+        @Override
         public boolean hasBlockEntity() {
-            return be != null;
+            return blockEntity != null;
         }
 
-        public BlockEntity getBlockEntity() {
-            return be;
-        }
-
-        public BlockState getState() {
-            return state;
-        }
-
-        public float getProgress() {
-            return progress;
-        }
-
-        public float getLastProgress() {
-            return lastProgress;
-        }
-
-        public float getSpeed() {
-            return speed;
-        }
-
-        public void setProgress(float progress) {
-            this.progress = progress;
-        }
-
-        public void setLastProgress(float lastProgress) {
-            this.lastProgress = lastProgress;
-        }
-
+        @Override
         public void setAllProgress(float progress) {
             this.progress = this.lastProgress = progress;
         }
 
-        public void setSpeed(float speed) {
-            this.speed = speed;
-        }
-
+        @Override
         public void onMovingTick(Level level, BlockPos toPos, Direction dir) {
             if (this.state.getBlock() instanceof MovingTickable tickable) {
                 tickable.pl$movingTick(level, this.state, toPos, dir, this.lastProgress, this.speed, true);
             }
-            if (this.be instanceof MovingTickable tickable) {
+            if (this.blockEntity instanceof MovingTickable tickable) {
                 tickable.pl$movingTick(level, this.state, toPos, dir, this.lastProgress, this.speed, true);
             }
         }
 
-        public static CompoundTag writeNbt(MergeData data, HolderLookup.Provider lookup) {
+        public static CompoundTag writeNbt(PLMergeBlockEntity.MergeData data, HolderLookup.Provider lookup) {
             CompoundTag compoundTag = new CompoundTag();
             compoundTag.put("state", NbtUtils.writeBlockState(data.getState()));
             if (data.hasBlockEntity()) {

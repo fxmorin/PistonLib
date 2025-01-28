@@ -1,7 +1,7 @@
 package ca.fxco.pistonlib.commands;
 
-import ca.fxco.api.pistonlib.pistonLogic.PistonMoveBehavior;
 import ca.fxco.pistonlib.PistonLib;
+import ca.fxco.pistonlib.api.pistonLogic.PistonMoveBehavior;
 import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.commands.arguments.DirectionArgument;

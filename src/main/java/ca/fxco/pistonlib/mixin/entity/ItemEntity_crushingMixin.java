@@ -1,9 +1,9 @@
 package ca.fxco.pistonlib.mixin.entity;
 
-import ca.fxco.api.pistonlib.recipes.PistonCrushingInput;
-import ca.fxco.api.pistonlib.recipes.PistonCrushingRecipe;
+import ca.fxco.pistonlib.api.recipes.PistonCrushingInput;
+import ca.fxco.pistonlib.api.recipes.PistonCrushingRecipe;
 import ca.fxco.pistonlib.base.ModRecipeTypes;
-import ca.fxco.api.pistonlib.entity.EntityPistonMechanics;
+import ca.fxco.pistonlib.api.entity.EntityPistonMechanics;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;

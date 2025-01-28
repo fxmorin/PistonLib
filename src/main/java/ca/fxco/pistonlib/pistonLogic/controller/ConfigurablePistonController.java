@@ -1,7 +1,6 @@
 package ca.fxco.pistonlib.pistonLogic.controller;
 
-import ca.fxco.api.pistonlib.pistonLogic.PistonEvents;
-import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
+import ca.fxco.pistonlib.api.pistonLogic.PistonEvents;
 import ca.fxco.pistonlib.helpers.Utils;
 import ca.fxco.pistonlib.pistonLogic.structureResolvers.BasicStructureResolver;
 import net.minecraft.core.BlockPos;
@@ -16,8 +15,8 @@ import static net.minecraft.world.level.block.state.properties.BlockStatePropert
 
 public class ConfigurablePistonController extends VanillaPistonController {
 
-    public ConfigurablePistonController(PistonFamily family, PistonType type) {
-        super(family, type);
+    public ConfigurablePistonController(PistonType type) {
+        super(type);
     }
 
     @Override

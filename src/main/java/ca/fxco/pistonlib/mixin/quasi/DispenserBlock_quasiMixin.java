@@ -1,16 +1,17 @@
 package ca.fxco.pistonlib.mixin.quasi;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.DispenserBlock;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(DispenserBlock.class)
 public class DispenserBlock_quasiMixin {
 
-    @Redirect(
+    @WrapOperation(
             method = "neighborChanged",
             at = @At(
                     value = "INVOKE",
@@ -18,7 +19,7 @@ public class DispenserBlock_quasiMixin {
                     ordinal = 1
             )
     )
-    private boolean useQuasiSignalCheck(Level level, BlockPos pos) {
-        return level.pl$hasQuasiNeighborSignal(pos.below(), 1);
+    private boolean useQuasiSignalCheck(Level instance, BlockPos pos, Operation<Boolean> original) {
+        return instance.pl$hasQuasiNeighborSignal(pos.below(), 1);
     }
 }

@@ -1,6 +1,6 @@
 package ca.fxco.pistonlib.mixin;
 
-import ca.fxco.api.pistonlib.block.PLBlockBehaviour;
+import ca.fxco.pistonlib.api.block.PLBlockBehaviour;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import org.spongepowered.asm.mixin.Mixin;
 

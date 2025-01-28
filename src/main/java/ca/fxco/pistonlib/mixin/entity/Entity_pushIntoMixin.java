@@ -1,7 +1,9 @@
 package ca.fxco.pistonlib.mixin.entity;
 
 import ca.fxco.pistonlib.helpers.BlockPosUtils;
-import ca.fxco.api.pistonlib.entity.EntityPistonMechanics;
+import ca.fxco.pistonlib.api.entity.EntityPistonMechanics;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MoverType;
@@ -11,7 +13,6 @@ import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(Entity.class)
 public abstract class Entity_pushIntoMixin implements EntityPistonMechanics {
@@ -19,7 +20,7 @@ public abstract class Entity_pushIntoMixin implements EntityPistonMechanics {
     @Shadow
     private Vec3 collide(Vec3 vec3) { return null; }
 
-    @Redirect( // Make this a wrapWithCondition
+    @WrapOperation(
             method = "move",
             at = @At(
                     value = "INVOKE",
@@ -27,7 +28,7 @@ public abstract class Entity_pushIntoMixin implements EntityPistonMechanics {
                             "Lnet/minecraft/world/phys/Vec3;"
             )
     )
-    private Vec3 checkPushInto(Entity instance, Vec3 vec3, MoverType moverType) {
+    private Vec3 checkPushInto(Entity instance, Vec3 vec3, Operation<Vec3> original, MoverType moverType) {
         if (moverType == MoverType.PISTON && !instance.level().isClientSide) {
             BlockState crushedAgainst = null;
             if (pl$canPushIntoBlocks()) {
@@ -63,6 +64,6 @@ public abstract class Entity_pushIntoMixin implements EntityPistonMechanics {
             }
             return afterCollide;
         }
-        return this.collide(vec3);
+        return original.call(instance, vec3);
     }
 }

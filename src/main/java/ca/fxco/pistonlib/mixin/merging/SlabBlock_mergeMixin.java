@@ -1,7 +1,7 @@
 package ca.fxco.pistonlib.mixin.merging;
 
 import ca.fxco.pistonlib.PistonLibConfig;
-import ca.fxco.api.pistonlib.block.PLBlockBehaviour;
+import ca.fxco.pistonlib.api.block.PLBlockBehaviour;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

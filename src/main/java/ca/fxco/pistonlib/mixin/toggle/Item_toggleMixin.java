@@ -1,6 +1,6 @@
 package ca.fxco.pistonlib.mixin.toggle;
 
-import ca.fxco.api.pistonlib.item.PLItem;
+import ca.fxco.pistonlib.api.item.PLItem;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.Item;
 import org.spongepowered.asm.mixin.Mixin;
@@ -11,6 +11,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.function.BooleanSupplier;
+
+import static ca.fxco.pistonlib.PistonLib.NEVER_ENABLED_SET;
 
 @Mixin(Item.class)
 public class Item_toggleMixin implements PLItem {

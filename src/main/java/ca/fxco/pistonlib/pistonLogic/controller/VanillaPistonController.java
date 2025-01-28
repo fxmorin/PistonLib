@@ -1,11 +1,13 @@
 package ca.fxco.pistonlib.pistonLogic.controller;
 
-import ca.fxco.api.pistonlib.pistonLogic.PistonEvents;
-import ca.fxco.api.pistonlib.pistonLogic.PistonMoveBehavior;
-import ca.fxco.api.pistonlib.pistonLogic.controller.PistonController;
-import ca.fxco.api.pistonlib.pistonLogic.structure.StructureRunner;
-import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.PistonLibConfig;
+import ca.fxco.pistonlib.api.pistonLogic.PistonEvents;
+import ca.fxco.pistonlib.api.pistonLogic.PistonMoveBehavior;
+import ca.fxco.pistonlib.api.pistonLogic.base.PLMergeBlockEntity;
+import ca.fxco.pistonlib.api.pistonLogic.controller.PistonController;
+import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
+import ca.fxco.pistonlib.api.pistonLogic.structure.StructureResolver;
+import ca.fxco.pistonlib.api.pistonLogic.structure.StructureRunner;
 import ca.fxco.pistonlib.base.ModTags;
 import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
@@ -17,6 +19,7 @@ import ca.fxco.pistonlib.pistonLogic.structureResolvers.BasicStructureResolver;
 import ca.fxco.pistonlib.pistonLogic.structureResolvers.MergingPistonStructureResolver;
 import ca.fxco.pistonlib.pistonLogic.structureRunners.BasicStructureRunner;
 import ca.fxco.pistonlib.pistonLogic.structureRunners.MergingStructureRunner;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -30,6 +33,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.piston.MovingPistonBlock;
 import net.minecraft.world.level.block.piston.PistonMovingBlockEntity;
+import net.minecraft.world.level.block.piston.PistonStructureResolver;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.PistonType;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -45,34 +49,35 @@ import static net.minecraft.world.level.block.state.properties.BlockStatePropert
  * @author FX
  * @since 1.0.4
  */
+@Getter
 @RequiredArgsConstructor
 public class VanillaPistonController implements PistonController {
 
-    private final PistonFamily family;
     private final PistonType type;
+    private PistonFamily family;
 
     @Override
-    public PistonFamily getFamily() {
-        return family;
+    public void setFamily(PistonFamily family) {
+        if (this.family != null) {
+            throw new IllegalStateException("Family has already been set! - " + this.family);
+        }
+        this.family = family;
     }
 
     @Override
-    public PistonType getType() {
-        return type;
-    }
-
-    @Override
-    public BasicStructureResolver newStructureResolver(Level level, BlockPos pos, Direction facing,
-                                                       int length, boolean extend) {
-        return PistonLibConfig.mergingApi ?
+    public <S extends PistonStructureResolver & StructureResolver> S newStructureResolver(
+            Level level, BlockPos pos, Direction facing, int length, boolean extend
+    ) {
+        //noinspection unchecked
+        return (S) (PistonLibConfig.mergingApi ?
                 new MergingPistonStructureResolver(this, level, pos, facing, length, extend) :
-                new BasicStructureResolver(this, level, pos, facing, length, extend);
+                new BasicStructureResolver(this, level, pos, facing, length, extend));
     }
 
     @Override
-    public StructureRunner newStructureRunner(
+    public <S extends PistonStructureResolver & StructureResolver> StructureRunner newStructureRunner(
             Level level, BlockPos pos, Direction facing, int length, boolean extend,
-            BasicStructureResolver.Factory<? extends BasicStructureResolver> structureProvider
+            StructureResolver.Factory<S> structureProvider
     ) {
         PistonFamily family = getFamily();
         PistonType type = getType();
@@ -245,7 +250,7 @@ public class VanillaPistonController implements PistonController {
                         mbe.finalTick();
                         droppedBlock = true;
                     } else if (frontBlockEntity instanceof MergeBlockEntity mbe) {
-                        MergeBlockEntity.MergeData mergeData = mbe.getMergingBlocks().get(facing);
+                        PLMergeBlockEntity.MergeData mergeData = mbe.getMergingBlocks().get(facing);
                         mergeData.setProgress(1F);
                         droppedBlock = true;
                     }

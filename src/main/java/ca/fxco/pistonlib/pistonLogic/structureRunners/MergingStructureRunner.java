@@ -1,12 +1,13 @@
 package ca.fxco.pistonlib.pistonLogic.structureRunners;
 
-import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
+import ca.fxco.pistonlib.api.PistonLibApi;
+import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
+import ca.fxco.pistonlib.api.pistonLogic.structure.StructureGroup;
+import ca.fxco.pistonlib.api.pistonLogic.structure.StructureResolver;
 import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlock;
 import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlock;
 import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlockEntity;
-import ca.fxco.api.pistonlib.pistonLogic.structure.StructureGroup;
-import ca.fxco.pistonlib.pistonLogic.structureResolvers.BasicStructureResolver;
 import ca.fxco.pistonlib.pistonLogic.structureResolvers.MergingPistonStructureResolver;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
@@ -14,6 +15,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.piston.PistonStructureResolver;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.PistonType;
 
@@ -30,9 +32,10 @@ public class MergingStructureRunner extends BasicStructureRunner {
     private BlockState[] unMergingStates;
     private int unMergingIndex = 0;
 
-    public MergingStructureRunner(Level level, BlockPos pos, Direction facing, int length,
-                                  PistonFamily family, PistonType type, boolean extend,
-                                  BasicStructureResolver.Factory<? extends BasicStructureResolver> structureProvider) {
+    public <S extends PistonStructureResolver & StructureResolver> MergingStructureRunner(
+            Level level, BlockPos pos, Direction facing, int length, PistonFamily family, PistonType type,
+            boolean extend, StructureResolver.Factory<S> structureProvider
+    ) {
         super(level, pos, facing, length, family, type, extend, structureProvider);
     }
 
@@ -73,7 +76,7 @@ public class MergingStructureRunner extends BasicStructureRunner {
                 unMergingStates = new BlockState[toUnMerge.size()];
                 StructureGroup structureGroup = null;
                 if (moveSize > 1) { // Only use Structure group if there are more than 1 block entities in the group
-                    structureGroup = StructureGroup.create(level);
+                    structureGroup = PistonLibApi.getSupplier().createStructureGroup(level.isClientSide);
                 }
                 for (int i = moveSize - 1; i >= 0; i--) {
                     BlockPos posToMove = toMove.get(i);
@@ -146,7 +149,7 @@ public class MergingStructureRunner extends BasicStructureRunner {
                     if (stateToMerge.pl$getBlockEntityMergeRules().checkMerge() &&
                             mergeBlockEntity.getInitialBlockEntity() != null) {
                         BlockEntity blockEntityToMerge = level.getBlockEntity(posToMerge);
-                        if (blockEntityToMerge.pl$shouldStoreSelf(mergeBlockEntity)) {
+                        if (blockEntityToMerge != null && blockEntityToMerge.pl$shouldStoreSelf(mergeBlockEntity)) {
                             blockEntityToMerge.pl$onMerge(mergeBlockEntity, moveDir);
                             mergeBlockEntity.doMerge(stateToMerge, blockEntityToMerge, moveDir, speed);
                         } else {

@@ -1,6 +1,6 @@
 package ca.fxco.pistonlib.mixin.toggle;
 
-import ca.fxco.api.pistonlib.block.PLBlockProperties;
+import ca.fxco.pistonlib.api.block.PLBlockProperties;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;

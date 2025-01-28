@@ -1,7 +1,7 @@
 package ca.fxco.pistonlib.base;
 
-import ca.fxco.api.pistonlib.recipes.pistonCrushing.*;
 import ca.fxco.pistonlib.PistonLib;
+import ca.fxco.pistonlib.recipes.pistonCrushing.*;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.crafting.Recipe;

@@ -2,7 +2,7 @@ package ca.fxco.pistonlib.mixin.movableBlockEntities;
 
 import java.util.Stack;
 
-import ca.fxco.api.pistonlib.level.PLLevel;
+import ca.fxco.pistonlib.api.level.PLLevel;
 import ca.fxco.pistonlib.mixin.accessors.BlockEntityAccessor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;

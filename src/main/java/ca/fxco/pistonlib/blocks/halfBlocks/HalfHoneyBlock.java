@@ -2,11 +2,10 @@ package ca.fxco.pistonlib.blocks.halfBlocks;
 
 import java.util.Map;
 
-import ca.fxco.api.pistonlib.pistonLogic.sticky.StickRules;
-import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyGroup;
-import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyGroups;
-import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyType;
-
+import ca.fxco.pistonlib.api.pistonLogic.sticky.StickRules;
+import ca.fxco.pistonlib.api.pistonLogic.sticky.StickyGroup;
+import ca.fxco.pistonlib.api.pistonLogic.sticky.StickyType;
+import ca.fxco.pistonlib.base.ModStickyGroups;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -104,7 +103,7 @@ public class HalfHoneyBlock extends HoneyBlock {
         }
         StickyGroup group = neighborState.pl$getStickyGroup();
         if (group != null) {
-            return StickRules.test(StickyGroups.HONEY, group);
+            return StickRules.test(ModStickyGroups.HONEY, group);
         }
         return true;
     }

@@ -4,11 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import ca.fxco.api.pistonlib.pistonLogic.controller.PistonController;
-import ca.fxco.api.pistonlib.pistonLogic.sticky.StickRules;
-import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyGroup;
-import ca.fxco.api.pistonlib.pistonLogic.sticky.StickyType;
 import ca.fxco.pistonlib.PistonLibConfig;
+import ca.fxco.pistonlib.api.pistonLogic.controller.PistonController;
+import ca.fxco.pistonlib.api.pistonLogic.sticky.StickRules;
+import ca.fxco.pistonlib.api.pistonLogic.sticky.StickyGroup;
+import ca.fxco.pistonlib.api.pistonLogic.sticky.StickyType;
+import ca.fxco.pistonlib.api.pistonLogic.structure.StructureResolver;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 
 import net.minecraft.core.BlockPos;
@@ -21,7 +22,7 @@ import net.minecraft.world.level.material.PushReaction;
 
 import static ca.fxco.pistonlib.PistonLib.DIRECTIONS;
 
-public class BasicStructureResolver extends PistonStructureResolver {
+public class BasicStructureResolver extends PistonStructureResolver implements StructureResolver {
 
     protected final PistonController controller;
     protected final int maxMovableWeight;
@@ -127,6 +128,10 @@ public class BasicStructureResolver extends PistonStructureResolver {
     	return false;
     }
 
+    protected static boolean canStick(BlockState state, BlockState adjState, Direction dir) {
+        return state.pl$matchesStickyConditions(adjState, dir);
+    }
+
     // Stickiness checks
     protected static boolean canAdjacentBlockStick(Direction dir, BlockState state, BlockState adjState) {
         return canAdjacentBlockStick(dir, state, adjState, true);
@@ -142,7 +147,7 @@ public class BasicStructureResolver extends PistonStructureResolver {
             Direction oppositeDir = dir.getOpposite();
             StickyType type = adjState.pl$sideStickiness(oppositeDir);
             if (type == StickyType.CONDITIONAL) {
-                if (type.canStick(state, adjState, dir)) {
+                if (canStick(state, adjState, dir)) {
                     return true;
                 }
                 return attemptIndirect && canIndirectBlockStick(dir, state, adjState);
@@ -218,7 +223,7 @@ public class BasicStructureResolver extends PistonStructureResolver {
         if (stickyType != StickyType.NO_STICK && dir.getAxis() != this.pushDirection.getAxis()) {
             BlockPos adjPos = pos.relative(dir);
             BlockState adjState = this.level.getBlockState(adjPos);
-            if (stickyType == StickyType.CONDITIONAL && !stickyType.canStick(state, adjState, dir)) {
+            if (stickyType == StickyType.CONDITIONAL && !canStick(state, adjState, dir)) {
                 return false;
             }
             return canMoveAdjacentBlock(dir, state, adjState) && attemptMoveLine(adjState, adjPos, dir);
@@ -231,7 +236,7 @@ public class BasicStructureResolver extends PistonStructureResolver {
             StickyType stickyType = state.pl$sideStickiness(dir);
             if (stickyType == StickyType.NO_STICK) {
                 return false;
-            } else if (stickyType == StickyType.CONDITIONAL && stickyType.canStick(state, adjState, dir)) {
+            } else if (stickyType == StickyType.CONDITIONAL && canStick(state, adjState, dir)) {
                 return true;
             }
         }
@@ -254,7 +259,7 @@ public class BasicStructureResolver extends PistonStructureResolver {
             if (state.pl$isSticky()) {
                 StickyType type = state.pl$sideStickiness(dir);
                 if (type == StickyType.CONDITIONAL) {
-                    return type.canStick(state, adjState, dir);
+                    return canStick(state, adjState, dir);
                 }
                 return type.ordinal() >= StickyType.STICKY.ordinal();
             }
@@ -356,14 +361,7 @@ public class BasicStructureResolver extends PistonStructureResolver {
         this.toPush.addAll(list3);
     }
 
-    public int getMoveLimit() {
+    protected int getMoveLimit() {
         return this.maxMovableWeight;
-    }
-
-    @FunctionalInterface
-    public interface Factory<T extends BasicStructureResolver> {
-
-        T create(Level level, BlockPos pos, Direction facing, int length, boolean extend);
-
     }
 }

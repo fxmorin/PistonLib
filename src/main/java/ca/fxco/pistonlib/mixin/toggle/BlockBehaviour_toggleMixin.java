@@ -1,6 +1,6 @@
 package ca.fxco.pistonlib.mixin.toggle;
 
-import ca.fxco.api.pistonlib.block.PLBlockBehaviour;
+import ca.fxco.pistonlib.api.block.PLBlockBehaviour;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import org.spongepowered.asm.mixin.Mixin;
@@ -11,6 +11,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.function.BooleanSupplier;
+
+import static ca.fxco.pistonlib.PistonLib.NEVER_ENABLED_SET;
 
 @Mixin(BlockBehaviour.class)
 public class BlockBehaviour_toggleMixin implements PLBlockBehaviour {

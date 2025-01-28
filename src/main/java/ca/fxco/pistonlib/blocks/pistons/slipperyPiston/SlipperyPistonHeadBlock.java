@@ -1,6 +1,5 @@
 package ca.fxco.pistonlib.blocks.pistons.slipperyPiston;
 
-import ca.fxco.api.pistonlib.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.base.ModProperties;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonHeadBlock;
 import ca.fxco.pistonlib.blocks.slipperyBlocks.BaseSlipperyBlock;
@@ -27,8 +26,8 @@ public class SlipperyPistonHeadBlock extends BasicPistonHeadBlock {
 
     public static final IntegerProperty SLIPPERY_DISTANCE = ModProperties.SLIPPERY_DISTANCE;
 
-    public SlipperyPistonHeadBlock(PistonFamily family, Properties properties) {
-        super(family, properties);
+    public SlipperyPistonHeadBlock(Properties properties) {
+        super(properties);
 
         this.registerDefaultState(this.stateDefinition.any()
             .setValue(FACING, Direction.NORTH)
