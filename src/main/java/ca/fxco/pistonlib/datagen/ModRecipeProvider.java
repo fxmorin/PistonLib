@@ -17,6 +17,7 @@ import net.minecraft.data.BlockFamily;
 import net.minecraft.data.recipes.*;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.flag.FeatureFlags;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -26,6 +27,7 @@ import net.minecraft.world.level.block.state.properties.PistonType;
 import org.slf4j.Logger;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public class ModRecipeProvider extends FabricRecipeProvider {
@@ -74,10 +76,17 @@ public class ModRecipeProvider extends FabricRecipeProvider {
 				SingleCrushingRecipeBuilder.crushing(Ingredient.of(Blocks.COPPER_ORE), Items.RAW_COPPER.getDefaultInstance()).save(exporter);
 				SingleCrushingRecipeBuilder.crushing(Ingredient.of(Blocks.GOLD_ORE), Items.RAW_GOLD.getDefaultInstance()).save(exporter);
 
-				//SingleCrushingRecipeBuilder.crushing(Ingredient.of(Blocks.STONE_BRICKS), Items.CRACKED_STONE_BRICKS.getDefaultInstance()).mustBeAgainst(Blocks.OBSIDIAN).save(exporter);
-				//SingleCrushingRecipeBuilder.crushing(Ingredient.of(Blocks.STONE_BRICKS), Items.CRACKED_STONE_BRICKS.getDefaultInstance())
-				//		.hasConditional(SingleCrushingConditionalRecipe.Condition.HIGHER_RESISTANCE, 1199F).save(exporter);
-				offerCrushingCrackedRecipe(exporter, Blocks.STONE_BRICKS, Items.CRACKED_STONE_BRICKS.getDefaultInstance());
+				Map<Block, Item> crushingRecipes = Map.of(
+						Blocks.STONE_BRICKS, Items.CRACKED_STONE_BRICKS,
+						Blocks.INFESTED_STONE_BRICKS, Items.INFESTED_CRACKED_STONE_BRICKS,
+						Blocks.DEEPSLATE_BRICKS, Items.CRACKED_DEEPSLATE_BRICKS,
+						Blocks.DEEPSLATE_TILES, Items.CRACKED_DEEPSLATE_TILES,
+						Blocks.NETHER_BRICKS, Items.CRACKED_NETHER_BRICKS,
+						Blocks.POLISHED_BLACKSTONE_BRICKS, Items.CRACKED_POLISHED_BLACKSTONE_BRICKS
+				);
+				for (Map.Entry<Block, Item> entry : crushingRecipes.entrySet()) {
+					offerCrushingCrackedRecipe(exporter, entry.getKey(), entry.getValue().getDefaultInstance());
+				}
 
 				PairCrushingRecipeBuilder.crushing(Ingredient.of(Blocks.OAK_PLANKS), Ingredient.of(Blocks.OAK_PLANKS), Items.STICK.getDefaultInstance()).save(exporter);
 
