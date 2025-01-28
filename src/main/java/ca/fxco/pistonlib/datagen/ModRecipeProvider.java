@@ -20,7 +20,6 @@ import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.PistonType;
@@ -45,6 +44,8 @@ public class ModRecipeProvider extends FabricRecipeProvider {
 			public void buildRecipes() {
 				LOGGER.info("Generating recipes...");
 
+				var itemRegistry = this.registries.lookupOrThrow(Registries.ITEM);
+
 				for (var entry : PistonLibRegistries.PISTON_FAMILY.entrySet()) {
 					ResourceKey<PistonFamily> key = entry.getKey();
 					PistonFamily family = entry.getValue();
@@ -60,23 +61,48 @@ public class ModRecipeProvider extends FabricRecipeProvider {
 
 					if (normalBase != null && stickyBase != null && normalBase.asItem() != Items.AIR &&
 							stickyBase.asItem() != Items.AIR) {
-						offerStickyPistonRecipe(exporter, stickyBase, normalBase);
+						ShapedRecipeBuilder.shaped(itemRegistry, RecipeCategory.REDSTONE, stickyBase)
+								.define('P', normalBase)
+								.define('S', Items.SLIME_BALL)
+								.pattern("S")
+								.pattern("P")
+								.unlockedBy("has_slime_ball", has(Items.SLIME_BALL))
+								.save(exporter);
 					}
 				}
 
 				LOGGER.info("Finished generating recipes for pistons, generating for other items...");
 
-				offerSlipperyBlockRecipe(exporter, ModBlocks.SLIPPERY_REDSTONE_BLOCK, Blocks.REDSTONE_BLOCK);
-				offerSlipperyBlockRecipe(exporter, ModBlocks.SLIPPERY_SLIME_BLOCK, Blocks.SLIME_BLOCK);
-				offerSlipperyBlockRecipe(exporter, ModBlocks.SLIPPERY_STONE_BLOCK, Blocks.STONE);
+				BlockFamily obsidianFamily = new BlockFamily.Builder(Blocks.OBSIDIAN)
+						.slab(ModBlocks.OBSIDIAN_SLAB_BLOCK)
+						.stairs(ModBlocks.OBSIDIAN_STAIR_BLOCK)
+						.getFamily();
+				generateRecipes(obsidianFamily, FeatureFlags.VANILLA_SET);
 
-				generateRecipes(new BlockFamily.Builder(Blocks.OBSIDIAN).slab(ModBlocks.OBSIDIAN_SLAB_BLOCK).stairs(ModBlocks.OBSIDIAN_STAIR_BLOCK).getFamily(), FeatureFlags.VANILLA_SET);
+				Map<Block, Block> slipperyBlockRecipes = Map.of(
+						ModBlocks.SLIPPERY_REDSTONE_BLOCK, Blocks.REDSTONE_BLOCK,
+						ModBlocks.SLIPPERY_SLIME_BLOCK, Blocks.SLIME_BLOCK,
+						ModBlocks.SLIPPERY_STONE_BLOCK, Blocks.STONE
+				);
+				for (Map.Entry<Block, Block> entry : slipperyBlockRecipes.entrySet()) {
+					Block baseBlock = entry.getValue();
+					ShapelessRecipeBuilder.shapeless(itemRegistry, RecipeCategory.MISC, entry.getKey(), 1)
+							.requires(baseBlock)
+							.requires(Items.POTION)
+							.unlockedBy(getHasName(baseBlock), has(baseBlock))
+							.save(exporter);
+				}
 
-				SingleCrushingRecipeBuilder.crushing(Ingredient.of(Blocks.IRON_ORE), Items.RAW_IRON.getDefaultInstance()).save(exporter);
-				SingleCrushingRecipeBuilder.crushing(Ingredient.of(Blocks.COPPER_ORE), Items.RAW_COPPER.getDefaultInstance()).save(exporter);
-				SingleCrushingRecipeBuilder.crushing(Ingredient.of(Blocks.GOLD_ORE), Items.RAW_GOLD.getDefaultInstance()).save(exporter);
+				Map<Block, Item> simpleCrushingRecipes = Map.of(
+						Blocks.IRON_ORE, Items.RAW_IRON,
+						Blocks.COPPER_ORE, Items.RAW_COPPER,
+						Blocks.GOLD_ORE, Items.RAW_GOLD
+				);
+				for (Map.Entry<Block, Item> entry : simpleCrushingRecipes.entrySet()) {
+					SingleCrushingRecipeBuilder.crushing(entry.getKey(), entry.getValue()).save(exporter);
+				}
 
-				Map<Block, Item> crushingRecipes = Map.of(
+				Map<Block, Item> highPressureCrushingRecipes = Map.of(
 						Blocks.STONE_BRICKS, Items.CRACKED_STONE_BRICKS,
 						Blocks.INFESTED_STONE_BRICKS, Items.INFESTED_CRACKED_STONE_BRICKS,
 						Blocks.DEEPSLATE_BRICKS, Items.CRACKED_DEEPSLATE_BRICKS,
@@ -84,28 +110,22 @@ public class ModRecipeProvider extends FabricRecipeProvider {
 						Blocks.NETHER_BRICKS, Items.CRACKED_NETHER_BRICKS,
 						Blocks.POLISHED_BLACKSTONE_BRICKS, Items.CRACKED_POLISHED_BLACKSTONE_BRICKS
 				);
-				for (Map.Entry<Block, Item> entry : crushingRecipes.entrySet()) {
-					offerCrushingCrackedRecipe(exporter, entry.getKey(), entry.getValue().getDefaultInstance());
+				for (Map.Entry<Block, Item> entry : highPressureCrushingRecipes.entrySet()) {
+					SingleCrushingRecipeBuilder.crushing(entry.getKey(), entry.getValue())
+							.hasConditional(SingleCrushingConditionalRecipe.Condition.HIGHER_RESISTANCE, 1199F)
+							.save(exporter);
 				}
 
-				PairCrushingRecipeBuilder.crushing(Ingredient.of(Blocks.OAK_PLANKS), Ingredient.of(Blocks.OAK_PLANKS), Items.STICK.getDefaultInstance()).save(exporter);
+				ItemStack sticks = new ItemStack(Items.STICK, 4);
+				PairCrushingRecipeBuilder.crushing(Blocks.OAK_PLANKS, Blocks.OAK_PLANKS, sticks).save(exporter);
 
-				MultiCrushingRecipeBuilder.crushing(List.of(Ingredient.of(Blocks.STONE), Ingredient.of(Items.QUARTZ), Ingredient.of(Blocks.ANDESITE)), Blocks.DIORITE.asItem().getDefaultInstance(), 3).save(exporter);
+				MultiCrushingRecipeBuilder.crushingItems(
+						List.of(Blocks.STONE, Items.QUARTZ, Blocks.ANDESITE),
+						Blocks.DIORITE.asItem(),
+						3
+				).save(exporter);
 
 				LOGGER.info("Finished generating recipes!");
-			}
-
-			public void offerSlipperyBlockRecipe(RecipeOutput exporter, Block slipperyBlock, Block baseBlock) {
-				ShapelessRecipeBuilder.shapeless(this.registries.lookupOrThrow(Registries.ITEM), RecipeCategory.MISC, slipperyBlock, 1).requires(baseBlock).requires(Items.POTION).unlockedBy(getHasName(baseBlock), has(baseBlock)).save(exporter);
-			}
-
-			public void offerStickyPistonRecipe(RecipeOutput exporter, Block stickyPiston, Block regularPiston) {
-				ShapedRecipeBuilder.shaped(this.registries.lookupOrThrow(Registries.ITEM), RecipeCategory.REDSTONE, stickyPiston).define('P', regularPiston).define('S', Items.SLIME_BALL).pattern("S").pattern("P").unlockedBy("has_slime_ball", has(Items.SLIME_BALL)).save(exporter);
-			}
-
-			public void offerCrushingCrackedRecipe(RecipeOutput exporter, Block block, ItemStack item) {
-				SingleCrushingRecipeBuilder.crushing(Ingredient.of(block), item)
-						.hasConditional(SingleCrushingConditionalRecipe.Condition.HIGHER_RESISTANCE, 1199F).save(exporter);
 			}
 		};
 	}

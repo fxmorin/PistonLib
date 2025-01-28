@@ -12,6 +12,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,6 +32,22 @@ public class SingleCrushingRecipeBuilder implements RecipeBuilder {
         this.ingredient = ingredient;
         this.result = itemStack;
         result.setCount(count);
+    }
+
+    public static SingleCrushingRecipeBuilder crushing(ItemLike itemLike, Item item) {
+        return crushing(itemLike, item, 1);
+    }
+
+    public static SingleCrushingRecipeBuilder crushing(ItemLike itemLike, Item item, int count) {
+        return crushing(itemLike, item.getDefaultInstance(), count);
+    }
+
+    public static SingleCrushingRecipeBuilder crushing(ItemLike itemLike, ItemStack itemStack) {
+        return crushing(itemLike, itemStack, 1);
+    }
+
+    public static SingleCrushingRecipeBuilder crushing(ItemLike itemLike, ItemStack itemStack, int count) {
+        return crushing(Ingredient.of(itemLike), itemStack, count);
     }
 
     public static SingleCrushingRecipeBuilder crushing(Ingredient ingredient, ItemStack itemStack) {

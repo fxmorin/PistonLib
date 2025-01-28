@@ -9,6 +9,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.level.ItemLike;
 import org.jetbrains.annotations.Nullable;
 
 public class PairCrushingRecipeBuilder implements RecipeBuilder {
@@ -23,6 +24,14 @@ public class PairCrushingRecipeBuilder implements RecipeBuilder {
         this.first = first;
         this.second = second;
         this.result = result;
+    }
+
+    public static PairCrushingRecipeBuilder crushing(ItemLike first, ItemLike second, Item result) {
+        return crushing(first, second, result.getDefaultInstance());
+    }
+
+    public static PairCrushingRecipeBuilder crushing(ItemLike first, ItemLike second, ItemStack result) {
+        return new PairCrushingRecipeBuilder(Ingredient.of(first), Ingredient.of(second), result);
     }
 
     public static PairCrushingRecipeBuilder crushing(Ingredient first, Ingredient second, ItemStack result) {

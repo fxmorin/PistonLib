@@ -9,6 +9,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.level.ItemLike;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedHashMap;
@@ -27,6 +28,22 @@ public class MultiCrushingRecipeBuilder implements RecipeBuilder {
         this.ingredients = ingredients;
         result.setCount(count);
         this.result = result;
+    }
+
+    public static MultiCrushingRecipeBuilder crushingItems(List<ItemLike> items, Item result) {
+        return crushingItems(items, result, 1);
+    }
+
+    public static MultiCrushingRecipeBuilder crushingItems(List<ItemLike> items, Item result, int count) {
+        return crushingItems(items, result.getDefaultInstance(), count);
+    }
+
+    public static MultiCrushingRecipeBuilder crushingItems(List<ItemLike> items, ItemStack result) {
+        return crushingItems(items, result, 1);
+    }
+
+    public static MultiCrushingRecipeBuilder crushingItems(List<ItemLike> items, ItemStack result, int count) {
+        return crushing(items.stream().map(Ingredient::of).toList(), result, count);
     }
 
     public static MultiCrushingRecipeBuilder crushing(List<Ingredient> ingredients, ItemStack result) {
