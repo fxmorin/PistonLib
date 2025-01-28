@@ -15,7 +15,7 @@ public class ModRecipeSerializers {
     public static final RecipeSerializer<PairCrushingRecipe> PAIR_PISTON_CRUSHING = register("piston_crushing_pair", new PairCrushingRecipe.Serializer());
     public static final RecipeSerializer<MultiCrushingRecipe> MULTI_PISTON_CRUSHING = register("piston_crushing_multi", new MultiCrushingRecipe.Serializer());
 
-    static <S extends RecipeSerializer<T>, T extends Recipe<?>> S register(String string, S recipeSerializer) {
+    private static <S extends RecipeSerializer<T>, T extends Recipe<?>> S register(String string, S recipeSerializer) {
         return Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, PistonLib.id(string), recipeSerializer);
     }
 

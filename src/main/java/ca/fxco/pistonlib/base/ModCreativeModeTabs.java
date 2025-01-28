@@ -17,7 +17,6 @@ import static ca.fxco.pistonlib.PistonLib.id;
 
 public class ModCreativeModeTabs {
 
-
     public static final ResourceKey<CreativeModeTab> GENERAL =
             ResourceKey.create(Registries.CREATIVE_MODE_TAB, id("general"));
 

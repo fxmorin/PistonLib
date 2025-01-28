@@ -11,10 +11,10 @@ public class ModRecipeTypes {
 
     public static final RecipeType<? extends PistonCrushingRecipe> PISTON_CRUSHING = register("piston_crushing");
 
-    static <T extends Recipe<?>> RecipeType<T> register(String string) {
-        return Registry.register(BuiltInRegistries.RECIPE_TYPE, PistonLib.id(string), new RecipeType<T>() {
+    private static <T extends Recipe<?>> RecipeType<T> register(String name) {
+        return Registry.register(BuiltInRegistries.RECIPE_TYPE, PistonLib.id(name), new RecipeType<T>() {
             public String toString() {
-                return string;
+                return name;
             }
         });
     }
