@@ -1,6 +1,5 @@
 package ca.fxco.api.pistonlib.recipes;
 
-import ca.fxco.api.pistonlib.containers.CrushingContainer;
 import ca.fxco.pistonlib.base.ModRecipeTypes;
 import net.minecraft.world.item.crafting.*;
 
