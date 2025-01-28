@@ -30,7 +30,7 @@ public abstract class Entity_pushIntoMixin implements EntityPistonMechanics {
     private Vec3 checkPushInto(Entity instance, Vec3 vec3, MoverType moverType) {
         if (moverType == MoverType.PISTON && !instance.level().isClientSide) {
             BlockState crushedAgainst = null;
-            if (canPushIntoBlocks()) {
+            if (pl$canPushIntoBlocks()) {
                 // This looks kinda scary, although it only checks max 25 blocks.
                 // Honestly it's not very expensive compared to a lot of the other movement logic which runs every tick
                 AABB aabb = instance.getBoundingBox();
@@ -50,7 +50,7 @@ public abstract class Entity_pushIntoMixin implements EntityPistonMechanics {
                             } else {
                                 crushedAgainst = null;
                             }
-                            if (instance.onPushedIntoBlock(state, pos)) {
+                            if (instance.pl$onPushedIntoBlock(state, pos)) {
                                 state.pl$onPushEntityInto(instance.level(), pos, instance);
                             }
                         }
@@ -59,7 +59,7 @@ public abstract class Entity_pushIntoMixin implements EntityPistonMechanics {
             }
             Vec3 afterCollide = this.collide(vec3);
             if (vec3.lengthSqr() != 0 && vec3 != afterCollide) { // If entity is being crushed
-                onPistonCrushing(crushedAgainst);
+                pl$onPistonCrushing(crushedAgainst);
             }
             return afterCollide;
         }

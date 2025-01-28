@@ -30,12 +30,12 @@ public abstract class ItemEntity_crushingMixin extends Entity implements EntityP
     }
 
     @Override
-    public boolean canPushIntoBlocks() {
+    public boolean pl$canPushIntoBlocks() {
         return true;
     }
 
     @Override
-    public void onPistonCrushing(@Nullable BlockState crushedAgainst) {
+    public void pl$onPistonCrushing(@Nullable BlockState crushedAgainst) {
         if (this.isRemoved()) {
             return;
         }
