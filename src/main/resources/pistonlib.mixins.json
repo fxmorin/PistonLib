@@ -21,6 +21,7 @@
     "blockEntity.PistonMovingBlockEntity_waterloggedMixin",
     "blockEntity.ServerLevel_blockEntityMixin",
     "entity.Entity_pushIntoMixin",
+    "entity.ItemEntity_crushingMixin",
     "fixes.PistonBaseBlock_headlessMixin",
     "fixes.PistonBaseBlock_illegalMixin",
     "fixes.PistonBaseBlock_pushOrderMixin",

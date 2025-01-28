@@ -93,6 +93,9 @@
       ],
       "net/minecraft/class_8235": [
         "ca/fxco/pistonlib/api/level/PLLevel"
+      ],
+      "net/minecraft/class_1297": [
+        "ca/fxco/pistonlib/api/entity/EntityPistonMechanics"
       ]
     },
     "modmenu": {

@@ -3,11 +3,13 @@ package ca.fxco.pistonlib.pistonLogic.controller;
 import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.api.pistonLogic.PistonEvents;
 import ca.fxco.pistonlib.api.pistonLogic.PistonMoveBehavior;
+import ca.fxco.pistonlib.api.pistonLogic.base.PLMergeBlockEntity;
 import ca.fxco.pistonlib.api.pistonLogic.controller.PistonController;
 import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.api.pistonLogic.structure.StructureResolver;
 import ca.fxco.pistonlib.api.pistonLogic.structure.StructureRunner;
 import ca.fxco.pistonlib.base.ModTags;
+import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonArmBlock;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonHeadBlock;
@@ -246,6 +248,10 @@ public class VanillaPistonController implements PistonController {
                     if (frontBlockEntity instanceof PistonMovingBlockEntity mbe &&
                             mbe.getDirection() == facing && mbe.isExtending()) {
                         mbe.finalTick();
+                        droppedBlock = true;
+                    } else if (frontBlockEntity instanceof MergeBlockEntity mbe) {
+                        PLMergeBlockEntity.MergeData mergeData = mbe.getMergingBlocks().get(facing);
+                        mergeData.setProgress(1F);
                         droppedBlock = true;
                     }
                 }

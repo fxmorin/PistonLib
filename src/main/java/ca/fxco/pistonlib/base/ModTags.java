@@ -20,7 +20,7 @@ public class ModTags {
         return createBlockTag(PistonLib.id(path));
     }
 
-    public static TagKey<Block> createBlockTag(ResourceLocation id) {
+    private static TagKey<Block> createBlockTag(ResourceLocation id) {
         return TagKey.create(Registries.BLOCK, id);
     }
 }
