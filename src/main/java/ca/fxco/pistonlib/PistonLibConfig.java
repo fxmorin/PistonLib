@@ -124,6 +124,13 @@ public class PistonLibConfig {
     public static boolean behaviorOverrideApi = true;
 
     @ConfigValue(
+            desc = "Toggle the entity API, this API enabled entity-related piston mechanics such as Piston Crushing",
+            keyword = {"entity", "api"},
+            category = Category.MECHANIC
+    )
+    public static boolean entityApi = true;
+
+    @ConfigValue(
             desc = "Group the piston structure into a single ticking block entity, allowing tons of optimizations",
             more = {"Disabling this mechanic also prevents multiple features from working. Such as being able to change the direction mid-way through pushing without block dropping", // I know, game changer xD
                     "This also allows blocks to cull against other blocks in piston structures!"},

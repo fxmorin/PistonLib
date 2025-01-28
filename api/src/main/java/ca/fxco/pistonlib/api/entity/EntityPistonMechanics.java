@@ -7,7 +7,8 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Interface defining mechanics related to entities interacting with pistons in the game world.
  * This interface provides methods to customize how entities behave when pushed by pistons
- * and interact with blocks during such events.
+ * and interact with blocks during such events. <p>
+ * The config option {@code entityApi} must be enabled to use this class.
  *
  * @author FX
  * @since 1.2.0

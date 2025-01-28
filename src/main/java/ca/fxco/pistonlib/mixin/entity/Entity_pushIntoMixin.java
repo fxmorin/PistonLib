@@ -1,5 +1,6 @@
 package ca.fxco.pistonlib.mixin.entity;
 
+import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.helpers.BlockPosUtils;
 import ca.fxco.pistonlib.api.entity.EntityPistonMechanics;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -25,7 +26,7 @@ public abstract class Entity_pushIntoMixin implements EntityPistonMechanics {
             )
     )
     private Vec3 checkPushInto(Entity instance, Vec3 vec3, Operation<Vec3> original, MoverType moverType) {
-        if (moverType == MoverType.PISTON && !instance.level().isClientSide) {
+        if (PistonLibConfig.entityApi && moverType == MoverType.PISTON && !instance.level().isClientSide) {
             BlockState crushedAgainst = null;
             if (pl$canPushIntoBlocks()) {
                 // This looks kinda scary, although it only checks max 25 blocks.
@@ -36,9 +37,9 @@ public abstract class Entity_pushIntoMixin implements EntityPistonMechanics {
                     BlockPos min = BlockPos.containing(aabb.minX + 1.0E-7, aabb.minY + 1.0E-7, aabb.minZ + 1.0E-7);
                     BlockPos max = BlockPos.containing(aabb.maxX - 1.0E-7, aabb.maxY - 1.0E-7, aabb.maxZ - 1.0E-7);
                     aabb = aabb.move(vec3);
-                    BlockPos blockPos = BlockPos.containing(aabb.minX + 1.0E-7, aabb.minY + 1.0E-7, aabb.minZ + 1.0E-7);
-                    BlockPos blockPos2 = BlockPos.containing(aabb.maxX - 1.0E-7, aabb.maxY - 1.0E-7, aabb.maxZ - 1.0E-7);
-                    for (BlockPos pos : BlockPos.betweenClosed(blockPos, blockPos2)) {
+                    BlockPos pos1 = BlockPos.containing(aabb.minX + 1.0E-7, aabb.minY + 1.0E-7, aabb.minZ + 1.0E-7);
+                    BlockPos pos2 = BlockPos.containing(aabb.maxX - 1.0E-7, aabb.maxY - 1.0E-7, aabb.maxZ - 1.0E-7);
+                    for (BlockPos pos : BlockPos.betweenClosed(pos1, pos2)) {
                         if (BlockPosUtils.isNotWithin(pos, min, max)) {
                             BlockState state = instance.level().getBlockState(pos);
                             if (single) {
