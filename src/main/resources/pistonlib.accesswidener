@@ -36,5 +36,3 @@ accessible field net/minecraft/world/item/crafting/RecipeManager recipes Lnet/mi
 mutable field net/minecraft/world/inventory/TransientCraftingContainer items Lnet/minecraft/core/NonNullList;
 accessible field net/minecraft/world/inventory/TransientCraftingContainer items Lnet/minecraft/core/NonNullList;
 accessible class net/minecraft/world/inventory/MenuType
-
-# Recipes
