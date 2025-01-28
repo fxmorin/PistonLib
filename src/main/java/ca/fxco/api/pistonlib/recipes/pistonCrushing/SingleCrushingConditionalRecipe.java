@@ -20,6 +20,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.function.IntFunction;
 
@@ -37,12 +38,8 @@ public class SingleCrushingConditionalRecipe extends SingleCrushingRecipe {
 
     @Override
     public boolean matches(PistonCrushingInput input, Level level) {
-        if (input.againstBlock() == null) {
-            return false;
-        }
-
-        return matchesCondition(condition, data, input.againstBlock().getBlock()) &&
-                super.matches(input, level);
+        BlockState state = input.getAgainstBlock();
+        return state != null && matchesCondition(condition, data, state.getBlock()) && super.matches(input, level);
     }
 
     @Override

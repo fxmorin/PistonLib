@@ -16,6 +16,7 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -33,7 +34,8 @@ public class SingleCrushingAgainstRecipe extends SingleCrushingRecipe {
 
     @Override
     public boolean matches(PistonCrushingInput input, Level level) {
-        return input.againstBlock().getBlock() == againstBlock && super.matches(input, level);
+        BlockState state = input.getAgainstBlock();
+        return state != null && state.getBlock() == againstBlock && super.matches(input, level);
     }
 
     @Override

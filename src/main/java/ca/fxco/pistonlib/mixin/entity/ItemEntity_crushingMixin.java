@@ -61,16 +61,15 @@ public abstract class ItemEntity_crushingMixin extends Entity implements EntityP
             return;
         }
         PistonCrushingRecipe crushingRecipe = optionalRecipe.get().value();
-        List<ItemStack> results = new ArrayList<>();
         int ingredientAmount = 0;
-        for (ItemStack itemStack : input.items()) {
+        for (ItemStack itemStack : input.getItems()) {
             if (ingredientAmount == 0) {
                 ingredientAmount = itemStack.getCount();
             } else {
                 ingredientAmount = Math.min(itemStack.getCount(), ingredientAmount);
             }
         }
-        for (ItemStack itemStack : input.items()) {
+        for (ItemStack itemStack : input.getItems()) {
             itemStack.shrink(ingredientAmount);
         }
 
