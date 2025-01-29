@@ -203,7 +203,7 @@ public class VanillaPistonController implements PistonController {
             BlockPos headPos = pos.relative(facing, length);
             BlockEntity headBlockEntity = level.getBlockEntity(headPos);
 
-            if (headBlockEntity instanceof BasicMovingBlockEntity mbe) {
+            if (headBlockEntity instanceof PistonMovingBlockEntity mbe) {
                 mbe.finalTick();
             }
 
