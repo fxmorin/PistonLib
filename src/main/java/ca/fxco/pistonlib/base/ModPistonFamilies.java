@@ -26,7 +26,7 @@ public class ModPistonFamilies {
             .base(PistonType.STICKY, Blocks.STICKY_PISTON)
             .head(Blocks.PISTON_HEAD)
             .moving(Blocks.MOVING_PISTON)
-            .vanillaMovingBlockEntity(BlockEntityType.PISTON, PistonMovingBlockEntity::new));
+            .movingBlockEntity(BlockEntityType.PISTON, PistonFamily.wrapFabricFactory(PistonMovingBlockEntity::new)));
 
     public static final PistonFamily BASIC = register("basic", PistonFamilyImpl.builder()
             .behavior(PistonBehaviorImpl.DEFAULT)

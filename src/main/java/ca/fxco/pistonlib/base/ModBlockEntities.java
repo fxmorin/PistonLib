@@ -3,7 +3,6 @@ package ca.fxco.pistonlib.base;
 import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import ca.fxco.pistonlib.blocks.mergeBlock.MergeBlockEntity;
 
-import ca.fxco.pistonlib.blocks.pistons.movableBlockEntities.MBEMovingBlockEntity;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 
 import net.minecraft.core.Registry;
@@ -32,7 +31,7 @@ public class ModBlockEntities {
         MERGE_BLOCK_ENTITY = Registry.register(
                 BuiltInRegistries.BLOCK_ENTITY_TYPE,
                 id("merge"),
-                FabricBlockEntityTypeBuilder.create(MergeBlockEntity::new, ModBlocks.MERGE_BLOCK).build(null)
+                FabricBlockEntityTypeBuilder.create(MergeBlockEntity::new, ModBlocks.MERGE_BLOCK).build()
         );
     }
 
@@ -47,7 +46,7 @@ public class ModBlockEntities {
      * Builds a block entity type from the given factories and
      * registers it to the given namespaced id.
      * <br>
-     * No blocks need to be passed here since they are added
+     * No blocks need to be passed here since they're added
      * to the block entity type after the corresponding piston
      * families are registered.
      *

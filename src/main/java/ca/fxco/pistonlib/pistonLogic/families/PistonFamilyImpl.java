@@ -158,17 +158,6 @@ public class PistonFamilyImpl implements PistonFamily {
         }
 
         @Override
-        public <T extends PistonMovingBlockEntity> Builder vanillaMovingBlockEntity(
-                BlockEntityType<T> type,
-                BiFunction<BlockPos, BlockState, T> factory
-        ) {
-            this.movingBlockEntityType = type;
-            this.movingBlockEntityFactory = (family, structureGroup, pos, state, movedState, movedBlockEntity,
-                                             facing, extending, isSourcePiston) -> factory.apply(pos, state);
-            return this;
-        }
-
-        @Override
         public Builder customTextures(boolean customTextures) {
             this.customTextures = customTextures;
             return this;
