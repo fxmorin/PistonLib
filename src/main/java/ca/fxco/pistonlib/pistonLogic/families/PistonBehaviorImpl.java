@@ -13,7 +13,6 @@ public class PistonBehaviorImpl implements PistonBehavior {
 
     private final boolean verySticky;
     private final boolean frontPowered;
-    private final boolean slippery;
     private final boolean quasi;
     private final int pushLimit;
     private final float extendingSpeed;
@@ -39,7 +38,6 @@ public class PistonBehaviorImpl implements PistonBehavior {
 
         protected boolean verySticky = false;
         protected boolean frontPowered = false;
-        protected boolean slippery = false;
         protected boolean quasi = true;
         protected int pushLimit = PistonLibConfig.defaultPistonPushLimit;
         protected float extendingSpeed = 1;
@@ -58,12 +56,6 @@ public class PistonBehaviorImpl implements PistonBehavior {
         @Override
         public Builder frontPowered() {
             this.frontPowered = true;
-            return this;
-        }
-
-        @Override
-        public Builder slippery() {
-            this.slippery = true;
             return this;
         }
 
@@ -131,7 +123,7 @@ public class PistonBehaviorImpl implements PistonBehavior {
 
         @Override
         public PistonBehavior build() {
-            return new PistonBehaviorImpl(verySticky, frontPowered, slippery, quasi, pushLimit, extendingSpeed,
+            return new PistonBehaviorImpl(verySticky, frontPowered, quasi, pushLimit, extendingSpeed,
                     retractingSpeed, retractOnExtending, extendOnRetracting, minLength, maxLength);
         }
     }
