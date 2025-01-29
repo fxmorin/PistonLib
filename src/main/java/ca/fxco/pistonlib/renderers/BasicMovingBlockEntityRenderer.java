@@ -46,7 +46,8 @@ public class BasicMovingBlockEntityRenderer<T extends BasicMovingBlockEntity> im
     }
 
     @Override
-    public void render(T mbe, float partialTick, PoseStack stack, MultiBufferSource bufferSource, int light, int overlay) {
+    public void render(T mbe, float partialTick, PoseStack stack, MultiBufferSource bufferSource,
+                       int light, int overlay) {
         Level level = mbe.getLevel();
         if (level == null) {
             return;
@@ -110,8 +111,8 @@ public class BasicMovingBlockEntityRenderer<T extends BasicMovingBlockEntity> im
         ModelBlockRenderer.clearCache();
     }
 
-    protected void renderMovingSource(T mbe, Level level, BlockPos fromPos, BlockPos toPos, float partialTick, PoseStack stack,
-                                      MultiBufferSource bufferSource, int light, int overlay) {
+    protected void renderMovingSource(T mbe, Level level, BlockPos fromPos, BlockPos toPos, float partialTick,
+                                      PoseStack stack, MultiBufferSource bufferSource, int light, int overlay) {
         BlockState state = mbe.getMovedState();
 
         if (mbe.isExtending()) {

@@ -14,20 +14,20 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.level.block.Block;
 
-public record PistonEventS2CPayload<P extends Block & PLPistonController>(
+public record PistonEventS2CPayload(
         Block pistonBlock,
         BlockPos pos,
         Direction dir,
         boolean extend
 ) implements PLPayload {
 
-    public static final CustomPacketPayload.Type<PistonEventS2CPayload<?>> TYPE =
+    public static final CustomPacketPayload.Type<PistonEventS2CPayload> TYPE =
             new Type<>(PistonLib.id("piston_event"));
 
     private static final StreamCodec<RegistryFriendlyByteBuf, Block> BLOCK_STREAM_CODEC =
             ByteBufCodecs.registry(Registries.BLOCK).map(block -> block, b -> b);
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, PistonEventS2CPayload<?>> STREAM_CODEC =
+    public static final StreamCodec<RegistryFriendlyByteBuf, PistonEventS2CPayload> STREAM_CODEC =
             StreamCodec.composite(
                     BLOCK_STREAM_CODEC,
                     PistonEventS2CPayload::pistonBlock,
@@ -41,7 +41,7 @@ public record PistonEventS2CPayload<P extends Block & PLPistonController>(
             );
 
     public PistonEventS2CPayload(PistonEventData<?> pistonEventData) {
-        this((P) pistonEventData.pistonBlock(), pistonEventData.pos(), pistonEventData.dir(), pistonEventData.extend());
+        this(pistonEventData.pistonBlock(), pistonEventData.pos(), pistonEventData.dir(), pistonEventData.extend());
     }
 
     @Override

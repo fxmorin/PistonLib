@@ -1,17 +1,13 @@
 package ca.fxco.pistonlib;
 
 import ca.fxco.pistonlib.base.ModBlockEntities;
-import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.helpers.PistonLibBehaviorManager;
 import ca.fxco.pistonlib.renderers.BasicMovingBlockEntityRenderer;
-import ca.fxco.pistonlib.renderers.MBEMovingBlockEntityRenderer;
 import ca.fxco.pistonlib.renderers.MergeBlockEntityRenderer;
 
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 
 public class PistonLibClient implements ClientModInitializer {
