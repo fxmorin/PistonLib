@@ -14,19 +14,10 @@ import static ca.fxco.pistonlib.PistonLib.id;
 
 public class ModBlockEntities {
 
-    // Pistons
-    public static final BlockEntityType<BasicMovingBlockEntity> BASIC_MOVING_BLOCK_ENTITY;
-
     // Other
     public static final BlockEntityType<MergeBlockEntity> MERGE_BLOCK_ENTITY;
 
     static {
-        // Pistons
-        BASIC_MOVING_BLOCK_ENTITY = register(
-                "basic",
-                BasicMovingBlockEntity::new
-        );
-
         // Other
         MERGE_BLOCK_ENTITY = Registry.register(
                 BuiltInRegistries.BLOCK_ENTITY_TYPE,

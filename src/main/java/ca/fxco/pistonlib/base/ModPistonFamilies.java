@@ -28,14 +28,6 @@ public class ModPistonFamilies {
             .moving(Blocks.MOVING_PISTON)
             .movingBlockEntity(BlockEntityType.PISTON, PistonFamily.wrapFabricFactory(PistonMovingBlockEntity::new)));
 
-    public static final PistonFamily BASIC = register("basic", PistonFamilyImpl.builder()
-            .behavior(PistonBehaviorImpl.DEFAULT)
-            .base(PistonType.DEFAULT, ModBlocks.BASIC_PISTON)
-            .base(PistonType.STICKY, ModBlocks.BASIC_STICKY_PISTON)
-            .head(ModBlocks.BASIC_PISTON_HEAD)
-            .moving(ModBlocks.BASIC_MOVING_BLOCK)
-            .movingBlockEntity(ModBlockEntities.BASIC_MOVING_BLOCK_ENTITY, BasicMovingBlockEntity::new));
-
     private static PistonFamily register(String name, PistonFamily.Builder familyBuilder) {
         return register(name, familyBuilder.build());
     }
