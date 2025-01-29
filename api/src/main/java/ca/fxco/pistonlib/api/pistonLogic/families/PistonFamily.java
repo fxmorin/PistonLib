@@ -347,6 +347,19 @@ public interface PistonFamily {
     }
 
     /**
+     * Wraps a fabric factory.
+     * This should only be used for vanilla piston block entities!
+     *
+     * @return A new factory, which wraps the fabric factory
+     * @since 1.2.0
+     */
+    static Factory<PistonMovingBlockEntity> createVanillaFactory() {
+        return (family, group, pos, state, movedState,
+                movedBlockEntity, facing, extending, isSourcePiston) ->
+                new PistonMovingBlockEntity(pos, state, movedState, facing, extending, isSourcePiston);
+    }
+
+    /**
      * Conditionally use two different Fabric Factories.
      * These conditions are done within the factory function, so that they can be changed dynamically.
      * Fabric factories are used by pistonlib block entities to initialize the block entity type.

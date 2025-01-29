@@ -4,14 +4,12 @@ import ca.fxco.pistonlib.api.PistonLibRegistries;
 import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamilies;
 import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
 import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamilyMember;
-import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicMovingBlockEntity;
 import ca.fxco.pistonlib.pistonLogic.families.PistonBehaviorImpl;
 import ca.fxco.pistonlib.pistonLogic.families.PistonFamilyImpl;
 import net.fabricmc.loader.impl.FabricLoaderImpl;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.piston.PistonMovingBlockEntity;
 import net.minecraft.world.level.block.state.properties.PistonType;
 
 import java.util.Objects;
@@ -26,7 +24,7 @@ public class ModPistonFamilies {
             .base(PistonType.STICKY, Blocks.STICKY_PISTON)
             .head(Blocks.PISTON_HEAD)
             .moving(Blocks.MOVING_PISTON)
-            .movingBlockEntity(BlockEntityType.PISTON, PistonFamily.wrapFabricFactory(PistonMovingBlockEntity::new)));
+            .movingBlockEntity(BlockEntityType.PISTON, PistonFamily.createVanillaFactory()));
 
     private static PistonFamily register(String name, PistonFamily.Builder familyBuilder) {
         return register(name, familyBuilder.build());
