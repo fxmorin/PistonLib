@@ -2,7 +2,6 @@ package ca.fxco.pistonlib.datagen;
 
 import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
-import ca.fxco.pistonlib.base.ModPistonFamilies;
 import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.minecraft.client.data.models.BlockModelGenerators;
@@ -39,8 +38,6 @@ public class ModModelProvider extends FabricModelProvider {
 	public void generateBlockStateModels(BlockModelGenerators generator) {
 		LOGGER.info("Generating blockstate definitions and models...");
 
-		registerPistonFamily(generator, ModPistonFamilies.BASIC);
-
 		TextureMapping particleOnlyTextureMap = new TextureMapping().put(TextureSlot.PARTICLE, TextureMapping.getBlockTexture(Blocks.PISTON, "_side"));
 		createTrivialBlock(ca.fxco.pistonlib.base.ModBlocks.MERGE_BLOCK, particleOnlyTextureMap, TEMPLATE_PARTICLE_ONLY, generator);
 
@@ -51,11 +48,13 @@ public class ModModelProvider extends FabricModelProvider {
 	public void generateItemModels(ItemModelGenerators itemModelGenerators) {
 	}
 
+	// Don't remove, it's used by other mods
 	public static void createTrivialBlock(Block block, TextureMapping textureMapping, ModelTemplate modelTemplate, BlockModelGenerators generators) {
 		ResourceLocation resourceLocation = modelTemplate.create(block, textureMapping, generators.modelOutput);
 		generators.blockStateOutput.accept(BlockModelGenerators.createSimpleBlock(block, resourceLocation));
 	}
 
+	// Don't remove, it's used by other mods
 	public static void registerPistonFamily(BlockModelGenerators generator, PistonFamily family) {
 		boolean customTextures = family.hasCustomTextures();
 		Block textureBaseBlock = customTextures ? family.getBase() : Blocks.PISTON;

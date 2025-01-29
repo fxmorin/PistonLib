@@ -130,7 +130,7 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity implements P
     public BlockState getCollisionRelatedBlockState() {
         // Removed setting the type since this is currently only used for collision shape
         return !this.isExtending() && this.isSourcePiston() && this.movedState.getBlock() instanceof BasicPistonBaseBlock ?
-            ModBlocks.BASIC_PISTON_HEAD.defaultBlockState()
+            Blocks.PISTON_HEAD.defaultBlockState()
                 .setValue(BasicPistonHeadBlock.SHORT, this.progress > 0.25F)
                 .setValue(BasicPistonHeadBlock.FACING, this.movedState.getValue(BasicPistonBaseBlock.FACING)) :
             this.movedState;
@@ -584,7 +584,7 @@ public class BasicMovingBlockEntity extends PistonMovingBlockEntity implements P
 
     protected BlockState getMovingStateForCollisionShape() {
         if (this.isSourcePiston()) {
-            return ModBlocks.BASIC_PISTON_HEAD.defaultBlockState()
+            return Blocks.PISTON_HEAD.defaultBlockState()
                 .setValue(PistonHeadBlock.FACING, this.direction)
                 .setValue(PistonHeadBlock.SHORT, this.extending != 1.0F - this.progress < 0.25F);
         } else {

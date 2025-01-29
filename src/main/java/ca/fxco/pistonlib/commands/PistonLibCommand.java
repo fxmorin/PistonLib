@@ -2,8 +2,6 @@ package ca.fxco.pistonlib.commands;
 
 import ca.fxco.pistonlib.PistonLib;
 import ca.fxco.pistonlib.api.pistonLogic.PistonMoveBehavior;
-import ca.fxco.pistonlib.base.ModBlocks;
-import ca.fxco.pistonlib.blocks.pistons.basePiston.BasicPistonBaseBlock;
 import ca.fxco.pistonlib.commands.arguments.DirectionArgument;
 import ca.fxco.pistonlib.commands.arguments.PistonMoveBehaviorArgument;
 import ca.fxco.pistonlib.helpers.BlockUtils;
@@ -33,6 +31,8 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.piston.PistonBaseBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.material.PushReaction;
@@ -158,8 +158,8 @@ public class PistonLibCommand implements Command {
 
     private static int runPistonEvent(CommandSourceStack commandSourceStack, GlobalPos globalPos, Direction facing,
                                       BlockInput blockInput, PistonEventType eventType) throws CommandSyntaxException {
-        Block block = blockInput == null ? ModBlocks.BASIC_STICKY_PISTON : blockInput.getState().getBlock();
-        if (!(block instanceof BasicPistonBaseBlock basicPistonBaseBlock)) {
+        Block block = blockInput == null ? Blocks.STICKY_PISTON : blockInput.getState().getBlock();
+        if (!(block instanceof PistonBaseBlock pistonBaseBlock)) {
             throw new SimpleCommandExceptionType(
                     Component.translatable("commands.pistonlib.notPistonBlock", block)
             ).create();
@@ -174,7 +174,7 @@ public class PistonLibCommand implements Command {
                 Direction face = blockHitResult.getDirection();
                 blockPos = blockHitResult.getBlockPos();
                 commandSourceStack.getLevel().pl$addPistonEvent(
-                        basicPistonBaseBlock,
+                        pistonBaseBlock,
                         isPush ? blockPos.relative(face) : blockPos.relative(face, 2),
                         face.getOpposite(),
                         isPush
@@ -206,7 +206,7 @@ public class PistonLibCommand implements Command {
         }
         Direction opposite = facing.getOpposite();
         serverLevel.pl$addPistonEvent(
-                basicPistonBaseBlock,
+                pistonBaseBlock,
                 isPush ? blockPos.relative(opposite) : blockPos,
                 opposite,
                 isPush
