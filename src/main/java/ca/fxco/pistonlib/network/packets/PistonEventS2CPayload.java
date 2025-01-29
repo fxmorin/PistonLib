@@ -1,7 +1,6 @@
 package ca.fxco.pistonlib.network.packets;
 
 import ca.fxco.pistonlib.PistonLib;
-import ca.fxco.pistonlib.api.block.PLPistonController;
 import ca.fxco.pistonlib.helpers.PistonEventData;
 import ca.fxco.pistonlib.network.ClientPacketHandler;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;

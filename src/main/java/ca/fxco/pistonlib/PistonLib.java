@@ -91,9 +91,6 @@ public class PistonLib implements ModInitializer, PistonLibInitializer, PistonLi
     }
 
     @Override
-    public void initialize() {}
-
-    @Override
     public void registerPistonFamilies() {
         ModPistonFamilies.bootstrap();
     }

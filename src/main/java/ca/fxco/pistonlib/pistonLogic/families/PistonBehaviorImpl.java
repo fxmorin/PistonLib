@@ -3,7 +3,6 @@ package ca.fxco.pistonlib.pistonLogic.families;
 import ca.fxco.pistonlib.PistonLibConfig;
 import ca.fxco.pistonlib.api.pistonLogic.families.PistonBehavior;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 
 @Getter

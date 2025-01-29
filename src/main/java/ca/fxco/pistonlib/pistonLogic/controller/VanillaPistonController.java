@@ -257,7 +257,8 @@ public class VanillaPistonController implements PistonController {
                 }
                 if (!droppedBlock) {
                     if (type == PistonEvents.RETRACT_NO_PULL || frontState.isAir() ||
-                            (frontState.getPistonPushReaction() != PushReaction.NORMAL && !frontState.is(ModTags.PISTONS)) ||
+                            (frontState.getPistonPushReaction() != PushReaction.NORMAL &&
+                                    !frontState.is(ModTags.PISTONS)) ||
                             !canMoveBlock(frontState, level, frontPos, facing.getOpposite(), false, facing)) {
                         if (!PistonLibConfig.illegalBreakingFix ||
                                 level.getBlockState(headPos).getDestroySpeed(level, headPos) != -1.0F) {

@@ -2,11 +2,9 @@ package ca.fxco.pistonlib.datagen;
 
 import java.util.concurrent.CompletableFuture;
 
-import ca.fxco.pistonlib.api.PistonLibRegistries;
 import org.slf4j.Logger;
 
 import ca.fxco.pistonlib.PistonLib;
-import ca.fxco.pistonlib.base.ModBlocks;
 import ca.fxco.pistonlib.base.ModTags;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -28,10 +26,10 @@ public class ModBlockTagProvider extends FabricTagProvider.BlockTagProvider {
 	protected void addTags(HolderLookup.Provider registries) {
 		LOGGER.info("Generating block tags...");
 
-		FabricTagBuilder pistonsTag = getOrCreateTagBuilder(ModTags.PISTONS);
-		FabricTagBuilder movingPistonsTag = getOrCreateTagBuilder(ModTags.MOVING_PISTONS);
-
-		getOrCreateTagBuilder(ModTags.UNPUSHABLE).add(Blocks.OBSIDIAN, Blocks.CRYING_OBSIDIAN, Blocks.RESPAWN_ANCHOR, Blocks.BEACON, Blocks.ENDER_CHEST, Blocks.ENCHANTING_TABLE, Blocks.SPAWNER);
+		getOrCreateTagBuilder(ModTags.UNPUSHABLE).add(
+				Blocks.OBSIDIAN, Blocks.CRYING_OBSIDIAN, Blocks.RESPAWN_ANCHOR, Blocks.BEACON,
+				Blocks.ENDER_CHEST, Blocks.ENCHANTING_TABLE, Blocks.SPAWNER
+		);
 
 		getOrCreateTagBuilder(BlockTags.WITHER_IMMUNE).addTag(ModTags.MOVING_PISTONS);
 		getOrCreateTagBuilder(BlockTags.DRAGON_IMMUNE).addTag(ModTags.MOVING_PISTONS);

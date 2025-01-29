@@ -28,7 +28,6 @@ import java.util.*;
 public class ConfigManagerImpl implements ConfigManager, ConfigManagerEntrypoint {
 
     private static final boolean DEBUG_CONFIG = false;
-    private static final boolean DEBUG_NETWORK = false;
 
     private final String modId;
     private final TomlWriter tomlWriter;
