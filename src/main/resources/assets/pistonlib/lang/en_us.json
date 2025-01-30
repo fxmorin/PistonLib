@@ -1,9 +1,21 @@
 {
+  "commands.pistonlib.behavior.default": "default",
+  "commands.pistonlib.behavior.normal": "normal",
+  "commands.pistonlib.behavior.destroy": "destroy",
+  "commands.pistonlib.behavior.block": "block",
+  "commands.pistonlib.behavior.ignore": "ignore",
+  "commands.pistonlib.behavior.push_only": "push only",
+  "commands.pistonlib.behavior.pull_only": "pull only",
+  "commands.pistonlib.behavior.illegal_change": "You cannot change the move behavior of %s",
+  "commands.pistonlib.behavior.set_override": "Set the piston move behavior override of all block states matching %s to %s",
+  "commands.pistonlib.behavior.query": "block state %s has piston move behavior %s",
+  "commands.pistonlib.behavior.query.modified": "modified",
+  "commands.pistonlib.behavior.query.vanilla": "vanilla",
   "commands.pistonlib.push.success": "Triggered push event at %s, %s, %s facing %s",
   "commands.pistonlib.pull.success": "Triggered pull event at %s, %s, %s facing %s",
   "commands.pistonlib.config.value": "Option %s is currently set to: %s",
   "commands.pistonlib.config.success": "Option %s is now set to: %s",
   "commands.pistonlib.config.success.restart": "After restart option %s will be set to: %s",
-  "commands.pistonlib.notPistonBlock": "Invalid piston block '%s'",
+  "commands.pistonlib.not_piston_block": "Invalid piston block '%s'",
   "argument.pistonlib.direction.invalid": "Unknown direction '%s'"
 }

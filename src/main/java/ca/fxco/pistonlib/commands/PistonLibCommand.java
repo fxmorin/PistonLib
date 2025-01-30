@@ -44,7 +44,7 @@ import java.util.*;
 public class PistonLibCommand implements Command {
 
     private static final DynamicCommandExceptionType CANNOT_CHANGE_MOVE_BEHAVIOR = new DynamicCommandExceptionType(
-            o -> Component.translatable("commands.pistonlib.behavior.illegalChange", o));
+            o -> Component.translatable("commands.pistonlib.behavior.illegal_change", o));
 
     @Override
     public void register(CommandDispatcher<CommandSourceStack> dispatcher,
@@ -161,7 +161,7 @@ public class PistonLibCommand implements Command {
         Block block = blockInput == null ? Blocks.STICKY_PISTON : blockInput.getState().getBlock();
         if (!(block instanceof PistonBaseBlock pistonBaseBlock)) {
             throw new SimpleCommandExceptionType(
-                    Component.translatable("commands.pistonlib.notPistonBlock", block)
+                    Component.translatable("commands.pistonlib.not_piston_block", block)
             ).create();
         }
         BlockPos blockPos;
@@ -277,19 +277,18 @@ public class PistonLibCommand implements Command {
         PistonMoveBehavior behavior = PistonMoveBehavior.fromPushReaction(pushReaction);
         PistonMoveBehavior override = PistonLibBehaviorManager.getOverride(state);
 
-        MutableComponent message = Component.
-                literal("block state ").
-                append(Component.
-                        literal(BlockUtils.blockStateAsString(state)).
-                        withStyle(ChatFormatting.YELLOW)).
-                append(" has piston move behavior ").
-                append(Component.
-                        literal(behavior.getName()).
-                        append(" (").
-                        append(override.isPresent() ? "modified" : "vanilla").
-                        append(")").
-                        withStyle(override.isPresent() ?
-                                ChatFormatting.GOLD : ChatFormatting.GREEN, ChatFormatting.BOLD));
+        MutableComponent message = Component.translatable(
+                "commands.pistonlib.behavior.query",
+                Component.literal(BlockUtils.blockStateAsString(state))
+                        .withStyle(ChatFormatting.YELLOW),
+                Component.translatable("commands.pistonlib.behavior." + behavior.getName())
+                        .append(" (")
+                        .append(Component.translatable("commands.pistonlib.behavior.query." +
+                                (override.isPresent() ? "modified" : "vanilla")))
+                        .append(")")
+                        .withStyle(override.isPresent() ? ChatFormatting.GOLD : ChatFormatting.GREEN,
+                                ChatFormatting.BOLD));
+
         source.sendSuccess(() -> message, false);
 
         return 1;
@@ -306,19 +305,13 @@ public class PistonLibCommand implements Command {
         }
         PistonLibBehaviorManager.save(true);
 
-        String stateString = BlockUtils.blockStateAsString(state, properties);
-
-        MutableComponent message = Component.
-                literal("set the ").
-                append("piston move behavior override of all block states matching ").
-                append(Component.
-                        literal(stateString).
-                        withStyle(ChatFormatting.YELLOW)).
-                append(" to ").
-                append(Component.
-                        literal(override.getName()).
-                        withStyle(override == PistonMoveBehavior.DEFAULT ?
-                                ChatFormatting.GREEN : ChatFormatting.GOLD, ChatFormatting.BOLD));
+        MutableComponent message = Component.translatable(
+                "commands.pistonlib.behavior.set_override",
+                Component.literal(BlockUtils.blockStateAsString(state, properties)).
+                        withStyle(ChatFormatting.YELLOW),
+                Component.translatable("commands.pistonlib.behavior." + override.getName())
+                        .withStyle(override == PistonMoveBehavior.DEFAULT ? ChatFormatting.GREEN : ChatFormatting.GOLD,
+                                ChatFormatting.BOLD));
 
         source.sendSuccess(() -> message, true);
 
