@@ -114,7 +114,7 @@ public class VanillaPistonController implements PistonController {
     @Override
     public boolean hasNeighborSignal(Level level, BlockPos pos, Direction facing) {
         return Utils.hasNeighborSignalExceptFromFacing(level, pos, facing) ||
-                level.pl$hasQuasiNeighborSignal(pos, 1);
+                (this.getFamily().isQuasi() && level.pl$hasQuasiNeighborSignal(pos, 1));
     }
 
     @Override
