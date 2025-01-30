@@ -113,8 +113,10 @@ public class VanillaPistonController implements PistonController {
 
     @Override
     public boolean hasNeighborSignal(Level level, BlockPos pos, Direction facing) {
-        return Utils.hasNeighborSignalExceptFromFacing(level, pos, facing) ||
-                (this.getFamily().isQuasi() && level.pl$hasQuasiNeighborSignal(pos, 1));
+        PistonFamily family = this.getFamily();
+        return (family.isFrontPowered() ?
+                level.hasNeighborSignal(pos) : Utils.hasNeighborSignalExceptFromFacing(level, pos, facing)) ||
+                (family.isQuasi() && level.pl$hasQuasiNeighborSignal(pos, 1));
     }
 
     @Override
@@ -157,11 +159,15 @@ public class VanillaPistonController implements PistonController {
 
     @Override
     public int getRetractType(ServerLevel level, BlockPos pos, Direction facing, int length) {
+        PistonFamily family = getFamily();
+        if (!family.isRetractOnExtending()) {
+            return PistonEvents.NONE;
+        }
+
         // make sure the piston doesn't try to retract while it's already retracting
         BlockPos headPos = pos.relative(facing, length);
         BlockState headState = level.getBlockState(headPos);
 
-        PistonFamily family = getFamily();
         if (headState.is(family.getMoving())) {
             if (level.getBlockEntity(headPos) instanceof PistonMovingBlockEntity mbe &&
                     mbe.isSourcePiston() && !mbe.isExtending() && mbe.getDirection() == facing) {
