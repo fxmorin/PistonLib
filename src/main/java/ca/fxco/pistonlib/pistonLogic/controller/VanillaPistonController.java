@@ -88,7 +88,27 @@ public class VanillaPistonController implements PistonController {
 
     @Override
     public int getLength(Level level, BlockPos pos, BlockState state) {
-        return state.getValue(EXTENDED) ? getFamily().getMaxLength() : getFamily().getMinLength();
+        PistonFamily family = getFamily();
+        if (state.getValue(EXTENDED)) {
+            int maxLength = family.getMaxLength();
+            if (maxLength == 1) {
+                return 1;
+            }
+            Direction facing = state.getValue(FACING);
+            int length = family.getMinLength();
+
+            while (length++ < maxLength) {
+                BlockPos frontPos = pos.relative(facing, length);
+                BlockState frontState = level.getBlockState(frontPos);
+
+                if (!frontState.is(family.getArm())) {
+                    break;
+                }
+            }
+
+            return length;
+        }
+        return family.getMinLength();
     }
 
     @Override
@@ -107,7 +127,7 @@ public class VanillaPistonController implements PistonController {
         int length = this.getLength(level, pos, state);
         boolean shouldExtend = hasNeighborSignal(level, pos, facing);
 
-        PistonFamily family = getFamily();
+        PistonFamily family = this.getFamily();
         if (PistonLibConfig.headlessPistonFix && !onPlace && length > family.getMinLength()) {
             BlockState blockState = level.getBlockState(pos.relative(facing, length));
             if (shouldExtend && !blockState.is(family.getMoving()) && !blockState.is(family.getHead())) {
