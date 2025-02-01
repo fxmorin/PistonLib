@@ -1,6 +1,7 @@
 package ca.fxco.pistonlib.commands;
 
 import ca.fxco.pistonlib.PistonLib;
+import ca.fxco.pistonlib.api.config.ConfigManager;
 import ca.fxco.pistonlib.api.pistonLogic.PistonMoveBehavior;
 import ca.fxco.pistonlib.commands.arguments.DirectionArgument;
 import ca.fxco.pistonlib.commands.arguments.PistonMoveBehaviorArgument;
@@ -53,8 +54,7 @@ public class PistonLibCommand implements Command {
                 .requires(source -> source.hasPermission(2))
                 .then(pistonEventSubCommand(registryAccess, PistonEventType.PUSH)) // Push Command
                 .then(pistonEventSubCommand(registryAccess, PistonEventType.PULL)) // Pull Command
-                .then(addOptionArgs(Commands.literal("config")
-                        .requires(source -> source.hasPermission(4))))
+                .then(ConfigManager.createConfigSubCommand(PistonLib.getConfigManager()))
                 .then(Commands.literal("behavior").requires(source -> source.hasPermission(4))
                         .then(Commands.argument("block", BlockStateArgument.block(registryAccess))
                                 .executes(context -> queryBehavior(
@@ -217,58 +217,6 @@ public class PistonLibCommand implements Command {
                 opposite.getName()
         ), true);
         return 1;
-    }
-
-    private static LiteralArgumentBuilder<CommandSourceStack> addOptionArgs(
-            LiteralArgumentBuilder<CommandSourceStack> builder
-    ) {
-        PistonLib.getConfigManager().getParsedValues().forEach(parsedValue ->
-            builder.then(Commands.literal(parsedValue.getName())
-                    .executes(ctx -> {
-                        ctx.getSource().sendSuccess(() -> Component.translatable("commands.pistonlib.config.value",
-                                parsedValue.getName(), parsedValue.getValue()), false);
-                        return 1;
-                    })
-                    .then(Commands.literal("set")
-                            .then(Commands.argument("new value", StringArgumentType.word())
-                                    .suggests((context, builder1) -> {
-                                        Object value = parsedValue.getValue();
-                                        String[] suggestions;
-
-                                        if (parsedValue.getSuggestions().length != 0) {
-                                            suggestions = parsedValue.getSuggestions();
-                                        } else if (value instanceof Boolean) {
-                                            suggestions = new String[]{"true", "false"};
-                                        } else if (value instanceof Enum<?> enumValue) {
-                                            Enum<?>[] enums = enumValue.getClass().getEnumConstants();
-                                            suggestions = new String[enums.length];
-                                            for (int i = 0; i < enums.length; i++) {
-                                                suggestions[i] = enums[i].toString();
-                                            }
-                                        } else {
-                                            return Suggestions.empty();
-                                        }
-                                        return SharedSuggestionProvider.suggest(suggestions, builder1);
-                                    }).executes(ctx -> {
-                                        PistonLib.getConfigManager().saveValueFromCommand(parsedValue, ctx.getSource(),
-                                                StringArgumentType.getString(ctx, "new value"));
-                                        ctx.getSource().sendSuccess(() -> Component.translatable(
-                                                "commands.pistonlib.config.success"
-                                                        + (parsedValue.requiresRestart() ? ".restart" : ""),
-                                                parsedValue.getName(), parsedValue.getValueToSave()), true);
-                                        return 1;
-                                    })))
-                    .then(Commands.literal("default").executes(ctx -> {
-                        PistonLib.getConfigManager().resetAndSaveValue(parsedValue);
-                        ctx.getSource().sendSuccess(() -> Component.translatable(
-                                "commands.pistonlib.config.success"
-                                        + (parsedValue.requiresRestart() ? ".restart" : ""),
-                                parsedValue.getName(), parsedValue.getValueToSave()), true);
-                        return 1;
-                    }))
-            )
-        );
-        return builder;
     }
 
     private static int queryBehavior(CommandSourceStack source, BlockInput input) {
