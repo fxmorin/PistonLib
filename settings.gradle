@@ -9,5 +9,5 @@ pluginManagement {
 }
 
 include('api')
-include('gametest')
+//include('gametest') TODO replace with newer
 
