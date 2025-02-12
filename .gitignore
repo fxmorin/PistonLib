@@ -132,3 +132,4 @@ backup/
 src/main/generated/
 src/generated/
 src/generated/**
+gametest/libs/**
