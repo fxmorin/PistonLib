@@ -138,8 +138,9 @@ public abstract class BlockStateBase_coreMixin implements PLBlockStateBase {
     }
 
     @Override
-    public @Nullable Pair<BlockState, BlockState> pl$doUnMerge(BlockGetter level, BlockPos pos, Direction dir){
-        return this.getBlock().pl$doUnMerge(this.asState(), level, pos, dir);
+    public @Nullable Pair<BlockState, BlockState> pl$doUnMerge(BlockGetter level, BlockPos pos,
+                                                               Direction dir, BlockState pullingState) {
+        return this.getBlock().pl$doUnMerge(this.asState(), level, pos, dir, pullingState);
     }
 
     @Override

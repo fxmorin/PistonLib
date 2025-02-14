@@ -136,7 +136,8 @@ public interface PLBlockStateBase extends BlockStatePistonBehavior,
     }
 
     @Override
-    default @Nullable Pair<BlockState, BlockState> pl$doUnMerge(BlockGetter level, BlockPos pos, Direction dir){
+    default @Nullable Pair<BlockState, BlockState> pl$doUnMerge(BlockGetter level, BlockPos pos,
+                                                                Direction dir, BlockState pullingState){
         throw new UnsupportedOperationException();
     }
 

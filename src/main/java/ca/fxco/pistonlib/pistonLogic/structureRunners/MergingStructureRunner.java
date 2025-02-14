@@ -72,7 +72,7 @@ public class MergingStructureRunner extends BasicStructureRunner {
         int moveSize = toMove.size();
         if (moveSize > 0) {
             if (structure instanceof MergingPistonStructureResolver mergingStructure) {
-                List<BlockPos> toUnMerge = mergingStructure.getToUnMerge();
+                Map<BlockPos, BlockState> toUnMerge = mergingStructure.getToUnMerge();
                 unMergingStates = new BlockState[toUnMerge.size()];
                 StructureGroup structureGroup = null;
                 if (moveSize > 1) { // Only use Structure group if there are more than 1 block entities in the group
@@ -87,7 +87,7 @@ public class MergingStructureRunner extends BasicStructureRunner {
                     boolean move = true;
 
                     // UnMerge blocks
-                    if (toUnMerge.contains(posToMove)) {
+                    if (toUnMerge.containsKey(posToMove)) {
                         Pair<BlockState, BlockState> unmergedStates = null;
                         if (stateToMove.pl$getBlockEntityMergeRules().checkUnMerge()) {
                             unmergedStates = blockEntityToMove.pl$doUnMerge(stateToMove, moveDir);
@@ -96,7 +96,8 @@ public class MergingStructureRunner extends BasicStructureRunner {
                             }
                         }
                         if (unmergedStates == null) {
-                            unmergedStates = stateToMove.pl$doUnMerge(level, posToMove, moveDir);
+                            unmergedStates = stateToMove.pl$doUnMerge(level,
+                                    posToMove, moveDir, toUnMerge.get(posToMove));
                         }
                         if (unmergedStates != null) {
                             unMergingStates[unMergingIndex++] = stateToMove;

@@ -168,7 +168,7 @@ public interface PLBlockBehaviour extends BlockPistonBehavior, BlockPistonMergin
     @Deprecated
     @Override
     default @Nullable Pair<BlockState, BlockState> pl$doUnMerge(BlockState state, BlockGetter level,
-                                                                BlockPos pos, Direction dir) {
+                                                                BlockPos pos, Direction dir, BlockState pullingState) {
         return null;
     }
 
