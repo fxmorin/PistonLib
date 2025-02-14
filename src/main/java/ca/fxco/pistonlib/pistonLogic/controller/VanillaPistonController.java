@@ -419,4 +419,10 @@ public class VanillaPistonController implements PistonController {
     public boolean moveBlocks(Level level, BlockPos pos, Direction facing, int length, boolean extend) {
         return newStructureRunner(level, pos, facing, length, extend, this::newStructureResolver).run();
     }
+
+    @Override
+    public BlockState getHeadState(BlockPos pistonPos, Level level, Direction pushingDir) {
+        return getFamily().getHead().defaultBlockState().setValue(FACING, pushingDir)
+                .setValue(BasicPistonHeadBlock.TYPE, type);
+    }
 }

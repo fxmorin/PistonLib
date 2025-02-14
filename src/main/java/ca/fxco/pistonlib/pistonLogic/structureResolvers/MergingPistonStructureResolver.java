@@ -70,7 +70,14 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
         // UnMerge checks on initial line blocks
         if (!initialBlock) {
             if (state.pl$usesConfigurablePistonMerging()) {
-                BlockState neighborState = level.getBlockState(pos.relative(pullDirection));
+                BlockPos headPos = pos.relative(extending ? pullDirection : pushDirection, 2);
+                BlockState neighborState;
+                if (headPos.equals(this.pistonPos)) {
+                    neighborState = this.controller.getHeadState(
+                            headPos, level, extending ? pushDirection : pullDirection);
+                } else {
+                    neighborState = level.getBlockState(pos.relative(pullDirection));
+                }
                 if (state.pl$canUnMerge(level, pos, neighborState, this.pushDirection) &&
                     (!state.pl$getBlockEntityMergeRules().checkUnMerge() ||
                     level.getBlockEntity(pos).pl$canUnMerge(state, neighborState, this.pushDirection))) {
