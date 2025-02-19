@@ -82,8 +82,8 @@ public class VanillaPistonController implements PistonController {
         PistonFamily family = getFamily();
         PistonType type = getType();
         return PistonLibConfig.mergingApi ?
-                new MergingStructureRunner(level, pos, facing, length, family, type, extend , structureProvider) :
-                new BasicStructureRunner(level, pos, facing, length, family, type, extend , structureProvider);
+                new MergingStructureRunner(level, pos, facing, length, this, extend , structureProvider) :
+                new BasicStructureRunner(level, pos, facing, length, this, extend , structureProvider);
     }
 
     @Override
@@ -421,8 +421,8 @@ public class VanillaPistonController implements PistonController {
     }
 
     @Override
-    public BlockState getHeadState(BlockPos pistonPos, Level level, Direction pushingDir) {
-        return getFamily().getHead().defaultBlockState().setValue(FACING, pushingDir)
+    public BlockState getHeadState(BlockPos pistonPos, Level level, Direction facing, boolean extending) {
+        return getFamily().getHead().defaultBlockState().setValue(FACING, facing)
                 .setValue(BasicPistonHeadBlock.TYPE, type);
     }
 }

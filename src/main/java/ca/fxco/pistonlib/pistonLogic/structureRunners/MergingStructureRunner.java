@@ -1,7 +1,7 @@
 package ca.fxco.pistonlib.pistonLogic.structureRunners;
 
 import ca.fxco.pistonlib.api.PistonLibApi;
-import ca.fxco.pistonlib.api.pistonLogic.families.PistonFamily;
+import ca.fxco.pistonlib.api.pistonLogic.controller.PistonController;
 import ca.fxco.pistonlib.api.pistonLogic.structure.StructureGroup;
 import ca.fxco.pistonlib.api.pistonLogic.structure.StructureResolver;
 import ca.fxco.pistonlib.base.ModBlocks;
@@ -17,7 +17,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.piston.PistonStructureResolver;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.PistonType;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -33,10 +32,10 @@ public class MergingStructureRunner extends BasicStructureRunner {
     private int unMergingIndex = 0;
 
     public <S extends PistonStructureResolver & StructureResolver> MergingStructureRunner(
-            Level level, BlockPos pos, Direction facing, int length, PistonFamily family, PistonType type,
+            Level level, BlockPos pos, Direction facing, int length, PistonController controller,
             boolean extend, StructureResolver.Factory<S> structureProvider
     ) {
-        super(level, pos, facing, length, family, type, extend, structureProvider);
+        super(level, pos, facing, length, controller, extend, structureProvider);
     }
 
     @Override
@@ -112,9 +111,9 @@ public class MergingStructureRunner extends BasicStructureRunner {
 
                     toRemove.remove(dstPos);
 
-                    BlockState movingBlock = this.family.getMoving().defaultBlockState()
+                    BlockState movingBlock = this.controller.getFamily().getMoving().defaultBlockState()
                             .setValue(BasicMovingBlock.FACING, facing);
-                    BlockEntity movingBlockEntity = this.family.newMovingBlockEntity(
+                    BlockEntity movingBlockEntity = this.controller.getFamily().newMovingBlockEntity(
                             structureGroup, dstPos, movingBlock, stateToMove, blockEntityToMove,
                             facing, extend, false);
 
@@ -136,7 +135,7 @@ public class MergingStructureRunner extends BasicStructureRunner {
             return;
         }
         List<BlockPos> toMerge = mergingStructure.getToMerge();
-        float speed = extend ? family.getExtendingSpeed() : family.getRetractingSpeed();
+        float speed = extend ? controller.getFamily().getExtendingSpeed() : controller.getFamily().getRetractingSpeed();
 
         // Merge Blocks
         for (int i = toMerge.size() - 1; i >= 0; i--) {

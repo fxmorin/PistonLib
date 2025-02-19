@@ -74,7 +74,7 @@ public class MergingPistonStructureResolver extends BasicStructureResolver {
                 BlockState neighborState;
                 if (headPos.equals(this.pistonPos)) {
                     neighborState = this.controller.getHeadState(
-                            headPos, level, extending ? pushDirection : pullDirection);
+                            headPos, level, extending ? pushDirection : pullDirection, extending);
                 } else {
                     neighborState = level.getBlockState(pos.relative(pullDirection));
                 }

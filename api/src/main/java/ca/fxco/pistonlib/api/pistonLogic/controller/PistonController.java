@@ -191,11 +191,12 @@ public interface PistonController {
     /**
      * The method used to get piston's head block state for piston
      *
-     * @param pistonPos        block position of the piston
-     * @param level            The level of the piston
-     * @param pushingDir direction piston is pushing in
+     * @param pistonPos block position of the piston
+     * @param level     The level of the piston
+     * @param facing    direction piston is facing
+     * @param extending if this head is for extending or retraction
      * @return block state of the head
      * @since 1.2.0
      */
-    BlockState getHeadState(BlockPos pistonPos, Level level, Direction pushingDir);
+    BlockState getHeadState(BlockPos pistonPos, Level level, Direction facing, boolean extending);
 }
