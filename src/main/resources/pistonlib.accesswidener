@@ -27,3 +27,5 @@ extendable method net/minecraft/world/level/block/piston/PistonMovingBlockEntity
 
 # Set FeatureFlag constructor to public
 accessible method net/minecraft/world/flag/FeatureFlag <init> (Lnet/minecraft/world/flag/FeatureFlagUniverse;I)V
+
+accessible method net/minecraft/world/level/block/piston/PistonHeadBlock calculateShape (Lnet/minecraft/core/Direction;Z)Lnet/minecraft/world/phys/shapes/VoxelShape;
