@@ -125,16 +125,14 @@ public interface ConfigManager {
      * @param configManager config manager to create command for
      * @return Subcommand with literal arguments of the options
      */
-    static LiteralArgumentBuilder<CommandSourceStack> createConfigSubCommand(
-            ConfigManager configManager
-    ) {
+    static LiteralArgumentBuilder<CommandSourceStack> createConfigSubCommand(ConfigManager configManager) {
         LiteralArgumentBuilder<CommandSourceStack> builder = Commands.literal("config")
                 .requires(source -> source.hasPermission(4));
         configManager.getParsedValues().forEach(parsedValue ->
                 builder.then(Commands.literal(parsedValue.getName())
                         .executes(ctx -> {
                             ctx.getSource().sendSuccess(() -> Component.translatable("commands.pistonlib.config.value",
-                                    parsedValue.getName(), parsedValue.getValue()), false);
+                                    parsedValue.getName(), String.valueOf(parsedValue.getValue())), false);
                             return 1;
                         })
                         .then(Commands.literal("set")
@@ -163,7 +161,8 @@ public interface ConfigManager {
                                             ctx.getSource().sendSuccess(() -> Component.translatable(
                                                     "commands.pistonlib.config.success"
                                                             + (parsedValue.requiresRestart() ? ".restart" : ""),
-                                                    parsedValue.getName(), parsedValue.getValueToSave()), true);
+                                                    parsedValue.getName(),
+                                                    String.valueOf(parsedValue.getValueToSave())), true);
                                             return 1;
                                         })))
                         .then(Commands.literal("default").executes(ctx -> {
@@ -171,7 +170,8 @@ public interface ConfigManager {
                             ctx.getSource().sendSuccess(() -> Component.translatable(
                                     "commands.pistonlib.config.success"
                                             + (parsedValue.requiresRestart() ? ".restart" : ""),
-                                    parsedValue.getName(), parsedValue.getValueToSave()), true);
+                                    parsedValue.getName(),
+                                    String.valueOf(parsedValue.getValueToSave())), true);
                             return 1;
                         }))
                 )
